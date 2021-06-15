@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - AWS_ACCESS_KEY_ID=testkey
+      - AWS_SECRET_ACCESS_KEY=testsecret
+      - AWS_REGION_NAME=us-east-1
+    volumes:
+      - .:/app:rw
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  db:
+    image: library/postgres:11.12
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
