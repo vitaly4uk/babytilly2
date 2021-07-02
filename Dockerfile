@@ -1,7 +1,7 @@
-FROM python:3.9.6-slim
+FROM python:3.9.6
 ENV PYTHONUNBUFFERED 1
 ENV ENV LOCAL
-#RUN apt-get update && apt-get install -y gettext inotify-tools python3-dev build-essential && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev python3-dev
 RUN mkdir -p /app
 WORKDIR /app
 RUN pip install --upgrade pip

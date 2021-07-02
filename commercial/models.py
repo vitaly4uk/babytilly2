@@ -50,7 +50,7 @@ class CategoryProperties(models.Model):
 class Article(models.Model):
     id = models.CharField(max_length=25, primary_key=True)
     category = TreeForeignKey(
-        Category, verbose_name=gettext_lazy('category'), null=True, blank=True, related_name='children', on_delete=models.CASCADE
+        Category, verbose_name=gettext_lazy('category'), null=True, blank=True, on_delete=models.CASCADE
     )
     image = ImageField(gettext_lazy('image'), upload_to='upload/foto/')
     property = models.ManyToManyField(Departament, through='ArticleProperties', verbose_name=gettext_lazy('property'))
@@ -85,7 +85,7 @@ class ArticleProperties(models.Model):
         verbose_name = gettext_lazy('category property')
         verbose_name_plural = gettext_lazy('category properties')
         constraints = [
-            models.UniqueConstraint(fields=['department', 'category'], name='unique_article_property')
+            models.UniqueConstraint(fields=['department', 'article'], name='unique_article_property')
         ]
 
 
