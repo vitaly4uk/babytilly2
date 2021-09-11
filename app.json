@@ -1,0 +1,24 @@
+{
+  "name": "BabyTilly 2",
+  "description": "Best toys",
+  "website": "https://baby-tilly.com/",
+  "repository": "https://github.com/vitaly4uk/babytilly2",
+  "success_url": "/",
+  "scripts": {
+    "postdeploy": "python manage.py migrate --noinput",
+    "dokku": {
+      "postdeploy": "python manage.py migrate --noinput"
+    }
+  },
+ "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  }
+}

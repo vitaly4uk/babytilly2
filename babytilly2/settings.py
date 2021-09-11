@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
+from urllib.parse import urlparse
+
 import dj_database_url
 from pathlib import Path
 
@@ -24,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ae6k1=^jgfg$8b5rb41fbxxyx6k@mejipqu&pfw&&o#p#s2)!4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '*'
@@ -43,6 +46,7 @@ INSTALLED_APPS = [
     'mptt',
     'sorl.thumbnail',
     'commercial',
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -131,6 +135,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ADMINS = (
     ('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),
 )
+
+CACHES = {
+     'default': {
+         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+     },
+ }
+
+MEMCACHED_URL = os.environ.get('MEMCACHED_URL')
+if MEMCACHED_URL:
+     memcached_url = urlparse(MEMCACHED_URL)
+     CACHES['default'] = {
+         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+         'LOCATION': '{0}:{1}'.format(memcached_url.hostname, memcached_url.port)
+     }
 
 try:
     from local_settings import *

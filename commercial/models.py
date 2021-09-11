@@ -13,6 +13,9 @@ class Departament(models.Model):
     country = CountryField(gettext_lazy('country'))
     email = models.EmailField(gettext_lazy('email'))
 
+    def __str__(self):
+        return str(self.country)
+
     class Meta:
         verbose_name = gettext_lazy('departament')
         verbose_name_plural = gettext_lazy('departments')
@@ -138,3 +141,12 @@ class OrderItem(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['order', 'article'], name='unique_order_item')
         ]
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
+    department = models.ForeignKey(Departament, verbose_name=gettext_lazy('department'), on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = gettext_lazy('profile')
+        verbose_name_plural = gettext_lazy('profiles')
