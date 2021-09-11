@@ -150,7 +150,9 @@ if MEMCACHED_URL:
      memcached_url = urlparse(MEMCACHED_URL)
      CACHES['default'] = {
          'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-         'LOCATION': '{0}:{1}'.format(memcached_url.hostname, memcached_url.port)
+         'LOCATION': '{0}:{1}'.format(memcached_url.hostname, memcached_url.port),
+         'TIMEOUT': 3600,
+         'KEY_PREFIX': 'babytilly2-'
      }
 
 try:
