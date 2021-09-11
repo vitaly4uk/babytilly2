@@ -1,7 +1,7 @@
-FROM python:3.9.7-slim
+FROM python:3.9.7-alpine
 ENV PYTHONUNBUFFERED 1
 ENV ENV LOCAL
-#RUN apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev python3-dev
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev libjpeg
 RUN mkdir -p /app
 WORKDIR /app
 RUN pip install --upgrade pip
