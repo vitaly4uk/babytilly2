@@ -1,7 +1,7 @@
-FROM python:3.9.7-alpine
+FROM python:3.9.7-slim
 ENV PYTHONUNBUFFERED 1
 ENV ENV LOCAL
-RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev libjpeg
+RUN #apk update && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev libjpeg
 RUN mkdir -p /app
 WORKDIR /app
 RUN pip install --upgrade pip
