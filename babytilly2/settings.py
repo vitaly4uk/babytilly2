@@ -15,6 +15,12 @@ from urllib.parse import urlparse
 import dj_database_url
 from pathlib import Path
 
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
+ADMINS = (
+    ('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),
+)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -139,10 +145,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ADMINS = (
-    ('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),
-)
-
 CACHES = {
      'default': {
          'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -158,6 +160,15 @@ if MEMCACHED_URL:
          'TIMEOUT': 3600,
          'KEY_PREFIX': 'babytilly2-'
      }
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_REGION_NAME = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'babytilly')
+AWS_PRELOAD_METADATA = True
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_EXPIRE = None
+AWS_QUERYSTRING_AUTH = False
 
 try:
     from local_settings import *
