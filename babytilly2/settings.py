@@ -140,6 +140,7 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 
 MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
