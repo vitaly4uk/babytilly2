@@ -22,6 +22,12 @@ class DepartamentAdmin(admin.ModelAdmin):
     list_display = ['country', 'email']
     search_fields = ['country']
 
+    def get_queryset(self, request):
+        queryset = super(DepartamentAdmin, self).get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(id=request.user.profile.department_id)
+        return queryset
+
 
 class CategoryAdmin(MPTTModelAdmin):
     inlines = [CategoryPropertyAdmin]
@@ -30,3 +36,9 @@ class CategoryAdmin(MPTTModelAdmin):
 
 class UserAdmin(DefaultUserAdmin):
     inlines = [ProfileAdmin]
+
+
+class ImportPriceAdmin(admin.ModelAdmin):
+    readonly_fields = ['imported_at', 'user']
+    list_display = ['imported_at', 'user', 'department']
+    list_filter = ['department']

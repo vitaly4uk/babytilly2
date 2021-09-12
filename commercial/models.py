@@ -150,3 +150,14 @@ class Profile(models.Model):
     class Meta:
         verbose_name = gettext_lazy('profile')
         verbose_name_plural = gettext_lazy('profiles')
+
+
+class ImportPrice(models.Model):
+    file = models.FileField(gettext_lazy('file'), upload_to='upload/import/')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
+    department = models.ForeignKey(Departament, verbose_name=gettext_lazy('department'), on_delete=models.CASCADE)
+    imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = gettext_lazy('import')
+        verbose_name_plural = gettext_lazy('imports')
