@@ -17,6 +17,8 @@ from pathlib import Path
 
 
 EMAIL_BACKEND = 'django_ses.SESBackend'
+DEFAULT_FROM_EMAIL = 'tilly.zakaz@gmail.com'
+SERVER_EMAIL = 'tilly.zakaz@gmail.com'
 ADMINS = (
     ('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),
 )
