@@ -15,7 +15,7 @@ class HomePage(TemplateView):
             storage = get_storage_class()()
             try:
                 dirs, files = storage.listdir('upload/startpage')
-            except FileNotFoundError:
+            except Exception:
                 files = []
             for filename in files:
                 if filename == '.':

@@ -147,6 +147,9 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     department = models.ForeignKey(Departament, verbose_name=gettext_lazy('department'), on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"Profile for {self.user}"
+
     class Meta:
         verbose_name = gettext_lazy('profile')
         verbose_name_plural = gettext_lazy('profiles')
