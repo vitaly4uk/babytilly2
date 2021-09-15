@@ -1,0 +1,198 @@
+{% extends "base.bootstrap.html" %}
+{% load thumbnail commercial_tags static %}
+
+{% block title %}{{ page_title }} :: {{ block.super }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        {% if category %}
+        <div class="col-md-4">
+                <nav aria-label="breadcrumb" class="ml-3">
+                    <ol class="breadcrumb">
+                        {% for ancestor in category.get_ancestors_include_self %}
+                            <li class="breadcrumb-item{% if forloop.last %} active{% endif %}"
+                                aria-current="page">{{ ancestor.name }}</li>
+                        {% endfor %}
+                    </ol>
+                </nav>
+        </div>
+        {% endif %}
+        <div class="{% if category %} col-md-8{% else %} col{% endif %}">
+                <form class="form-inline float-right w-sm-100" method="GET" name="ordering">
+                    <div class="form-group mx-2 d-none d-xl-block">
+                        <label for="perPageCount" class="d-inline-block">количество:</label>
+                        <select class="custom-select custom-select-sm" id="perPageCount" name="per_page"
+                                onchange="goToPage(1)">
+                            {% for value in paginator_list %}
+                                <option value="{{ value }}" {% if value == per_page %}selected{% endif %}>
+                                    {{ value }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group mx-2 w-sm-100">
+                    <label for="sortSelect" class="d-none d-xl-block">цена:</label>
+                    <select class="custom-select custom-select-sm d-inline-block" id="sortSelect" name="sort" onchange="goToPage(1)">
+                        <option value="">
+                            нет сортировки
+                        </option>
+                        <option value="price" {% if sort == 'price' %}selected{% endif %}>
+                            от дешевых к дорогим
+                        </option>
+                        <option value="-price" {% if sort == '-price' %}selected{% endif %}>
+                            от дорогих к дешевым
+                        </option>
+                    </select>
+                    </div>
+                    {% if user.profile.type == 2 %}
+                        <div class="form-group mx-2 d-none d-xl-block">
+                        <label for="typeSelect" class="d-inline-block">расположение:</label>
+                        <select class="custom-select custom-select-sm" id="typeSelect" name="type"
+                                onchange="goToPage(1)">
+                            {% for type in source_type %}
+                                <option value="{{ type.0 }}" {% if request.GET.type|upper == type.0|upper %}selected{% endif %}>
+                                    {{ type.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        </div>
+                    {% endif %}
+                    {% if request.GET.query %}
+                        <input type="hidden" name="query" value="{{ request.GET.query }}">
+                    {% endif %}
+                </form>
+        </div>
+    </div>
+    {% for item in object_list %}
+        <div class="row py-1">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="row no-gutters{% if item.article.id in order.get_article_ids %} bought{% endif %}">
+                        <div class="col-md-2">
+                            <div class="carousel slide" data-ride="carousel" data-interval="false" id="carousel-{{ item.article.id }}">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <a href="{{ item.article.image.url }}" role="button" data-toggle="modal"
+                                           data-target="#imageModal">
+                                            <img src="{{ item.article.get_small_thumbnail_url }}" class="card-img img-thumbnail"
+                                                 width="150" height="150">
+                                        </a>
+                                    </div>
+                                {% with item.article.images.all as additional_images %}
+                                    {% for i in additional_images %}
+                                        <div class="carousel-item">
+                                            <a href="{{ i.image.url }}" role="button" data-toggle="modal"
+                                               data-target="#imageModal">
+                                                <img src="{{ i.get_small_thumbnail_url }}" class="card-img img-thumbnail" width="150"
+                                                     height="150">
+                                            </a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                    {% if additional_images %}
+                                        <a class="carousel-control-prev" href="#carousel-{{ item.article.id }}" role="button" data-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Предыдуший</span>
+                                        </a>
+                                        <a class="carousel-control-next" href="#carousel-{{ item.article.id }}" role="button" data-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Следующий</span>
+                                        </a>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="card-header">
+                                <h5 class="card-title">
+                                    {{ item.article.name }}
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-subtitle">
+                                    <small>шт в ящ.: {{ item.article.in_pack }}</small>
+                                    {% if item.article.doze %}
+                                        <span class="badge badge-pill badge-warning">ДОЗЫ</span>{% endif %}
+                                    {% if item.article.is_new %}
+                                        <span class="badge badge-pill badge-danger">НОВИНКА</span>{% endif %}
+                                    {% if item.article.is_stock %}
+                                        <span class="badge badge-pill badge-success">СПЕЦ. ПРЕД.</span>{% endif %}
+                                </p>
+
+                                <p class="card-text truncated">{{ item.article.description|safe|truncatewords:15 }}</p>
+                                <p class="card-text d-none">{{ item.article.description|safe }}</p>
+                                {% if user.profile.type == 2 %}
+                                    {% if item.article.type == 1 %}
+                                        <div class="card-text">
+                                            <img src="{% static 'img/open_box.png' %}" class="box">
+                                        </div>
+                                    {% endif %}
+                                    {% if item.article.type == 2 %}
+                                        <div class="card-text">
+                                            <img src="{% static 'img/close_box.png' %}" class="box">
+                                            <img src="{% static 'img/open_box.png' %}" class="box">
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                {% if user.profile.show_price %}
+                                    <div class="card-text">
+                                        за шт. <span class="h5">{% get_price item user %}</span>
+                                    </div>
+                                {% endif %}
+                                <div class="card-text">
+                                    <form class="form-inline mx-sm-3 mb-2">
+                                        <label class="sr-only" for="{{ item.article.id }}_input">Количество</label>
+                                        <input type="text" name="{{ item.article.id }}" id="{{ item.article.id }}_input"
+                                               size=4 value="1" class="form-control form-control-sm">
+                                        <a id="{{ item.article.id }}"
+                                           href="{% url 'commercial_addto_cart_one' item.article.id %}/"
+                                           class="btn btn-primary btn-sm ml-2"
+                                           onclick="addToCart('{{ item.article.id }}');return false;">&nbsp;Да&nbsp;</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="pb-5"></div>
+    {% include 'commercial/paginator.html' %}
+
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="imageCarousel" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="" class="d-block w-100" alt="...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_body %}
+    <script type="application/javascript">
+      $(document).ready(function () {
+        $('#imageModal').on('show.bs.modal', function (event) {
+          const button = $(event.relatedTarget) // Button that triggered the modal
+          const url = button.attr('href') // Extract info from data-* attributes
+          // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+          // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+          const modal = $(this)
+          modal.find('img').attr('src', url)
+        })
+
+        $('p.truncated').on('click', function (event) {
+          event.preventDefault()
+          $(event.target).addClass('d-none').next().removeClass('d-none')
+        })
+      })
+    </script>
+{% endblock %}

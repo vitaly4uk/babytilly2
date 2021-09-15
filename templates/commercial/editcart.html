@@ -1,0 +1,69 @@
+{% extends "base.bootstrap.html" %}
+{% load i18n commercial_tags thumbnail %}
+
+{% block title %}Корзина :: {{ block.super }}{% endblock %}
+
+{% block content %}
+    <form name="cartform" method="POST">
+        {% csrf_token %}
+        <table class="table table-striped p-5">
+            <thead>
+            <tr>
+                <th scope="col">##</th>
+                <th scope="col">Наименование</th>
+                <th scope="col">Цена</th>
+                <th scope="col">Кол-во</th>
+                <th scope="col">Объем</th>
+                <th scope="col">Сумма</th>
+                <th scope="col">Удалить</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in order.get_order_items %}
+                <tr>
+                    <td scope="row">{{ forloop.counter }}</td>
+                    <td>{{ item.article }}</td>
+                    <td align="right">{% if user.profile.show_price %}{% get_price item.article user %}{% endif %}</td>
+                    <td align="right"><input type="text" value="{{ item.count }}" size="5" name="{{ item.pk }}"></td>
+                    <td align="right">{{ item.volume|floatformat:2 }}</td>
+                    <td align="right">
+                        {% if user.profile.show_price %}{{ item.sum|floatformat:2 }}{% endif %}
+                    </td>
+                    <td align="center"><input type="checkbox" name="del_{{ item.pk }}"></td>
+                    <td align="right">
+                        <img src="{{ item.article.get_small_thumbnail_url }}" width="100" height="100" border="0">
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td scope="row" colspan="3"></td>
+                <td align="right">{{ order.count }}</td>
+                <td align="right">{{ order.volume|floatformat:2 }}</td>
+                {% if user.profile.show_price %}
+                    <td align="right">{{ order.sum|floatformat:2 }}</td>{% else %}
+                    <td></td>{% endif %}
+                <td></td>
+                <td></td>
+            </tr>
+            </tfoot>
+        </table>
+    <div class="row">
+{#        <div class="col-2">#}
+{#            <input type="submit" value="Очистить" name="submit" class="btn btn-danger">#}
+{#        </div>#}
+        <div class="col-12 text-right">
+            <input type="submit" value="Пересчитать" name="submit" class="btn btn-secondary">
+            <input type="submit" value="Отправить" name="submit" class="btn btn-primary">
+        </div>
+    </div>
+<div class="row pt-2 pb-5">
+    <div class="col w-75">
+        Комментарий:
+        <textarea name="comment" class="w-75"></textarea>
+    </div>
+</div>
+    </form>
+{% endblock %}

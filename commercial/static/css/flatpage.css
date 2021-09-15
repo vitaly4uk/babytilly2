@@ -1,0 +1,7 @@
+html {
+    background: white;
+}
+
+div#cart {
+    display: none;
+}

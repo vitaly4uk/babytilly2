@@ -1,0 +1,6 @@
+{% if order %}
+    В корзине {{ order.get_order_items|length }} товаров.
+    <a href="{% url 'commercial_edit_cart' %}" class="text-dark font-weight-bold">Редактировать</a>
+{% else %}
+    <p class="h4">Корзина пуста.</p>
+{% endif %}

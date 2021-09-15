@@ -1,0 +1,7 @@
+Заказ {{ order }}
+{{ order.comment }}
+## \t Наименование \t Цена \t Кол-во \t Сумма
+{% for item in cart %}
+{{ forloop.counter }} \t {{ item.article }} \t {% if user.profile.show_price %}{{ item.price|floatformat:2 }}{% endif %} \t {{ item.count }} \t {% if user.profile.show_price %}{{ item.sum|floatformat:2 }}{% endif %}
+{% endfor %}
+\t \t \t {{ order.count }} \t {% if user.profile.show_price %}{{ order.sum|floatformat:2 }}{% endif %}
