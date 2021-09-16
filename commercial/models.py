@@ -72,6 +72,9 @@ class Article(models.Model):
             cache.set(f'big-thumb-url-{self.image.name}', url)
         return url
 
+    def get_image_url(self):
+        return self.image.url
+
     class Meta:
         verbose_name = gettext_lazy('article')
         verbose_name_plural = gettext_lazy('articles')
