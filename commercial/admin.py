@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from mptt.admin import MPTTModelAdmin
-from commercial.models import Profile, CategoryProperties
+from commercial.models import Profile, CategoryProperties, Departament
 
 
 class ProfileAdmin(admin.TabularInline):
@@ -22,19 +22,6 @@ class CategoryPropertyAdmin(admin.StackedInline):
         if not request.user.is_superuser:
             queryset = queryset.filter(department_id=request.user.profile.department_id)
         return queryset
-
-    def get_formset(self, request, obj=None, **kwargs):
-        formset = super(CategoryPropertyAdmin, self).get_formset(request, obj, **kwargs)
-        formset.user = request.user
-        return formset
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'department':
-            kwargs['initial'] = request.user.profile.department_id
-            return db_field.formfield(**kwargs)
-        return super(CategoryPropertyAdmin, self).formfield_for_foreignkey(
-            db_field, request, **kwargs
-        )
 
     def get_max_num(self, request, obj=None, **kwargs):
         if not request.user.is_superuser:
