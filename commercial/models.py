@@ -88,8 +88,8 @@ class ArticleProperties(models.Model):
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
 
     class Meta:
-        verbose_name = gettext_lazy('category property')
-        verbose_name_plural = gettext_lazy('category properties')
+        verbose_name = gettext_lazy('article property')
+        verbose_name_plural = gettext_lazy('article properties')
         constraints = [
             models.UniqueConstraint(fields=['department', 'article'], name='unique_article_property')
         ]
