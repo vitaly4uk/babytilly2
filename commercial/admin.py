@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from mptt.admin import MPTTModelAdmin
-from commercial.models import Profile, CategoryProperties, Departament
+from sorl.thumbnail.admin import AdminImageMixin
+
+from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage
 
 
 class ProfileAdmin(admin.TabularInline):
@@ -51,6 +53,33 @@ class DepartamentAdmin(admin.ModelAdmin):
 
 class CategoryAdmin(MPTTModelAdmin):
     inlines = [CategoryPropertyAdmin]
+    list_display = ['id']
+
+
+class ArticlePropertyAdmin(admin.StackedInline):
+    model = ArticleProperties
+    min_num = 1
+    autocomplete_fields = ['department']
+
+    def get_queryset(self, request):
+        queryset = super(ArticlePropertyAdmin, self).get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(department_id=request.user.profile.department_id)
+        return queryset
+
+    def get_max_num(self, request, obj=None, **kwargs):
+        if not request.user.is_superuser:
+            return 1
+        return super(ArticlePropertyAdmin, self).get_max_num(request, obj=obj, **kwargs)
+
+
+class ArticleImageInline(AdminImageMixin, admin.StackedInline):
+    model = ArticleImage
+    extra = 0
+
+
+class ArticleAdmin(admin.ModelAdmin):
+    inlines = [ArticlePropertyAdmin, ArticleImageInline]
     list_display = ['id']
 
 
