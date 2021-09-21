@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from mptt.admin import MPTTModelAdmin
 
+from commercial.formsets import CategoryPropertyFormSet
 from commercial.models import Profile, CategoryProperties
 
 
@@ -17,6 +18,12 @@ class CategoryPropertyAdmin(admin.StackedInline):
     model = CategoryProperties
     min_num = 1
     autocomplete_fields = ['department']
+    formset = CategoryPropertyFormSet
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(CategoryPropertyAdmin, self).get_formset(request, obj, **kwargs)
+        formset.user = request.user
+        return formset
 
     def get_max_num(self, request, obj=None, **kwargs):
         if not request.user.is_superuser:
