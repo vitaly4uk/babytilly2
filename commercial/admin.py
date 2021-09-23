@@ -85,7 +85,7 @@ class ArticleAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super(ArticleAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(department_id=request.user.profile.department_id)
+            queryset = queryset.filter(property__id=request.user.profile.department_id)
         return queryset
 
 
