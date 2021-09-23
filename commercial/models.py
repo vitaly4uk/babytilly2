@@ -124,6 +124,9 @@ class Order(models.Model):
     comment = models.TextField(default='')
     is_closed = models.BooleanField(gettext_lazy('closed'), default=False)
 
+    def __str__(self):
+        return str(self.pk)
+
     class Meta:
         verbose_name = gettext_lazy('order')
         verbose_name_plural = gettext_lazy('orders')

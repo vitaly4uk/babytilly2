@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
-from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage
+from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem
 
 
 class ProfileAdmin(admin.TabularInline):
@@ -82,6 +82,12 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
     list_display = ['id']
 
+    def get_queryset(self, request):
+        queryset = super(ArticleAdmin, self).get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(property__id=request.user.profile.department_id)
+        return queryset
+
 
 class UserAdmin(DefaultUserAdmin):
     inlines = [ProfileAdmin]
@@ -98,3 +104,33 @@ class ImportPriceAdmin(admin.ModelAdmin):
     list_display = ['imported_at', 'user', 'department']
     list_filter = ['department']
     autocomplete_fields = ['department']
+
+
+class OrderItemInline(admin.StackedInline):
+    model = OrderItem
+    readonly_fields = []
+    extra = 0
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super(OrderItemInline, self).get_readonly_fields(request, obj)
+        if obj and not request.user.is_superuser:
+            return readonly_fields + ['article', 'count', 'price']
+        return readonly_fields
+
+
+class OrderAdmin(admin.ModelAdmin):
+    date_hierarchy = 'date'
+    inlines = [OrderItemInline]
+    readonly_fields = []
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super(OrderAdmin, self).get_readonly_fields(request, obj)
+        if obj and not request.user.is_superuser:
+            return readonly_fields + ['user', 'date', 'comment', 'is_closed']
+        return readonly_fields
+
+    def get_queryset(self, request):
+        queryset = super(OrderAdmin, self).get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(user=request.user)
+        return queryset
