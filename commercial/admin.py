@@ -82,12 +82,6 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
     list_display = ['id']
 
-    def get_queryset(self, request):
-        queryset = super(ArticleAdmin, self).get_queryset(request)
-        if not request.user.is_superuser:
-            queryset = queryset.filter(property__id=request.user.profile.department_id)
-        return queryset
-
 
 class UserAdmin(DefaultUserAdmin):
     inlines = [ProfileAdmin]
