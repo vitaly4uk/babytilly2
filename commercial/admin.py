@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
-from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem
+from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentImage
 
 
 class ProfileAdmin(admin.TabularInline):
@@ -30,10 +30,14 @@ class CategoryPropertyAdmin(admin.StackedInline):
             return 1
         return super(CategoryPropertyAdmin, self).get_max_num(request, obj=obj, **kwargs)
 
+class DepartamentImageInline(AdminImageMixin, admin.StackedInline):
+    model = DepartamentImage
+    extra = 0
 
 class DepartamentAdmin(admin.ModelAdmin):
     list_display = ['country', 'email']
     search_fields = ['country']
+    inlines = [DepartamentImageInline]
 
     def get_queryset(self, request):
         queryset = super(DepartamentAdmin, self).get_queryset(request)

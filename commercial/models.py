@@ -23,6 +23,27 @@ class Departament(models.Model):
             models.UniqueConstraint(fields=['country', 'email'], name='unique_department')
         ]
 
+class DepartamentImage(models.Model):
+    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('image'), related_name='images', on_delete=models.CASCADE)
+    image = ImageField(gettext_lazy('image'), upload_to='upload/departament/')
+
+    def get_small_thumbnail_url(self):
+        url = cache.get(f'small-thumb-url-{self.image.name}')
+        if url is None:
+            url = get_thumbnail_url(self.image, settings.THUMBNAIL_SIZE['small'])
+            cache.set(f'small-thumb-url-{self.image.name}', url)
+        return url
+
+    def get_big_thumbnail_url(self):
+        url = cache.get(f'big-thumb-url-{self.image.name}')
+        if url is None:
+            url = get_thumbnail_url(self.image, settings.THUMBNAIL_SIZE['big'])
+            cache.set(f'big-thumb-url-{self.image.name}', url)
+        return url
+
+    class Meta:
+        verbose_name = gettext_lazy('image')
+        verbose_name_plural = gettext_lazy('images')
 
 class Category(MPTTModel):
     id = models.CharField(max_length=25, primary_key=True)
