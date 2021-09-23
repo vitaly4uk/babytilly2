@@ -23,8 +23,12 @@ class Departament(models.Model):
             models.UniqueConstraint(fields=['country', 'email'], name='unique_department')
         ]
 
-class DepartamentImage(models.Model):
-    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('image'), related_name='images', on_delete=models.CASCADE)
+class StartPage(models.Model):
+    pass
+
+class StartPageImage(models.Model):
+    start_page = models.ForeignKey(StartPage, verbose_name=gettext_lazy('image'), related_name='images', on_delete=models.CASCADE)
+    departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
     image = ImageField(gettext_lazy('image'), upload_to='upload/departament/')
 
     def get_small_thumbnail_url(self):
