@@ -34,6 +34,7 @@ class StartPageImage(models.Model):
     class Meta:
         verbose_name = gettext_lazy('start page image')
         verbose_name_plural = gettext_lazy('start page images')
+        ordering = ['order']
 
 class Category(MPTTModel):
     id = models.CharField(max_length=25, primary_key=True)
