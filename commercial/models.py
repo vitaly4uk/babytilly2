@@ -29,7 +29,7 @@ class StartPageImage(models.Model):
     order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
 
     def __str__(self):
-        return f'{self.image.name.split("/")[-1]} {self.departament}'
+        return f'{self.image.name} {self.departament}'
 
     class Meta:
         verbose_name = gettext_lazy('start page image')

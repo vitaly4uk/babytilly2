@@ -32,7 +32,7 @@ class CategoryPropertyAdmin(admin.StackedInline):
         return super(CategoryPropertyAdmin, self).get_max_num(request, obj=obj, **kwargs)
 
 class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
-    list_display = ['__str__', 'order']
+    list_display = ['pk', 'image', 'departament', 'order']
     form = StartPageImageAdminForm
 
     def get_form(self, request, obj=None, **kwargs):
