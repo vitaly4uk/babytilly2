@@ -28,6 +28,9 @@ class StartPageImage(models.Model):
     image = ImageField(gettext_lazy('image'), upload_to='upload/start_page/')
     order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
 
+    def __str__(self):
+        return f'{self.image.name.split("/")[-1]} {self.departament}'
+
     class Meta:
         verbose_name = gettext_lazy('start page image')
         verbose_name_plural = gettext_lazy('start page images')

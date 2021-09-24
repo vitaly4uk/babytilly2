@@ -14,13 +14,13 @@ class HomePage(TemplateView):
             file_list = []
             storage = get_storage_class()()
             try:
-                dirs, files = storage.listdir('upload/startpage')
+                dirs, files = storage.listdir('upload/start_page')
             except Exception:
                 files = []
             for filename in files:
                 if filename == '.':
                     continue
-                file_list.append(storage.url('{}/{}'.format('upload/startpage', filename)))
+                file_list.append(storage.url('{}/{}'.format('upload/start_page', filename)))
             cache.set('home-page-file-list', file_list)
         context.update({
             'file_list': file_list,
