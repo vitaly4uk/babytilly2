@@ -12,6 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='startpageimage',
-            options={'ordering': ['order'], 'verbose_name': 'start page image', 'verbose_name_plural': 'start page images'},
+            options={'ordering': ['departament', 'order'], 'verbose_name': 'start page image', 'verbose_name_plural': 'start page images'},
         ),
     ]
