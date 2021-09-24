@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
+from commercial.forms import StartPageImageAdminForm
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, StartPageImage
 
 
@@ -30,22 +31,20 @@ class CategoryPropertyAdmin(admin.StackedInline):
             return 1
         return super(CategoryPropertyAdmin, self).get_max_num(request, obj=obj, **kwargs)
 
-class StartPageImageInline(AdminImageMixin, admin.StackedInline):
-    model = StartPageImage
-    extra = 0
-    autocomplete_fields = ['departament']
+class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
+    list_display = ['order']
+    form = StartPageImageAdminForm
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(StartPageImageAdmin, self).get_form(request, obj, **kwargs)
+        form.user = request.user
+        return form
 
     def get_queryset(self, request):
-        queryset = super(StartPageImageInline, self).get_queryset(request)
+        queryset = super(StartPageImageAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
             queryset = queryset.filter(departament_id=request.user.profile.department_id)
         return queryset
-
-class StartPageAdmin(admin.ModelAdmin):
-    inlines = [StartPageImageInline]
-
-    def has_delete_permission(self, request, obj=None):
-        return request.user.is_superuser
 
 class DepartamentAdmin(admin.ModelAdmin):
     list_display = ['country', 'email']

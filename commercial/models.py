@@ -23,13 +23,10 @@ class Departament(models.Model):
             models.UniqueConstraint(fields=['country', 'email'], name='unique_department')
         ]
 
-class StartPage(models.Model):
-    pass
-
 class StartPageImage(models.Model):
-    start_page = models.ForeignKey(StartPage, verbose_name=gettext_lazy('image'), related_name='images', on_delete=models.CASCADE)
-    departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
-    image = ImageField(gettext_lazy('image'), upload_to='upload/departament/')
+    departament = models.ForeignKey(Departament, on_delete=models.CASCADE, blank=True, null=True)
+    image = ImageField(gettext_lazy('image'), upload_to='upload/start_page/')
+    order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
 
     def get_small_thumbnail_url(self):
         url = cache.get(f'small-thumb-url-{self.image.name}')
@@ -46,8 +43,8 @@ class StartPageImage(models.Model):
         return url
 
     class Meta:
-        verbose_name = gettext_lazy('image')
-        verbose_name_plural = gettext_lazy('images')
+        verbose_name = gettext_lazy('start page image')
+        verbose_name_plural = gettext_lazy('start page images')
 
 class Category(MPTTModel):
     id = models.CharField(max_length=25, primary_key=True)
