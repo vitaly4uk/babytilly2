@@ -12,7 +12,8 @@ class StartPageImageAdminForm(forms.ModelForm):
         user = self.user
         departament = self.cleaned_data.get('departament')
         if not departament and not user.is_superuser:
-            raise forms.ValidationError(ugettext_lazy('field is required'))
+            msg = ugettext_lazy('field is required')
+            self.add_error('departament', msg)
         return departament
 
     class Meta:

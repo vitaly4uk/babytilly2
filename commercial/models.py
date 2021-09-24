@@ -28,20 +28,6 @@ class StartPageImage(models.Model):
     image = ImageField(gettext_lazy('image'), upload_to='upload/start_page/')
     order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
 
-    def get_small_thumbnail_url(self):
-        url = cache.get(f'small-thumb-url-{self.image.name}')
-        if url is None:
-            url = get_thumbnail_url(self.image, settings.THUMBNAIL_SIZE['small'])
-            cache.set(f'small-thumb-url-{self.image.name}', url)
-        return url
-
-    def get_big_thumbnail_url(self):
-        url = cache.get(f'big-thumb-url-{self.image.name}')
-        if url is None:
-            url = get_thumbnail_url(self.image, settings.THUMBNAIL_SIZE['big'])
-            cache.set(f'big-thumb-url-{self.image.name}', url)
-        return url
-
     class Meta:
         verbose_name = gettext_lazy('start page image')
         verbose_name_plural = gettext_lazy('start page images')
