@@ -11,24 +11,12 @@ class HomePage(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomePage, self).get_context_data()
+        queryset = StartPageImage.objects.only('image')
         if self.request.user.is_authenticated:
-            department = self.request.user.profile.department_id
-            file_list = cache.get(f'home-page-file-list-{department}')
-            if not file_list:
-                file_list = []
-                storage = get_storage_class()()
-                for image in StartPageImage.objects.filter(departament_id=department):
-                    file_list.append(storage.url(image.image.url))
-                cache.set(f'home-page-file-list-{department}', file_list)
+            queryset = queryset.filter(departament_id=self.request.user.profile.department_id)
         else:
-            file_list = cache.get(f'home-page-file-list-free')
-            if not file_list:
-                file_list = []
-                storage = get_storage_class()()
-                for image in StartPageImage.objects.filter(departament__isnull=True):
-                    file_list.append(storage.url(image.image.url))
-                cache.set(f'home-page-file-list-free', file_list)
+            queryset = queryset.filter(departament__isnull=True)
         context.update({
-            'file_list': file_list,
+            'file_list': [sp.image.url for sp in queryset],
         })
         return context

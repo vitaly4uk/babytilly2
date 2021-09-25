@@ -23,23 +23,29 @@ class Departament(models.Model):
             models.UniqueConstraint(fields=['country', 'email'], name='unique_department')
         ]
 
+
 class StartPageImage(models.Model):
     departament = models.ForeignKey(Departament, on_delete=models.CASCADE, blank=True, null=True)
     image = ImageField(gettext_lazy('image'), upload_to='upload/start_page/')
     order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
 
     def __str__(self):
-        return f'{self.image.name} {self.departament}'
+        return ' '.join([self.image.name, self.departament.country.name])
 
     class Meta:
         verbose_name = gettext_lazy('start page image')
         verbose_name_plural = gettext_lazy('start page images')
         ordering = ['departament', 'order']
+        indexes = [
+            models.Index(fields=['departament', 'order'], include=['image'], name='department_order')
+        ]
+
 
 class Category(MPTTModel):
     id = models.CharField(max_length=25, primary_key=True)
     parent = TreeForeignKey(
-        'self', verbose_name=gettext_lazy('parent'), null=True, blank=True, related_name='children', on_delete=models.CASCADE
+        'self', verbose_name=gettext_lazy('parent'), null=True, blank=True, related_name='children',
+        on_delete=models.CASCADE
     )
     property = models.ManyToManyField(Departament, through='CategoryProperties', verbose_name=gettext_lazy('property'))
 
@@ -108,7 +114,8 @@ class ArticleProperties(models.Model):
 
 
 class ArticleImage(models.Model):
-    article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), related_name='images', on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), related_name='images',
+                                on_delete=models.CASCADE)
     image = ImageField(gettext_lazy('image'), upload_to='upload/foto/')
 
     def get_small_thumbnail_url(self):

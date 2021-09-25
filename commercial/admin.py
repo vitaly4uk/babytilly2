@@ -132,6 +132,15 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
     readonly_fields = []
 
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super(OrderAdmin, self).get_readonly_fields(request, obj)
         if obj and not request.user.is_superuser:
