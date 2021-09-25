@@ -3,26 +3,20 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.core.cache import cache
 
+from commercial.models import StartPageImage
+
 
 class HomePage(TemplateView):
     template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
         context = super(HomePage, self).get_context_data()
-        file_list = cache.get('home-page-file-list')
-        if not file_list:
-            file_list = []
-            storage = get_storage_class()()
-            try:
-                dirs, files = storage.listdir('upload/startpage')
-            except Exception:
-                files = []
-            for filename in files:
-                if filename == '.':
-                    continue
-                file_list.append(storage.url('{}/{}'.format('upload/startpage', filename)))
-            cache.set('home-page-file-list', file_list)
+        queryset = StartPageImage.objects.only('image')
+        if self.request.user.is_authenticated:
+            queryset = queryset.filter(departament_id=self.request.user.profile.department_id)
+        else:
+            queryset = queryset.filter(departament__isnull=True)
         context.update({
-            'file_list': file_list,
+            'file_list': [sp.image.url for sp in queryset],
         })
         return context

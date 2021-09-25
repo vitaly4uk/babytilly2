@@ -24,10 +24,28 @@ class Departament(models.Model):
         ]
 
 
+class StartPageImage(models.Model):
+    departament = models.ForeignKey(Departament, on_delete=models.CASCADE, blank=True, null=True)
+    image = ImageField(gettext_lazy('image'), upload_to='upload/start_page/')
+    order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
+
+    def __str__(self):
+        return ' '.join([self.image.name, self.departament.country.name])
+
+    class Meta:
+        verbose_name = gettext_lazy('start page image')
+        verbose_name_plural = gettext_lazy('start page images')
+        ordering = ['departament', 'order']
+        indexes = [
+            models.Index(fields=['departament', 'order'], include=['image'], name='department_order')
+        ]
+
+
 class Category(MPTTModel):
     id = models.CharField(max_length=25, primary_key=True)
     parent = TreeForeignKey(
-        'self', verbose_name=gettext_lazy('parent'), null=True, blank=True, related_name='children', on_delete=models.CASCADE
+        'self', verbose_name=gettext_lazy('parent'), null=True, blank=True, related_name='children',
+        on_delete=models.CASCADE
     )
     property = models.ManyToManyField(Departament, through='CategoryProperties', verbose_name=gettext_lazy('property'))
 
@@ -96,7 +114,8 @@ class ArticleProperties(models.Model):
 
 
 class ArticleImage(models.Model):
-    article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), related_name='images', on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), related_name='images',
+                                on_delete=models.CASCADE)
     image = ImageField(gettext_lazy('image'), upload_to='upload/foto/')
 
     def get_small_thumbnail_url(self):
@@ -123,6 +142,9 @@ class Order(models.Model):
     date = models.DateTimeField(gettext_lazy('date'), auto_now_add=True)
     comment = models.TextField(default='')
     is_closed = models.BooleanField(gettext_lazy('closed'), default=False)
+
+    def __str__(self):
+        return str(self.pk)
 
     class Meta:
         verbose_name = gettext_lazy('order')

@@ -3,7 +3,8 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
-from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage
+from commercial.forms import StartPageImageAdminForm
+from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, StartPageImage
 
 
 class ProfileAdmin(admin.TabularInline):
@@ -30,6 +31,20 @@ class CategoryPropertyAdmin(admin.StackedInline):
             return 1
         return super(CategoryPropertyAdmin, self).get_max_num(request, obj=obj, **kwargs)
 
+class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
+    list_display = ['pk', 'image', 'departament', 'order']
+    form = StartPageImageAdminForm
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(StartPageImageAdmin, self).get_form(request, obj, **kwargs)
+        form.user = request.user
+        return form
+
+    def get_queryset(self, request):
+        queryset = super(StartPageImageAdmin, self).get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(departament_id=request.user.profile.department_id)
+        return queryset
 
 class DepartamentAdmin(admin.ModelAdmin):
     list_display = ['country', 'email']
@@ -98,3 +113,42 @@ class ImportPriceAdmin(admin.ModelAdmin):
     list_display = ['imported_at', 'user', 'department']
     list_filter = ['department']
     autocomplete_fields = ['department']
+
+
+class OrderItemInline(admin.StackedInline):
+    model = OrderItem
+    readonly_fields = []
+    extra = 0
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super(OrderItemInline, self).get_readonly_fields(request, obj)
+        if obj and not request.user.is_superuser:
+            return readonly_fields + ['article', 'count', 'price']
+        return readonly_fields
+
+
+class OrderAdmin(admin.ModelAdmin):
+    date_hierarchy = 'date'
+    inlines = [OrderItemInline]
+    readonly_fields = []
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super(OrderAdmin, self).get_readonly_fields(request, obj)
+        if obj and not request.user.is_superuser:
+            return readonly_fields + ['user', 'date', 'comment', 'is_closed']
+        return readonly_fields
+
+    def get_queryset(self, request):
+        queryset = super(OrderAdmin, self).get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(user__profile__department_id=request.user.profile.department_id)
+        return queryset
