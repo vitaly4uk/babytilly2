@@ -1,12 +1,14 @@
 import logging
 from io import BytesIO
-
+from django.template import loader
 from PIL import Image
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
 logger = logging.getLogger(__name__)
 
+def export_to_csv(request, order, encode):
+    return loader.render_to_string('commercial/csv.html', {'order': order})
 
 def get_thumbnail_url(image, size):
     thumb_name = image.name.replace('upload/foto', 'thumb/{}'.format(size))

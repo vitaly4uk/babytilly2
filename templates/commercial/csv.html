@@ -1,0 +1,4 @@
+"{{ order.user }}";"";"{{ order.pk }}"
+"{{ order.comment }}";"";""
+{% for item in order.items.all %}"{{ item.article.pk|safe }}";"{{ item.article|safe }}";"{{ item.count }}";"{{ item.price|floatformat:2 }}";"{{ item.sum|floatformat:2 }}"
+{% endfor %}

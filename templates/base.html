@@ -1,4 +1,4 @@
-{% load static mptt_tags cache i18n %}
+{% load static commercial_tags cache i18n %}
 <!DOCTYPE html>
 <html>
 
@@ -72,39 +72,35 @@
                     <li>
                         {% if user.is_staff %}
                             <a href="{% url 'admin:index' %}" class="text-dark font-weight-bold">Админка</a>
-                        {% else %}
-                            {% if user.profile.show_dashboard %}
                             <a href="{% url 'commercial_order_list' %}" class="text-dark font-weight-bold">{% trans "Dashboard" %}</a>
                             {% endif %}
-                        {% endif %}
                         <a href="{% url 'logout' %}?next=/" class="text-dark font-weight-bold">{% trans "Logout" %}</a>
                     </li>
                 </ul>
                 <div id="cart" class="text-center border rounded-lg bg-light"></div>
             </div>
             <nav class="navbar">
-                {% comment %}
                 <ul class="list-unstyled py-5">
-                    {% recursetree categories %}
+                        {% recursetree categories %}
                         <li>
-                            {% if node.is_leaf_node %}
-                                <a href="{{ node.get_absolute_url }}?{{ link }}" class="text-dark"
-                                   data-leaf-id="{{ node.id }}" title="{{ node.name }}">
+                            {% if node.category.is_leaf_node %}
+                                <a href="{{ node.category.get_absolute_url }}?{{ link }}" class="text-dark"
+                                   data-leaf-id="{{ node.category.id }}" title="{{ node.name }}">
                                     {{ node.name }}
                                 </a>
                             {% else %}
-                                <a href="#catSubmenu-{{ node.id }}" data-toggle="collapse" data-node-id="{{ node.id }}"
+                                <a href="#catSubmenu-{{ node.category.id }}" data-toggle="collapse" data-node-id="{{ node.category.id }}"
                                    aria-expanded="false" title="{{ node.name }}"
-                                   area-controls="#catSubmenu-{{ node.id }}" class="dropdown-toggle text-dark"
+                                   area-controls="#catSubmenu-{{ node.category.id }}" class="dropdown-toggle text-dark"
                                    role="button">{{ node.name }}</a>
-                                <ul class="collapse list-unstyled pl-2" id="catSubmenu-{{ node.id }}">
+                                <ul class="collapse list-unstyled pl-2" id="catSubmenu-{{ node.category.id }}">
                                     {{ children }}
                                 </ul>
                             {% endif %}
                         </li>
-                    {% endrecursetree %}
+                {% endrecursetree %}
                 </ul>
-                {% endcomment %}
+
             </nav>
         {% else %}
             <form class="p-3" action="{% url 'login' %}" method="post">
@@ -221,6 +217,7 @@
         alert(errorThrown + '\n' + status + '\n' + xhr.statusText + '\n' + url)
       },
       success: function (data) {
+          window.console.log(data)
         $('#cart').html(data)
       },
     })

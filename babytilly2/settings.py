@@ -66,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'commercial.middleware.OrderMiddleware',
 ]
 
 ROOT_URLCONF = 'babytilly2.urls'
@@ -82,6 +83,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'commercial.context_processors.root_sections'
             ],
         },
     },
@@ -218,6 +220,10 @@ LOGGING = {
     }
 }
 
+THUMBNAIL_SIZE = {
+    'small': '150',
+    'big': '426',
+}
 try:
     from local_settings import *
 except ImportError:
