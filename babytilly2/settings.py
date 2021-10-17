@@ -218,6 +218,18 @@ LOGGING = {
     }
 }
 
+if REDIS_URL := os.environ.get('REDIS_URL'):
+    CELERY_BROKER_URL = REDIS_URL
+else:
+    # aws_access_key = safequote(AWS_ACCESS_KEY_ID) if isinstance(AWS_ACCESS_KEY_ID, bytes) else AWS_ACCESS_KEY_ID
+    # aws_secret_key = safequote(AWS_SECRET_ACCESS_KEY) if isinstance(AWS_SECRET_ACCESS_KEY, bytes) else AWS_SECRET_ACCESS_KEY
+    CELERY_BROKER_URL = f'sqs://{safequote(AWS_ACCESS_KEY_ID)}:{safequote(AWS_SECRET_ACCESS_KEY)}@'
+    CELERY_BROKER_TRANSPORT_OPTIONS = {
+        'queue_name_prefix': 'babytilly2-',
+        'region': AWS_REGION_NAME,
+        'polling_interval': 60
+    }
+
 try:
     from local_settings import *
 except ImportError:
