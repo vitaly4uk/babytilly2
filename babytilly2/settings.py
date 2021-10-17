@@ -10,11 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+from pathlib import Path
 from urllib.parse import urlparse
 
 import dj_database_url
-from pathlib import Path
-
+from kombu.utils.url import safequote
 
 EMAIL_BACKEND = 'django_ses.SESBackend'
 DEFAULT_FROM_EMAIL = 'tilly.zakaz@gmail.com'
