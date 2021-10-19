@@ -220,6 +220,10 @@ LOGGING = {
     }
 }
 
+LOGIN_URL = LOGOUT_URL = LOGIN_REDIRECT_URL = '/'
+
+MPTT_ADMIN_LEVEL_INDENT = 30
+
 THUMBNAIL_SIZE = {
     'small': '150',
     'big': '426',
