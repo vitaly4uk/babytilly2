@@ -11,7 +11,7 @@ def create_profile(apps, schema_migration):
     for user in User.objects.filter(profile__isnull=True):
         Profile.objects.create(
             user=user,
-            departament=departament
+            department=departament
         )
 
 class Migration(migrations.Migration):
