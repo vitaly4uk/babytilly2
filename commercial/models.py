@@ -1,13 +1,18 @@
 from django.conf import settings
 from django.core.cache import cache
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.encoding import smart_text
 from django.utils.translation import gettext_lazy
 from django_countries.fields import CountryField
 from mptt.models import MPTTModel, TreeForeignKey
 from sorl.thumbnail import ImageField
+import logging
+from commercial.functions import get_thumbnail_url, export_to_csv
 
-from commercial.functions import get_thumbnail_url
-
+logger = logging.getLogger(__name__)
 
 class Departament(models.Model):
     country = CountryField(gettext_lazy('country'))
@@ -49,6 +54,15 @@ class Category(MPTTModel):
     )
     property = models.ManyToManyField(Departament, through='CategoryProperties', verbose_name=gettext_lazy('property'))
 
+    def __str__(self):
+        return self.id
+
+    def get_absolute_url(self):
+        return reverse('category_detail_url', kwargs={'id': self.id})
+
+    def get_ancestors_include_self(self):
+        return self.get_ancestors(include_self=True)
+
     class Meta:
         verbose_name = gettext_lazy('category')
         verbose_name_plural = gettext_lazy('categories')
@@ -59,6 +73,9 @@ class CategoryProperties(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(gettext_lazy('name'), max_length=255)
     published = models.BooleanField(gettext_lazy('published'), default=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = gettext_lazy('category property')
@@ -146,6 +163,54 @@ class Order(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    def get_order_items(self):
+        if getattr(self, '_items', None) is None:
+            self._items = list(self.items.all())
+        return self._items
+
+    def count(self):
+        return sum(i.count for i in self.get_order_items())
+
+    def sum(self):
+        return sum(i.price * i.count for i in self.get_order_items())
+
+    sum.short_description = gettext_lazy('Sum')
+
+    def add_item(self, article: Article, count: int):
+        cart_item, _ = OrderItem.objects.get_or_create(
+            cart=self,
+            article=article,
+            price=article.price,
+        )
+        cart_item.count += count
+        cart_item.save()
+        self.items.add(cart_item)
+        self.recalculate()
+
+    def get_absolute_url(self):
+        return reverse('commercial_order_detail', kwargs={'pk': self.pk})
+
+    def send(self):
+        context = {
+            'cart': self.items.all(),
+            'order': self,
+            'profile': self.user
+        }
+        html_body = str(render_to_string('commercial/mail.html', context))
+        text_body = str(render_to_string('commercial/mail_text.html', context))
+        to_emails = [settings.DEFAULT_FROM_EMAIL, 'tilly.sklbuh@gmail.com']
+        if self.user.email:
+            to_emails.append(self.user.email)
+        logger.debug('Sending order to: {}'.format(to_emails))
+        msg = EmailMultiAlternatives(
+            subject='Заказ {} {}'.format(self, self.user),
+            body=text_body,
+            to=to_emails
+        )
+        msg.attach_alternative(html_body, 'text/html')
+        msg.attach('zakaz{}.csv'.format(self.pk), export_to_csv(None, self, 'cp1251'), 'text/csv')
+        msg.send()
+
     class Meta:
         verbose_name = gettext_lazy('order')
         verbose_name_plural = gettext_lazy('orders')
@@ -159,6 +224,12 @@ class OrderItem(models.Model):
     article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), on_delete=models.CASCADE)
     count = models.PositiveIntegerField(gettext_lazy('count'), default=0)
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
+
+    def __str__(self):
+        return smart_text(self.article.name)
+
+    def sum(self):
+        return self.count * self.price
 
     class Meta:
         verbose_name = gettext_lazy('order item')

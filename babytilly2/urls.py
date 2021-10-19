@@ -23,5 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('search/', HomePage.as_view(), name='search'),
+    path('commerce/', include('commercial.urls')),
     path('', HomePage.as_view(), name='home_page'),
 ] + staticfiles_urlpatterns()

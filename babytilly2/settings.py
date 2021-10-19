@@ -66,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'commercial.middleware.OrderMiddleware',
 ]
 
 ROOT_URLCONF = 'babytilly2.urls'
@@ -82,6 +83,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'commercial.context_processors.root_sections'
             ],
         },
     },
@@ -216,6 +218,15 @@ LOGGING = {
             'handlers': ['console'],
         },
     }
+}
+
+LOGIN_URL = LOGOUT_URL = LOGIN_REDIRECT_URL = '/'
+
+MPTT_ADMIN_LEVEL_INDENT = 30
+
+THUMBNAIL_SIZE = {
+    'small': '150',
+    'big': '426',
 }
 
 if REDIS_URL := os.environ.get('REDIS_URL'):

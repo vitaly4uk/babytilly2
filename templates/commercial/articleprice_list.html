@@ -1,9 +1,10 @@
-{% extends "base.bootstrap.html" %}
+{% extends "base.html" %}
 {% load thumbnail commercial_tags static %}
 
 {% block title %}{{ page_title }} :: {{ block.super }}{% endblock %}
 
 {% block content %}
+
     <div class="row">
         {% if category %}
         <div class="col-md-4">
@@ -33,7 +34,7 @@
                     <div class="form-group mx-2 w-sm-100">
                     <label for="sortSelect" class="d-none d-xl-block">цена:</label>
                     <select class="custom-select custom-select-sm d-inline-block" id="sortSelect" name="sort" onchange="goToPage(1)">
-                        <option value="">
+                        <option value="name">
                             нет сортировки
                         </option>
                         <option value="price" {% if sort == 'price' %}selected{% endif %}>
@@ -74,7 +75,7 @@
                                     <div class="carousel-item active">
                                         <a href="{{ item.article.image.url }}" role="button" data-toggle="modal"
                                            data-target="#imageModal">
-                                            <img src="{{ item.article.get_small_thumbnail_url }}" class="card-img img-thumbnail"
+                                            <img src="#" class="card-img img-thumbnail"
                                                  width="150" height="150">
                                         </a>
                                     </div>
@@ -83,7 +84,7 @@
                                         <div class="carousel-item">
                                             <a href="{{ i.image.url }}" role="button" data-toggle="modal"
                                                data-target="#imageModal">
-                                                <img src="{{ i.get_small_thumbnail_url }}" class="card-img img-thumbnail" width="150"
+                                                <img src="#" class="card-img img-thumbnail" width="150"
                                                      height="150">
                                             </a>
                                         </div>
@@ -105,12 +106,13 @@
                         <div class="col-md-10">
                             <div class="card-header">
                                 <h5 class="card-title">
-                                    {{ item.article.name }}
+                                    {{ item.name }}
                                 </h5>
                             </div>
                             <div class="card-body">
                                 <p class="card-subtitle">
-                                    <small>шт в ящ.: {{ item.article.in_pack }}</small>
+                                    {% if item.article.in_pack %}
+                                        <small>шт в ящ.: {{ item.article.in_pack }}</small>{% endif %}
                                     {% if item.article.doze %}
                                         <span class="badge badge-pill badge-warning">ДОЗЫ</span>{% endif %}
                                     {% if item.article.is_new %}
@@ -136,7 +138,7 @@
                                 {% endif %}
                                 {% if user.profile.show_price %}
                                     <div class="card-text">
-                                        за шт. <span class="h5">{% get_price item user %}</span>
+                                        за шт. <span class="h5">{{ item.price }}</span>
                                     </div>
                                 {% endif %}
                                 <div class="card-text">
