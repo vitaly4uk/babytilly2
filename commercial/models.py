@@ -187,7 +187,7 @@ class ImportPrice(models.Model):
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        from tasks import import_price
+        from .tasks import import_price
         super(ImportPrice, self).save(*args, **kwargs)
         import_price.delay(self.id)
 

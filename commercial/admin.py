@@ -120,6 +120,10 @@ class ImportPriceAdmin(admin.ModelAdmin):
     list_filter = ['department']
     autocomplete_fields = ['department']
 
+    def save_model(self, request, obj, form, change):
+        obj.user = request.user
+        super(ImportPriceAdmin, self).save_model(request, obj, form, change)
+
 
 class OrderItemInline(admin.StackedInline):
     model = OrderItem
