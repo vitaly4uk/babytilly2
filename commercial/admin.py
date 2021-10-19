@@ -101,6 +101,12 @@ class ArticleAdmin(admin.ModelAdmin):
 
 class UserAdmin(DefaultUserAdmin):
     inlines = [ProfileAdmin]
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2', 'is_staff'),
+        }),
+    )
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super(UserAdmin, self).get_readonly_fields(request, obj=obj)
@@ -114,6 +120,10 @@ class ImportPriceAdmin(admin.ModelAdmin):
     list_display = ['imported_at', 'user', 'department']
     list_filter = ['department']
     autocomplete_fields = ['department']
+
+    def save_model(self, request, obj, form, change):
+        obj.user = request.user
+        super(ImportPriceAdmin, self).save_model(request, obj, form, change)
 
 
 class OrderItemInline(admin.StackedInline):
