@@ -1,6 +1,6 @@
 from django.contrib.auth import logout
 from django.core.files.storage import get_storage_class
-from django.db.models import F
+from django.db.models import F, Q
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import View
@@ -66,6 +66,26 @@ class ArticleListView(ActiveRequiredMixin, ListView):
         context.update({
             'category': self.object,
             'sort': sort
+        })
+        return context
+
+class ArticleSearchListView(ActiveRequiredMixin, ListView):
+    template_name = 'commercial/articleprice_list.html'
+    context_object_name = 'object_list'
+
+    def get_queryset(self):
+        search_str = self.request.GET.get('query', '').strip()
+        user_department_id = self.request.user.profile.department_id
+        if search_str:
+            queryset = ArticleProperties.objects.filter(name__icontains=search_str, department_id=user_department_id)
+        else:
+            queryset = ArticleProperties.objects.none()
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ArticleSearchListView, self).get_context_data(*args, **kwargs)
+        context.update({
+            'page_title': self.request.GET.get('query', '').strip()
         })
         return context
 

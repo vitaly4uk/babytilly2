@@ -17,12 +17,12 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, include
 
-from commercial.views import HomePage
+from commercial.views import HomePage, ArticleSearchListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('search/', HomePage.as_view(), name='search'),
+    path('search/', ArticleSearchListView.as_view(), name='search'),
     path('commerce/', include('commercial.urls')),
     path('', HomePage.as_view(), name='home_page'),
 ] + staticfiles_urlpatterns()
