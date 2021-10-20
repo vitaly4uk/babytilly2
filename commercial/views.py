@@ -4,12 +4,14 @@ from django.db.models import F
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView
 from django.core.cache import cache
 from braces.views import CsrfExemptMixin, JSONRequestResponseMixin, AjaxResponseMixin
 from commercial.models import StartPageImage, Category, Article, ArticleProperties, Order, OrderItem
 from django.utils.decorators import method_decorator
 import logging
+
+from commonutils.views import ActiveRequiredMixin, is_active
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +38,7 @@ class HomePage(TemplateView):
         })
         return context
 
-class ArticleListView(ListView):
+class ArticleListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/articleprice_list.html'
     context_object_name = 'object_list'
 
@@ -60,15 +62,23 @@ class ArticleListView(ListView):
         })
         return context
 
-class OrderListView(ListView):
+class OrderListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/order_list.html'
     context_object_name = 'order_list'
+    model = Order
 
     def get_queryset(self):
-        query_set = Order.objects.filter(user=self.request.user)
-        return query_set
+        return Order.objects.filter(user=self.request.user, is_closed=True)
 
-#@method_decorator(is_active('/'), 'dispatch')
+class OrderDetailView(ActiveRequiredMixin, DetailView):
+    template_name = 'commercial/editcart.html'
+    context_object_name = 'order'
+    model = Order
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user, is_closed=True)
+
+@method_decorator(is_active('/'), 'dispatch')
 class AddToCartView(TemplateView):
     template_name = 'commercial/cart.html'
 
@@ -95,6 +105,7 @@ class AddToCartView(TemplateView):
         })
         return context
 
+@is_active('/')
 def edit_cart(request):
     if request.method == "POST":
         if request.POST.get('submit') == 'Очистить':

@@ -14,7 +14,7 @@
                 <th scope="col">Цена</th>
                 <th scope="col">Кол-во</th>
                 <th scope="col">Сумма</th>
-                <th scope="col">Удалить</th>
+                <th scope="col">{% if not order.is_closed %}Удалить{% endif %}</th>
                 <th></th>
             </tr>
             </thead>
@@ -23,10 +23,10 @@
                 <tr>
                     <td scope="row">{{ forloop.counter }}</td>
                     <td>{{ item.article }}</td>
-                    <td align="right">{% if user.profile.show_price %}{% get_price item.article user %}{% endif %}</td>
-                    <td align="right"><input type="text" value="{{ item.count }}" size="5" name="{{ item.pk }}"></td>
+                    <td align="right">{{ item.price }}</td>
+                    <td align="right">{% if order.is_closed %}{{ item.count }}{% else %}<input type="text" value="{{ item.count }}" size="5" name="{{ item.pk }}">{% endif %}</td>
                     <td align="right">{{ item.sum|floatformat:2 }}</td>
-                    <td align="center"><input type="checkbox" name="del_{{ item.pk }}"></td>
+                    <td align="center">{% if not order.is_closed %}<input type="checkbox" name="del_{{ item.pk }}">{% endif %}</td>
                     <td align="right">
                         <img src="#" width="100" height="100" border="0">
                     </td>
@@ -48,15 +48,21 @@
 {#        <div class="col-2">#}
 {#            <input type="submit" value="Очистить" name="submit" class="btn btn-danger">#}
 {#        </div>#}
+        {% if not order.is_closed %}
         <div class="col-12 text-right">
             <input type="submit" value="Пересчитать" name="submit" class="btn btn-secondary">
             <input type="submit" value="Отправить" name="submit" class="btn btn-primary">
         </div>
+        {% endif %}
     </div>
 <div class="row pt-2 pb-5">
     <div class="col w-75">
         Комментарий:
+        {% if order.is_closed %}
+            <p>{{ order.comment }}</p>
+        {% else %}
         <textarea name="comment" class="w-75"></textarea>
+        {% endif %}
     </div>
 </div>
     </form>
