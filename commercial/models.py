@@ -260,7 +260,7 @@ class ImportPrice(models.Model):
     def save(self, *args, **kwargs):
         from .tasks import import_price
         super(ImportPrice, self).save(*args, **kwargs)
-        import_price.delay(self.id)
+        #import_price.delay(self.id)
 
     class Meta:
         verbose_name = gettext_lazy('import')
