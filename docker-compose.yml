@@ -6,8 +6,8 @@ services:
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
       - MEMCACHED_URL=memcached://cache:11211
-      - AWS_ACCESS_KEY_ID=testkey
-      - AWS_SECRET_ACCESS_KEY=testsecret
+      - AWS_ACCESS_KEY_ID=AKIAJEJYM5RWDUAESLYQ
+      - AWS_SECRET_ACCESS_KEY=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
       - AWS_REGION_NAME=us-east-1
     volumes:
       - .:/app:rw

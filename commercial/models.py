@@ -252,15 +252,15 @@ class Profile(models.Model):
 
 
 class ImportPrice(models.Model):
-    file = models.FileField(gettext_lazy('file'), upload_to='upload/import/')
+    file = models.FileField(gettext_lazy('file'), upload_to='upload/import/%Y/%m/%d/')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     department = models.ForeignKey(Departament, verbose_name=gettext_lazy('department'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        from .tasks import import_price
+        from commercial.tasks import import_price
         super(ImportPrice, self).save(*args, **kwargs)
-        #import_price.delay(self.id)
+        import_price.delay(self.id)
 
     class Meta:
         verbose_name = gettext_lazy('import')
