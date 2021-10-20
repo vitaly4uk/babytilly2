@@ -12,7 +12,7 @@
                     <ol class="breadcrumb">
                         {% for ancestor in category.get_ancestors_include_self %}
                             <li class="breadcrumb-item{% if forloop.last %} active{% endif %}"
-                                aria-current="page">{{ ancestor.name }}</li>
+                                aria-current="page">{% get_category_name ancestor request.user %}</li>
                         {% endfor %}
                     </ol>
                 </nav>
