@@ -46,10 +46,17 @@ class ArticleListView(ActiveRequiredMixin, ListView):
         return get_object_or_404(Category, id=self.kwargs['id'])
 
     def get_queryset(self):
+        sort = self.request.GET.get('sort', None)
         user_department_id = self.request.user.profile.department_id
         self.object = self.get_object()
-        query_set = ArticleProperties.objects.filter(published=True, department_id=user_department_id, article__category__id=self.object.id).order_by('name')
-        return query_set
+        queryset = ArticleProperties.objects.filter(published=True, department_id=user_department_id, article__category__id=self.object.id).order_by('name')
+
+        if sort == 'price':
+            queryset = queryset.order_by('price')
+        if sort == '-price':
+            queryset = queryset.order_by('-price')
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super(ArticleListView, self).get_context_data(**kwargs)
