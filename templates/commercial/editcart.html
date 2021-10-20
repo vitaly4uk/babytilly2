@@ -22,7 +22,7 @@
             {% for item in order.get_order_items %}
                 <tr>
                     <td scope="row">{{ forloop.counter }}</td>
-                    <td>{{ item.article }}</td>
+                    <td>{% get_article_name item.article request.user %}</td>
                     <td align="right">{{ item.price }}</td>
                     <td align="right">{% if order.is_closed %}{{ item.count }}{% else %}<input type="text" value="{{ item.count }}" size="5" name="{{ item.pk }}">{% endif %}</td>
                     <td align="right">{{ item.sum|floatformat:2 }}</td>
