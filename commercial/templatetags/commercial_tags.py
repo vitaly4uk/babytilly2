@@ -16,8 +16,7 @@ def get_price(article, user):
 
 @register.simple_tag
 def get_article_name(article, user):
-    item = ArticleProperties.objects.get(article=article, department_id=user.profile.department_id)
-    return item.name
+    return ArticleProperties.objects.get(article=article, department_id=user.profile.department_id).name
 
 def get_cached_trees(queryset):
     """

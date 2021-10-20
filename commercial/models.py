@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
@@ -198,7 +199,8 @@ class Order(models.Model):
         }
         html_body = str(render_to_string('commercial/mail.html', context))
         text_body = str(render_to_string('commercial/mail_text.html', context))
-        to_emails = [settings.DEFAULT_FROM_EMAIL, 'tilly.sklbuh@gmail.com']
+        stuff_email = User.objects.get(is_staff=True, profile__department_id=self.user.profile.department_id).email
+        to_emails = [settings.DEFAULT_FROM_EMAIL, stuff_email]
         if self.user.email:
             to_emails.append(self.user.email)
         logger.debug('Sending order to: {}'.format(to_emails))
