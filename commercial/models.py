@@ -64,6 +64,11 @@ class Category(MPTTModel):
     def get_ancestors_include_self(self):
         return self.get_ancestors(include_self=True)
 
+    def get_ancestors_ids(self):
+        query = self.get_ancestors(include_self=True)
+        query = query.values_list('id', flat=True)
+        return list(query)
+
     class Meta:
         verbose_name = gettext_lazy('category')
         verbose_name_plural = gettext_lazy('categories')
@@ -199,7 +204,7 @@ class Order(models.Model):
         }
         html_body = str(render_to_string('commercial/mail.html', context))
         text_body = str(render_to_string('commercial/mail_text.html', context))
-        stuff_email = User.objects.get(is_staff=True, profile__department_id=self.user.profile.department_id).email
+        stuff_email = Departament.objects.get(id=self.user.profile.department_id).email
         to_emails = [settings.DEFAULT_FROM_EMAIL, stuff_email]
         if self.user.email:
             to_emails.append(self.user.email)
