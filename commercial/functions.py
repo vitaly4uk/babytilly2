@@ -72,16 +72,13 @@ def do_import_csv(csv_file: typing.IO, country: str):
             category_property.published = True
             category_property.save()
 
-            parent_category_id = row['parent_id'].strip().rjust(5, '0')
+            parent_category_id = row['parent_id']
             if parent_category_id:
                 parent_category_id = parent_category_id.strip().rjust(5, '0')
-                try:
-                    parent = Category.objects.get(pk=parent_category_id)
-                    category.parent = parent
-                    category.level = parent.level + 1
-                    category.save()
-                except Category.DoesNotExist:
-                    break
+                parent = Category.objects.get(pk=parent_category_id)
+                category.parent = parent
+                category.level = parent.level + 1
+                category.save()
         else:
             # print(row)
             parent_category_id = row['parent_id'].strip().rjust(5, '0')
