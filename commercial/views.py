@@ -1,15 +1,17 @@
 from django.contrib.auth import logout
 from django.core.files.storage import get_storage_class
-from django.db.models import F
+from django.db.models import F, Q
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView
 from django.core.cache import cache
 from braces.views import CsrfExemptMixin, JSONRequestResponseMixin, AjaxResponseMixin
 from commercial.models import StartPageImage, Category, Article, ArticleProperties, Order, OrderItem
 from django.utils.decorators import method_decorator
 import logging
+
+from commonutils.views import ActiveRequiredMixin, is_active
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +38,7 @@ class HomePage(TemplateView):
         })
         return context
 
-class ArticleListView(ListView):
+class ArticleListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/articleprice_list.html'
     context_object_name = 'object_list'
 
@@ -44,10 +46,17 @@ class ArticleListView(ListView):
         return get_object_or_404(Category, id=self.kwargs['id'])
 
     def get_queryset(self):
+        sort = self.request.GET.get('sort', None)
         user_department_id = self.request.user.profile.department_id
         self.object = self.get_object()
-        query_set = ArticleProperties.objects.filter(published=True, department_id=user_department_id, article__category__id=self.object.id).order_by('name')
-        return query_set
+        queryset = ArticleProperties.objects.filter(published=True, department_id=user_department_id, article__category__id=self.object.id).order_by('name')
+
+        if sort == 'price':
+            queryset = queryset.order_by('price')
+        if sort == '-price':
+            queryset = queryset.order_by('-price')
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super(ArticleListView, self).get_context_data(**kwargs)
@@ -60,15 +69,43 @@ class ArticleListView(ListView):
         })
         return context
 
-class OrderListView(ListView):
-    template_name = 'commercial/order_list.html'
-    context_object_name = 'order_list'
+class ArticleSearchListView(ActiveRequiredMixin, ListView):
+    template_name = 'commercial/articleprice_list.html'
+    context_object_name = 'object_list'
 
     def get_queryset(self):
-        query_set = Order.objects.filter(user=self.request.user)
-        return query_set
+        search_str = self.request.GET.get('query', '').strip()
+        user_department_id = self.request.user.profile.department_id
+        if search_str:
+            queryset = ArticleProperties.objects.filter(name__icontains=search_str, department_id=user_department_id)
+        else:
+            queryset = ArticleProperties.objects.none()
+        return queryset
 
-#@method_decorator(is_active('/'), 'dispatch')
+    def get_context_data(self, *args, **kwargs):
+        context = super(ArticleSearchListView, self).get_context_data(*args, **kwargs)
+        context.update({
+            'page_title': self.request.GET.get('query', '').strip()
+        })
+        return context
+
+class OrderListView(ActiveRequiredMixin, ListView):
+    template_name = 'commercial/order_list.html'
+    context_object_name = 'order_list'
+    model = Order
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user, is_closed=True)
+
+class OrderDetailView(ActiveRequiredMixin, DetailView):
+    template_name = 'commercial/editcart.html'
+    context_object_name = 'order'
+    model = Order
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user, is_closed=True)
+
+@method_decorator(is_active('/'), 'dispatch')
 class AddToCartView(TemplateView):
     template_name = 'commercial/cart.html'
 
@@ -95,6 +132,7 @@ class AddToCartView(TemplateView):
         })
         return context
 
+@is_active('/')
 def edit_cart(request):
     if request.method == "POST":
         if request.POST.get('submit') == 'Очистить':
