@@ -22,6 +22,7 @@ from commercial.views import ArticleListView, AddToCartView, OrderListView, edit
 
 urlpatterns = [
     path('cart/', edit_cart, {}, 'commercial_edit_cart'),
+    path('showcart/', AddToCartView.as_view(), name='commercial_show_cart'),
     path('addtocart/<str:id>/', AddToCartView.as_view(), name='commercial_addto_cart_one'),
     path('addtocart/<str:id>/<int:count>/', AddToCartView.as_view(),
                       name='commercial_addto_cart'),
