@@ -72,7 +72,7 @@ def do_import_csv(csv_file: typing.IO, country: str):
             category_property.published = True
             category_property.save()
 
-            parent_category_id = row['parent_id']
+            parent_category_id = row['parent_id'].strip().rjust(5, '0')
             if parent_category_id:
                 parent_category_id = parent_category_id.strip().rjust(5, '0')
                 try:
@@ -84,7 +84,7 @@ def do_import_csv(csv_file: typing.IO, country: str):
                     break
         else:
             # print(row)
-            parent_category_id = row['parent_id']
+            parent_category_id = row['parent_id'].strip().rjust(5, '0')
             if parent_category_id:
                 category, created = Category.objects.get_or_create(pk=parent_category_id)
                 article_id = row['id'].strip().rjust(5, '0')
