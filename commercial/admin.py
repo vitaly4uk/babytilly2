@@ -69,7 +69,22 @@ class DepartamentAdmin(admin.ModelAdmin):
 
 class CategoryAdmin(MPTTModelAdmin):
     inlines = [CategoryPropertyAdmin]
-    list_display = ['id']
+    list_display = ['id', 'category_name']
+    search_fields = ['id']
+
+    @admin.display(description=gettext_lazy('name'))
+    def category_name(self, obj):
+        property = obj.categoryproperties_set.filter(
+            department_id=self.request.user.profile.department_id
+        ).only('name').first()
+        if property:
+            return property.name
+
+    def get_queryset(self, request):
+        self.request = request
+        queryset = super(CategoryAdmin, self).get_queryset(request)
+        #queryset = queryset.select_related('categoryproperties').filter(categoryproperties__departament_id=request.user.profile.department_id)
+        return queryset #.prefetch_related('property')
 
 
 class ArticlePropertyAdmin(admin.StackedInline):
@@ -96,7 +111,21 @@ class ArticleImageInline(AdminImageMixin, admin.StackedInline):
 
 class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
-    list_display = ['id']
+    list_display = ['id', 'article_name']
+    search_fields = ['id']
+
+    @admin.display(description=gettext_lazy('name'))
+    def article_name(self, obj):
+        property = obj.articleproperties_set.filter(
+            department_id=self.request.user.profile.department_id
+        ).only('name').first()
+        if property:
+            return property.name
+
+    def get_queryset(self, request):
+        queryset = super(ArticleAdmin, self).get_queryset(request)
+        self.request = request
+        return queryset #.prefetch_related('property')
 
 
 class UserAdmin(DefaultUserAdmin):
