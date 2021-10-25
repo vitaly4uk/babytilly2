@@ -4,7 +4,7 @@ import logging
 from django import template
 from django.utils.safestring import mark_safe
 
-from commercial.models import Category, CategoryProperties
+from commercial.models import Category, CategoryProperties, ArticleProperties
 
 register = template.Library()
 logger = logging.getLogger(__name__)
@@ -13,6 +13,14 @@ logger = logging.getLogger(__name__)
 @register.simple_tag
 def get_price(article, user):
     return "%.02f" % article.get_price(user)
+
+@register.simple_tag
+def get_category_name(category, user):
+    return CategoryProperties.objects.get(category=category, department_id=user.profile.department_id).name
+
+@register.simple_tag
+def get_article_name(article, user):
+    return ArticleProperties.objects.get(article=article, department_id=user.profile.department_id).name
 
 def get_cached_trees(queryset):
     """

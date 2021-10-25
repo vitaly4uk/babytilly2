@@ -12,7 +12,7 @@
                     <ol class="breadcrumb">
                         {% for ancestor in category.get_ancestors_include_self %}
                             <li class="breadcrumb-item{% if forloop.last %} active{% endif %}"
-                                aria-current="page">{{ ancestor.name }}</li>
+                                aria-current="page">{% get_category_name ancestor request.user %}</li>
                         {% endfor %}
                     </ol>
                 </nav>
@@ -136,11 +136,9 @@
                                         </div>
                                     {% endif %}
                                 {% endif %}
-                                {% if user.profile.show_price %}
                                     <div class="card-text">
                                         за шт. <span class="h5">{{ item.price }}</span>
                                     </div>
-                                {% endif %}
                                 <div class="card-text">
                                     <form class="form-inline mx-sm-3 mb-2">
                                         <label class="sr-only" for="{{ item.article.id }}_input">Количество</label>

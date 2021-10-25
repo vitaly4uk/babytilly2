@@ -18,14 +18,15 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path
 from django.views.generic import TemplateView
 
-from commercial.views import ArticleListView, AddToCartView, OrderListView, edit_cart
+from commercial.views import ArticleListView, AddToCartView, OrderListView, edit_cart, OrderDetailView
 
 urlpatterns = [
     path('cart/', edit_cart, {}, 'commercial_edit_cart'),
-    path('commerce/addtocart/<int:id>/', AddToCartView.as_view(), name='commercial_addto_cart_one'),
-    path('commerce/addtocart/<int:id>/<int:count>/', AddToCartView.as_view(),
+    path('addtocart/<int:id>/', AddToCartView.as_view(), name='commercial_addto_cart_one'),
+    path('addtocart/<int:id>/<int:count>/', AddToCartView.as_view(),
                       name='commercial_addto_cart'),
-    path('commerce/orders/', OrderListView.as_view(), name='commercial_order_list'),
-    path('commerce/category/<int:id>/', ArticleListView.as_view(), name='category_detail_url'),
+    path('dashboard/order/', OrderListView.as_view(), name='commercial_order_list'),
+    path('dashboard/order/<int:pk>/', OrderDetailView.as_view(), name='commercial_order_detail'),
+    path('category/<int:id>/', ArticleListView.as_view(), name='category_detail_url'),
     path('', login_required(TemplateView.as_view(template_name='index.html'))),
 ] + staticfiles_urlpatterns()
