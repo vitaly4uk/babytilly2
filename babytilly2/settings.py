@@ -245,6 +245,7 @@ THUMBNAIL_SIZE = {
     'small': '150',
     'big': '426',
 }
+PAGINATOR = [10, 25, 50, 100]
 
 if REDIS_URL := os.environ.get('REDIS_URL'):
     CELERY_BROKER_URL = REDIS_URL
