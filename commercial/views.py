@@ -1,6 +1,7 @@
 from django.contrib.auth import logout
 from django.core.files.storage import get_storage_class
 from django.db.models import F, Q
+from django.conf import settings
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import View
@@ -42,6 +43,9 @@ class ArticleListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/articleprice_list.html'
     context_object_name = 'object_list'
 
+    def get_paginate_by(self, queryset):
+        return int(self.request.GET.get('per_page', settings.PAGINATOR[2]))
+
     def get_object(self):
         return get_object_or_404(Category, id=self.kwargs['id'])
 
@@ -60,12 +64,11 @@ class ArticleListView(ActiveRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ArticleListView, self).get_context_data(**kwargs)
-        sort = ''
-        if self.request.GET:
-            sort = self.request.GET['sort']
         context.update({
             'category': self.object,
-            'sort': sort
+            'sort': self.request.GET.get('sort', None),
+            'per_page': self.get_paginate_by(None),
+            'paginator_list': settings.PAGINATOR,
         })
         return context
 
@@ -73,19 +76,32 @@ class ArticleSearchListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/articleprice_list.html'
     context_object_name = 'object_list'
 
+    def get_paginate_by(self, queryset):
+        return int(self.request.GET.get('per_page', settings.PAGINATOR[2]))
+
     def get_queryset(self):
+        sort = self.request.GET.get('sort', None)
         search_str = self.request.GET.get('query', '').strip()
         user_department_id = self.request.user.profile.department_id
         if search_str:
             queryset = ArticleProperties.objects.filter(name__icontains=search_str, department_id=user_department_id)
         else:
             queryset = ArticleProperties.objects.none()
+
+        if sort == 'price':
+            queryset = queryset.order_by('price')
+        if sort == '-price':
+            queryset = queryset.order_by('-price')
+
         return queryset
 
     def get_context_data(self, *args, **kwargs):
         context = super(ArticleSearchListView, self).get_context_data(*args, **kwargs)
         context.update({
-            'page_title': self.request.GET.get('query', '').strip()
+            'page_title': self.request.GET.get('query', '').strip(),
+            'sort': self.request.GET.get('sort', None),
+            'per_page': self.get_paginate_by(None),
+            'paginator_list': settings.PAGINATOR,
         })
         return context
 
