@@ -81,8 +81,9 @@ def do_import_csv(csv_file: typing.IO, country: str):
                 category.save()
         else:
             # print(row)
-            parent_category_id = row['parent_id'].strip().rjust(5, '0')
+            parent_category_id = row['parent_id']
             if parent_category_id:
+                parent_category_id = parent_category_id.strip().rjust(5, '0')
                 category, created = Category.objects.get_or_create(pk=parent_category_id)
                 article_id = row['id'].strip().rjust(5, '0')
                 article, created = Article.objects.get_or_create(pk=article_id)
