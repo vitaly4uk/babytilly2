@@ -257,10 +257,10 @@ class ImportPrice(models.Model):
     department = models.ForeignKey(Departament, verbose_name=gettext_lazy('department'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
 
-    # def save(self, *args, **kwargs):
-    #     from commercial.tasks import import_price
-    #     super(ImportPrice, self).save(*args, **kwargs)
-    #     import_price.delay(self.id)
+    def save(self, *args, **kwargs):
+        from commercial.tasks import import_price
+        super(ImportPrice, self).save(*args, **kwargs)
+        import_price.delay(self.id)
 
     class Meta:
         verbose_name = gettext_lazy('import')
