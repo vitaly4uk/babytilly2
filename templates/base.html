@@ -182,9 +182,8 @@
       }, 400)
       return false
     })
-    {% comment %}
-    loadCart("{% url 'commercial_show_cart' %}");
-    {% endcomment %}
+        loadCart("{% url 'commercial_show_cart' %}");
+
 
 
     $.each({{ category.get_ancestors_ids|safe|default:'[]' }}, function (index, value) {

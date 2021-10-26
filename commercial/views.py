@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from django.contrib.auth import logout
 from django.core.files.storage import get_storage_class
 from django.db.models import F, Q
@@ -64,11 +66,15 @@ class ArticleListView(ActiveRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ArticleListView, self).get_context_data(**kwargs)
+        params = self.request.GET.copy()
+        if 'page' in params:
+            del params['page']
         context.update({
             'category': self.object,
             'sort': self.request.GET.get('sort', None),
             'per_page': self.get_paginate_by(None),
             'paginator_list': settings.PAGINATOR,
+            'link': urlencode(params),
         })
         return context
 
@@ -97,11 +103,15 @@ class ArticleSearchListView(ActiveRequiredMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ArticleSearchListView, self).get_context_data(*args, **kwargs)
+        params = self.request.GET.copy()
+        if 'page' in params:
+            del params['page']
         context.update({
             'page_title': self.request.GET.get('query', '').strip(),
             'sort': self.request.GET.get('sort', None),
             'per_page': self.get_paginate_by(None),
             'paginator_list': settings.PAGINATOR,
+            'link': urlencode(params),
         })
         return context
 
