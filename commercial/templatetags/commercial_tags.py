@@ -3,6 +3,7 @@ import logging
 
 from django import template
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy
 
 from commercial.models import Category, CategoryProperties, ArticleProperties
 
@@ -16,11 +17,11 @@ def get_price(article, user):
 
 @register.simple_tag
 def get_category_name(category, user):
-    return CategoryProperties.objects.get(category=category, department_id=user.profile.department_id).name
+    return CategoryProperties.objects.get(category=category, departament_id=user.profile.departament_id).name
 
 @register.simple_tag
 def get_article_name(article, user):
-    return ArticleProperties.objects.get(article=article, department_id=user.profile.department_id).name
+    return ArticleProperties.objects.get(article=article, departament_id=user.profile.departament_id).name
 
 def get_cached_trees(queryset):
     """
@@ -69,7 +70,7 @@ def get_cached_trees(queryset):
                 # ``queryset`` was a list or other iterable (unable to order),
                 # and was provided in an order other than depth-first
                 raise ValueError(
-                    _("Node %s not in depth-first order") % (type(queryset),)
+                    gettext_lazy("Node %s not in depth-first order") % (type(queryset),)
                 )
 
             # Set up the attribute on the node that will store cached children,
@@ -117,16 +118,16 @@ class RecurseTreeNode(template.Node):
         self.queryset_var = queryset_var
 
     def _render_node(self, context, node):
-        department_id = node.department_id
+        departament_id = node.departament_id
         bits = []
         context.push()
         if isinstance(node, Category):
             for child in node.get_children():
-                child = CategoryProperties.objects.get(category=child, department__id=department_id)
+                child = CategoryProperties.objects.get(category=child, departament_id=departament_id)
                 bits.append(self._render_node(context, child))
         elif isinstance(node, CategoryProperties):
             for child in node.category.get_children():
-                child = CategoryProperties.objects.get(category=child, department__id=department_id)
+                child = CategoryProperties.objects.get(category=child, departament_id=departament_id)
                 bits.append(self._render_node(context, child))
         context["node"] = node
         context["children"] = mark_safe("".join(bits))
@@ -164,7 +165,7 @@ def recursetree(parser, token):
     """
     bits = token.contents.split()
     if len(bits) != 2:
-        raise template.TemplateSyntaxError(_("%s tag requires a queryset") % bits[0])
+        raise template.TemplateSyntaxError(gettext_lazy("%s tag requires a queryset") % bits[0])
 
     queryset_var = template.Variable(bits[1])
 

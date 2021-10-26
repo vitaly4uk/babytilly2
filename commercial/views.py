@@ -33,7 +33,7 @@ class HomePage(TemplateView):
         context = super(HomePage, self).get_context_data()
         queryset = StartPageImage.objects.only('image')
         if self.request.user.is_authenticated:
-            queryset = queryset.filter(departament_id=self.request.user.profile.department_id)
+            queryset = queryset.filter(departament_id=self.request.user.profile.departament_id)
         else:
             queryset = queryset.filter(departament__isnull=True)
         context.update({
@@ -48,14 +48,10 @@ class ArticleListView(ActiveRequiredMixin, ListView):
     def get_paginate_by(self, queryset):
         return int(self.request.GET.get('per_page', settings.PAGINATOR[2]))
 
-    def get_object(self):
-        return get_object_or_404(Category, id=self.kwargs['id'])
-
     def get_queryset(self):
         sort = self.request.GET.get('sort', None)
-        user_department_id = self.request.user.profile.department_id
-        self.object = self.get_object()
-        queryset = ArticleProperties.objects.filter(published=True, department_id=user_department_id, article__category__id=self.object.id).order_by('name')
+        user_departament_id = self.request.user.profile.departament_id
+        queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id, article__category__id=self.kwargs['id']).order_by('name')
 
         if sort == 'price':
             queryset = queryset.order_by('price')
@@ -70,7 +66,7 @@ class ArticleListView(ActiveRequiredMixin, ListView):
         if 'page' in params:
             del params['page']
         context.update({
-            'category': self.object,
+            'category': get_object_or_404(Category, id=self.kwargs['id']),
             'sort': self.request.GET.get('sort', None),
             'per_page': self.get_paginate_by(None),
             'paginator_list': settings.PAGINATOR,
@@ -88,9 +84,9 @@ class ArticleSearchListView(ActiveRequiredMixin, ListView):
     def get_queryset(self):
         sort = self.request.GET.get('sort', None)
         search_str = self.request.GET.get('query', '').strip()
-        user_department_id = self.request.user.profile.department_id
+        user_departament_id = self.request.user.profile.departament_id
         if search_str:
-            queryset = ArticleProperties.objects.filter(name__icontains=search_str, department_id=user_department_id)
+            queryset = ArticleProperties.objects.filter(name__icontains=search_str, departament_id=user_departament_id)
         else:
             queryset = ArticleProperties.objects.none()
 
@@ -137,7 +133,7 @@ class AddToCartView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddToCartView, self).get_context_data(**kwargs)
-        user_department_id = self.request.user.profile.department_id
+        user_departament_id = self.request.user.profile.departament_id
         order = getattr(self.request, 'order', None)
         id = self.kwargs.get('id', None)
         count = self.kwargs.get('count', 1)
@@ -148,7 +144,7 @@ class AddToCartView(TemplateView):
                 order.save()
                 self.request.session['order_id'] = order.pk
                 self.request.order = order
-            article = get_object_or_404(ArticleProperties, article_id=id, department_id=user_department_id)
+            article = get_object_or_404(ArticleProperties, article_id=id, departament_id=user_departament_id)
             (orderitem, _) = OrderItem.objects.get_or_create(order=order, article_id=article.article.id)
             orderitem.count = int(count)
             orderitem.price = str(article.price)

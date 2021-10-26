@@ -15,5 +15,5 @@ def import_price(import_id: int):
 
     do_import_csv(
         csv_file=in_memory_file,
-        country=import_price.department.country
+        country=import_price.departament.country
     )

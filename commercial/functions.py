@@ -53,9 +53,9 @@ def do_import_csv(csv_file: typing.IO, country: str):
         'image', '19', 'description', '21', '22'
     ]
     reader = csv.DictReader(csv_file, fieldnames=field_names, delimiter=';')
-    department = Departament.objects.get(country=country)
-    CategoryProperties.objects.filter(department=department).update(published=False)
-    ArticleProperties.objects.filter(department=department).update(published=False)
+    departament = Departament.objects.get(country=country)
+    CategoryProperties.objects.filter(departament=departament).update(published=False)
+    ArticleProperties.objects.filter(departament=departament).update(published=False)
     for row in reader:
         is_category = row['is_category'] == '1'
 
@@ -66,7 +66,7 @@ def do_import_csv(csv_file: typing.IO, country: str):
             category, created = Category.objects.get_or_create(pk=category_id)
             category_property, created = CategoryProperties.objects.get_or_create(
                 category=category,
-                department=department
+                departament=departament
             )
             category_property.name = row['name']
             category_property.published = True
@@ -92,7 +92,7 @@ def do_import_csv(csv_file: typing.IO, country: str):
                 article.save()
                 article_property, created = ArticleProperties.objects.get_or_create(
                     article=article,
-                    department=department
+                    departament=departament
                 )
                 article_property.name = row['name']
                 article_property.description = row['description']

@@ -24,9 +24,9 @@ class Departament(models.Model):
 
     class Meta:
         verbose_name = gettext_lazy('departament')
-        verbose_name_plural = gettext_lazy('departments')
+        verbose_name_plural = gettext_lazy('departaments')
         constraints = [
-            models.UniqueConstraint(fields=['country', 'email'], name='unique_department')
+            models.UniqueConstraint(fields=['country', 'email'], name='unique_departament')
         ]
 
 
@@ -43,7 +43,7 @@ class StartPageImage(models.Model):
         verbose_name_plural = gettext_lazy('start page images')
         ordering = ['departament', 'order']
         indexes = [
-            models.Index(fields=['departament', 'order'], include=['image'], name='department_order')
+            models.Index(fields=['departament', 'order'], include=['image'], name='departament_order')
         ]
 
 
@@ -75,7 +75,7 @@ class Category(MPTTModel):
 
 
 class CategoryProperties(models.Model):
-    department = models.ForeignKey(Departament, on_delete=models.CASCADE)
+    departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(gettext_lazy('name'), max_length=255)
     published = models.BooleanField(gettext_lazy('published'), default=True)
@@ -87,7 +87,7 @@ class CategoryProperties(models.Model):
         verbose_name = gettext_lazy('category property')
         verbose_name_plural = gettext_lazy('category properties')
         constraints = [
-            models.UniqueConstraint(fields=['department', 'category'], name='unique_category_property')
+            models.UniqueConstraint(fields=['departament', 'category'], name='unique_category_property')
         ]
 
 
@@ -122,7 +122,7 @@ class Article(models.Model):
 
 
 class ArticleProperties(models.Model):
-    department = models.ForeignKey(Departament, on_delete=models.CASCADE)
+    departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     name = models.CharField(gettext_lazy('name'), max_length=255)
     published = models.BooleanField(gettext_lazy('published'), default=True)
@@ -132,7 +132,7 @@ class ArticleProperties(models.Model):
         verbose_name = gettext_lazy('article property')
         verbose_name_plural = gettext_lazy('article properties')
         constraints = [
-            models.UniqueConstraint(fields=['department', 'article'], name='unique_article_property')
+            models.UniqueConstraint(fields=['departament', 'article'], name='unique_article_property')
         ]
 
 
@@ -204,7 +204,7 @@ class Order(models.Model):
         }
         html_body = str(render_to_string('commercial/mail.html', context))
         text_body = str(render_to_string('commercial/mail_text.html', context))
-        stuff_email = Departament.objects.get(id=self.user.profile.department_id).email
+        stuff_email = Departament.objects.get(id=self.user.profile.departament_id).email
         to_emails = [settings.DEFAULT_FROM_EMAIL, stuff_email]
         if self.user.email:
             to_emails.append(self.user.email)
@@ -248,7 +248,7 @@ class OrderItem(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
-    department = models.ForeignKey(Departament, verbose_name=gettext_lazy('department'), on_delete=models.CASCADE)
+    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Profile for {self.user}"
@@ -261,7 +261,7 @@ class Profile(models.Model):
 class ImportPrice(models.Model):
     file = models.FileField(gettext_lazy('file'), upload_to='upload/import/%Y/%m/%d/')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
-    department = models.ForeignKey(Departament, verbose_name=gettext_lazy('department'), on_delete=models.CASCADE)
+    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
 
     def save(self, *args, **kwargs):

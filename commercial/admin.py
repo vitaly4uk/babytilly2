@@ -11,7 +11,7 @@ from commercial.models import Profile, CategoryProperties, ArticleProperties, Ar
 
 class ProfileAdmin(admin.TabularInline):
     model = Profile
-    autocomplete_fields = ['department']
+    autocomplete_fields = ['departament']
     can_delete = False
     min_num = 1
     max_num = 1
@@ -20,12 +20,12 @@ class ProfileAdmin(admin.TabularInline):
 class CategoryPropertyAdmin(admin.StackedInline):
     model = CategoryProperties
     min_num = 1
-    autocomplete_fields = ['department']
+    autocomplete_fields = ['departament']
 
     def get_queryset(self, request):
         queryset = super(CategoryPropertyAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(department_id=request.user.profile.department_id)
+            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
         return queryset
 
     def get_max_num(self, request, obj=None, **kwargs):
@@ -36,6 +36,7 @@ class CategoryPropertyAdmin(admin.StackedInline):
 class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ['pk', 'image', 'departament', 'order']
     form = StartPageImageAdminForm
+    autocomplete_fields = ['departament']
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(StartPageImageAdmin, self).get_form(request, obj, **kwargs)
@@ -45,7 +46,7 @@ class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super(StartPageImageAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(departament_id=request.user.profile.department_id)
+            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
         return queryset
 
 class DepartamentAdmin(admin.ModelAdmin):
@@ -56,7 +57,7 @@ class DepartamentAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super(DepartamentAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(id=request.user.profile.department_id)
+            queryset = queryset.filter(id=request.user.profile.departament_id)
         return queryset
 
     def has_add_permission(self, request):
@@ -78,7 +79,7 @@ class CategoryAdmin(MPTTModelAdmin):
     @admin.display(description=gettext_lazy('name'))
     def category_name(self, obj):
         property = obj.categoryproperties_set.filter(
-            department_id=self.request.user.profile.department_id
+            departament_id=self.request.user.profile.departament_id
         ).only('name').first()
         if property:
             return property.name
@@ -86,19 +87,19 @@ class CategoryAdmin(MPTTModelAdmin):
     def get_queryset(self, request):
         self.request = request
         queryset = super(CategoryAdmin, self).get_queryset(request)
-        #queryset = queryset.select_related('categoryproperties').filter(categoryproperties__departament_id=request.user.profile.department_id)
+        #queryset = queryset.select_related('categoryproperties').filter(categoryproperties__departament_id=request.user.profile.departament_id)
         return queryset #.prefetch_related('property')
 
 
 class ArticlePropertyAdmin(admin.StackedInline):
     model = ArticleProperties
     min_num = 1
-    autocomplete_fields = ['department']
+    autocomplete_fields = ['departament']
 
     def get_queryset(self, request):
         queryset = super(ArticlePropertyAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(department_id=request.user.profile.department_id)
+            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
         return queryset
 
     def get_max_num(self, request, obj=None, **kwargs):
@@ -121,7 +122,7 @@ class ArticleAdmin(admin.ModelAdmin):
     @admin.display(description=gettext_lazy('name'))
     def article_name(self, obj):
         property = obj.articleproperties_set.filter(
-            department_id=self.request.user.profile.department_id
+            departament_id=self.request.user.profile.departament_id
         ).only('name').first()
         if property:
             return property.name
@@ -150,9 +151,9 @@ class UserAdmin(DefaultUserAdmin):
 
 class ImportPriceAdmin(admin.ModelAdmin):
     readonly_fields = ['imported_at', 'user']
-    list_display = ['imported_at', 'user', 'department']
-    list_filter = ['department']
-    autocomplete_fields = ['department']
+    list_display = ['imported_at', 'user', 'departament']
+    list_filter = ['departament']
+    autocomplete_fields = ['departament']
     ordering = ['imported_at']
 
     def save_model(self, request, obj, form, change):
@@ -200,5 +201,5 @@ class OrderAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super(OrderAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(user__profile__department_id=request.user.profile.department_id)
+            queryset = queryset.filter(user__profile__departament_id=request.user.profile.department_id)
         return queryset
