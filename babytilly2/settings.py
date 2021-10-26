@@ -52,7 +52,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ae6k1=^jgfg$8b5rb41fbxxyx6k@mejipqu&pfw&&o#p#s2)!4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '*'
@@ -256,7 +256,9 @@ else:
     CELERY_BROKER_TRANSPORT_OPTIONS = {
         'queue_name_prefix': 'babytilly2-',
         'region': AWS_REGION_NAME,
-        'polling_interval': 60
+        'polling_interval': 60,
+        'wait_time_seconds': 10
+
     }
 
 try:
