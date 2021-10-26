@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
+from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter
 from commercial.forms import StartPageImageAdminForm
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, StartPageImage
 
@@ -50,6 +51,7 @@ class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
 class DepartamentAdmin(admin.ModelAdmin):
     list_display = ['country', 'email']
     search_fields = ['country']
+    actions = None
 
     def get_queryset(self, request):
         queryset = super(DepartamentAdmin, self).get_queryset(request)
@@ -71,6 +73,7 @@ class CategoryAdmin(MPTTModelAdmin):
     inlines = [CategoryPropertyAdmin]
     list_display = ['id', 'category_name']
     search_fields = ['id']
+    list_filter = [CategoryPublishedFilter]
 
     @admin.display(description=gettext_lazy('name'))
     def category_name(self, obj):
@@ -113,6 +116,7 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
     list_display = ['id', 'article_name']
     search_fields = ['id']
+    list_filter = [ArticlePublishedFilter]
 
     @admin.display(description=gettext_lazy('name'))
     def article_name(self, obj):
@@ -149,6 +153,7 @@ class ImportPriceAdmin(admin.ModelAdmin):
     list_display = ['imported_at', 'user', 'department']
     list_filter = ['department']
     autocomplete_fields = ['department']
+    ordering = ['imported_at']
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
@@ -171,6 +176,11 @@ class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'
     inlines = [OrderItemInline]
     readonly_fields = []
+    ordering = ['date']
+    list_filter = ['is_closed', ('user', admin.RelatedOnlyFieldListFilter)]
+    actions = None
+    search_fields = ['id']
+    list_display = ['id', 'user', 'date', 'is_closed']
 
     def has_add_permission(self, request):
         return request.user.is_superuser
