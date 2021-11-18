@@ -44,7 +44,7 @@ def get_thumbnail_url(image, size):
     return thumb_url
 
 
-def do_import_csv(csv_file: typing.IO, country: str):
+def do_import_price(csv_file: typing.IO, country: str):
     from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties
 
     field_names = [
@@ -101,3 +101,37 @@ def do_import_csv(csv_file: typing.IO, country: str):
                 article_property.save()
 
     Category.objects.rebuild()
+
+def do_import_novelty(csv_file: typing.IO, departament_id: int):
+    from commercial.models import ArticleProperties
+
+    ArticleProperties.objects.filter(departament_id=departament_id).update(is_new=False)
+    reader = csv.reader(csv_file, delimiter=';')
+
+    for row in reader:
+        try:
+            article_id = row[0].strip().rjust(5, '0')
+        except IndexError:
+            continue
+
+        ArticleProperties.objects.filter(
+            departament_id=departament_id,
+            article_id=article_id
+        ).update(is_new=True)
+
+def do_import_special(csv_file: typing.IO, departament_id: int):
+    from commercial.models import ArticleProperties
+
+    ArticleProperties.objects.filter(departament_id=departament_id).update(is_special=False)
+    reader = csv.reader(csv_file, delimiter=';')
+
+    for row in reader:
+        try:
+            article_id = row[0].strip().rjust(5, '0')
+        except IndexError:
+            continue
+
+        ArticleProperties.objects.filter(
+            departament_id=departament_id,
+            article_id=article_id
+        ).update(is_special=True)

@@ -127,6 +127,8 @@ class ArticleProperties(models.Model):
     name = models.CharField(gettext_lazy('name'), max_length=255)
     published = models.BooleanField(gettext_lazy('published'), default=True)
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
+    is_new = models.BooleanField(gettext_lazy('is new'), default=False)
+    is_special = models.BooleanField(gettext_lazy('is spacial'), default=False)
 
     class Meta:
         verbose_name = gettext_lazy('article property')
@@ -270,5 +272,35 @@ class ImportPrice(models.Model):
         import_price.delay(self.id)
 
     class Meta:
-        verbose_name = gettext_lazy('import')
-        verbose_name_plural = gettext_lazy('imports')
+        verbose_name = gettext_lazy('import price')
+        verbose_name_plural = gettext_lazy('import prices')
+
+class ImportNew(models.Model):
+    file = models.FileField(gettext_lazy('file'), upload_to='upload/import/%Y/%m/%d/')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
+    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
+    imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        from commercial.tasks import import_novelty
+        super(ImportPrice, self).save(*args, **kwargs)
+        import_novelty.delay(self.id)
+
+    class Meta:
+        verbose_name = gettext_lazy('import new')
+        verbose_name_plural = gettext_lazy('import news')
+
+class ImportSpecial(models.Model):
+    file = models.FileField(gettext_lazy('file'), upload_to='upload/import/%Y/%m/%d/')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
+    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
+    imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        from commercial.tasks import import_special
+        super(ImportPrice, self).save(*args, **kwargs)
+        import_special.delay(self.id)
+
+    class Meta:
+        verbose_name = gettext_lazy('import special')
+        verbose_name_plural = gettext_lazy('import specials')

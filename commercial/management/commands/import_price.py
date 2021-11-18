@@ -2,7 +2,7 @@ import codecs
 
 from django.core.management import BaseCommand
 
-from commercial.functions import do_import_csv
+from commercial.functions import do_import_price
 
 
 class Command(BaseCommand):
@@ -14,4 +14,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         with codecs.open(options['file_name'], 'r', encoding='cp1251') as csv_file:
-            do_import_csv(csv_file, options['country'])
+            do_import_price(csv_file, options['country'])
