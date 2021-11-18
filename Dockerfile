@@ -1,4 +1,4 @@
-FROM python:3.9.7
+FROM python:3.9.9
 ENV PYTHONUNBUFFERED 1
 ENV ENV LOCAL
 # RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev libjpeg
