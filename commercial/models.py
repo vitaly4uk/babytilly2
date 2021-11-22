@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
@@ -10,10 +12,11 @@ from django.utils.translation import gettext_lazy
 from django_countries.fields import CountryField
 from mptt.models import MPTTModel, TreeForeignKey
 from sorl.thumbnail import ImageField
-import logging
+
 from commercial.functions import get_thumbnail_url, export_to_csv
 
 logger = logging.getLogger(__name__)
+
 
 class Departament(models.Model):
     country = CountryField(gettext_lazy('country'))
@@ -32,7 +35,7 @@ class Departament(models.Model):
 
 class StartPageImage(models.Model):
     departament = models.ForeignKey(Departament, on_delete=models.CASCADE, blank=True, null=True)
-    image = ImageField(gettext_lazy('image'), upload_to='upload/start_page/')
+    image = ImageField(gettext_lazy('image'), upload_to='start_page/')
     order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
 
     def __str__(self):
@@ -96,7 +99,7 @@ class Article(models.Model):
     category = TreeForeignKey(
         Category, verbose_name=gettext_lazy('category'), null=True, blank=True, on_delete=models.CASCADE
     )
-    image = ImageField(gettext_lazy('image'), upload_to='upload/foto/')
+    image = ImageField(gettext_lazy('image'), upload_to='photos/')
     property = models.ManyToManyField(Departament, through='ArticleProperties', verbose_name=gettext_lazy('property'))
 
     def get_small_thumbnail_url(self):
@@ -141,7 +144,7 @@ class ArticleProperties(models.Model):
 class ArticleImage(models.Model):
     article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), related_name='images',
                                 on_delete=models.CASCADE)
-    image = ImageField(gettext_lazy('image'), upload_to='upload/foto/')
+    image = ImageField(gettext_lazy('image'), upload_to='photos/')
 
     def get_small_thumbnail_url(self):
         url = cache.get(f'small-thumb-url-{self.image.name}')
@@ -261,7 +264,7 @@ class Profile(models.Model):
 
 
 class ImportPrice(models.Model):
-    file = models.FileField(gettext_lazy('file'), upload_to='upload/import/%Y/%m/%d/')
+    file = models.FileField(gettext_lazy('file'), upload_to='import_price/%Y/%m/%d/')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
@@ -275,8 +278,9 @@ class ImportPrice(models.Model):
         verbose_name = gettext_lazy('import price')
         verbose_name_plural = gettext_lazy('import prices')
 
+
 class ImportNew(models.Model):
-    file = models.FileField(gettext_lazy('file'), upload_to='upload/import/%Y/%m/%d/')
+    file = models.FileField(gettext_lazy('file'), upload_to='import_new/%Y/%m/%d/')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
@@ -290,8 +294,9 @@ class ImportNew(models.Model):
         verbose_name = gettext_lazy('import new')
         verbose_name_plural = gettext_lazy('import news')
 
+
 class ImportSpecial(models.Model):
-    file = models.FileField(gettext_lazy('file'), upload_to='upload/import/%Y/%m/%d/')
+    file = models.FileField(gettext_lazy('file'), upload_to='import_special/%Y/%m/%d/')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)

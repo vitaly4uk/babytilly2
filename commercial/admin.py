@@ -6,7 +6,7 @@ from sorl.thumbnail.admin import AdminImageMixin
 
 from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter
 from commercial.forms import StartPageImageAdminForm
-from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, StartPageImage
+from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem
 
 
 class ProfileAdmin(admin.TabularInline):
@@ -33,6 +33,7 @@ class CategoryPropertyAdmin(admin.StackedInline):
             return 1
         return super(CategoryPropertyAdmin, self).get_max_num(request, obj=obj, **kwargs)
 
+
 class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ['pk', 'image', 'departament', 'order']
     form = StartPageImageAdminForm
@@ -48,6 +49,7 @@ class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
         if not request.user.is_superuser:
             queryset = queryset.filter(departament_id=request.user.profile.departament_id)
         return queryset
+
 
 class DepartamentAdmin(admin.ModelAdmin):
     list_display = ['country', 'email']
@@ -87,8 +89,8 @@ class CategoryAdmin(MPTTModelAdmin):
     def get_queryset(self, request):
         self.request = request
         queryset = super(CategoryAdmin, self).get_queryset(request)
-        #queryset = queryset.select_related('categoryproperties').filter(categoryproperties__departament_id=request.user.profile.departament_id)
-        return queryset #.prefetch_related('property')
+        # queryset = queryset.select_related('categoryproperties').filter(categoryproperties__departament_id=request.user.profile.departament_id)
+        return queryset  # .prefetch_related('property')
 
 
 class ArticlePropertyAdmin(admin.StackedInline):
@@ -113,7 +115,7 @@ class ArticleImageInline(AdminImageMixin, admin.StackedInline):
     extra = 0
 
 
-class ArticleAdmin(admin.ModelAdmin):
+class ArticleAdmin(AdminImageMixin, admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
     list_display = ['id', 'article_name']
     search_fields = ['id']
@@ -130,7 +132,7 @@ class ArticleAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super(ArticleAdmin, self).get_queryset(request)
         self.request = request
-        return queryset #.prefetch_related('property')
+        return queryset  # .prefetch_related('property')
 
 
 class UserAdmin(DefaultUserAdmin):
