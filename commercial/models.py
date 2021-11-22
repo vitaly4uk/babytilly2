@@ -34,19 +34,18 @@ class Departament(models.Model):
 
 
 class StartPageImage(models.Model):
-    departament = models.ForeignKey(Departament, on_delete=models.CASCADE, blank=True, null=True)
     image = ImageField(gettext_lazy('image'), upload_to='start_page/')
     order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
 
     def __str__(self):
-        return ' '.join([self.image.name, self.departament.country.name])
+        return self.image.name
 
     class Meta:
         verbose_name = gettext_lazy('start page image')
         verbose_name_plural = gettext_lazy('start page images')
-        ordering = ['departament', 'order']
+        ordering = ['order']
         indexes = [
-            models.Index(fields=['departament', 'order'], include=['image'], name='departament_order')
+            models.Index(fields=['order'], include=['image'], name='order')
         ]
 
 
@@ -131,7 +130,7 @@ class ArticleProperties(models.Model):
     published = models.BooleanField(gettext_lazy('published'), default=True)
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
     is_new = models.BooleanField(gettext_lazy('is new'), default=False)
-    is_special = models.BooleanField(gettext_lazy('is spacial'), default=False)
+    is_special = models.BooleanField(gettext_lazy('is special'), default=False)
 
     class Meta:
         verbose_name = gettext_lazy('article property')

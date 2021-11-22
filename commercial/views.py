@@ -32,10 +32,6 @@ class HomePage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomePage, self).get_context_data()
         queryset = StartPageImage.objects.only('image')
-        if self.request.user.is_authenticated:
-            queryset = queryset.filter(departament_id=self.request.user.profile.departament_id)
-        else:
-            queryset = queryset.filter(departament__isnull=True)
         context.update({
             'file_list': [sp.image.url for sp in queryset],
         })
