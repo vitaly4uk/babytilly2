@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load thumbnail commercial_tags static %}
+{% load thumbnail commercial_tags static i18n %}
 
 {% block title %}{{ page_title }} :: {{ block.super }}{% endblock %}
 
@@ -115,8 +115,10 @@
                                         <small>шт в ящ.: {{ item.article.in_pack }}</small>{% endif %}
                                     {% if item.article.doze %}
                                         <span class="badge badge-pill badge-warning">ДОЗЫ</span>{% endif %}
-                                    {% if item.article.is_new %}
-                                        <span class="badge badge-pill badge-danger">НОВИНКА</span>{% endif %}
+                                    {% if item.is_new %}
+                                        <span class="badge badge-pill badge-danger">{% trans 'new'|upper %}</span>{% endif %}
+                                    {% if item.is_special %}
+                                        <span class="badge badge-pill badge-success">{% trans 'sale'|upper %}</span>{% endif %}
                                     {% if item.article.is_stock %}
                                         <span class="badge badge-pill badge-success">СПЕЦ. ПРЕД.</span>{% endif %}
                                 </p>

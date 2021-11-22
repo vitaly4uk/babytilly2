@@ -5,7 +5,6 @@ from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
 from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter
-from commercial.forms import StartPageImageAdminForm
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem
 
 
@@ -35,20 +34,7 @@ class CategoryPropertyAdmin(admin.StackedInline):
 
 
 class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
-    list_display = ['pk', 'image', 'departament', 'order']
-    form = StartPageImageAdminForm
-    autocomplete_fields = ['departament']
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super(StartPageImageAdmin, self).get_form(request, obj, **kwargs)
-        form.user = request.user
-        return form
-
-    def get_queryset(self, request):
-        queryset = super(StartPageImageAdmin, self).get_queryset(request)
-        if not request.user.is_superuser:
-            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
-        return queryset
+    list_display = ['pk', 'image', 'order']
 
 
 class DepartamentAdmin(admin.ModelAdmin):
