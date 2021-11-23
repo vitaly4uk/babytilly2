@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
-
+from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy
-
+from babytilly2 import settings
 from commercial.models import Category, CategoryProperties, ArticleProperties
 
 register = template.Library()
@@ -173,3 +173,8 @@ def recursetree(parser, token):
     parser.delete_first_token()
 
     return RecurseTreeNode(template_nodes, queryset_var)
+
+@register.filter()
+@stringfilter
+def get_thumb_size(value):
+    return settings.THUMBNAIL_SIZE.get(value, None)
