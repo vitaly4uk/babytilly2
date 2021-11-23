@@ -107,6 +107,12 @@ class ArticleAdmin(AdminImageMixin, admin.ModelAdmin):
     search_fields = ['id']
     list_filter = [ArticlePublishedFilter]
 
+    def save_model(self, request, obj, form, change):
+        obj.save()
+
+        for afile in request.FILES.getlist('images_multiple'):
+            obj.images.create(image=afile)
+
     @admin.display(description=gettext_lazy('name'))
     def article_name(self, obj):
         property = obj.articleproperties_set.filter(
