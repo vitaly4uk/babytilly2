@@ -75,8 +75,10 @@
                                     <div class="carousel-item active">
                                         <a href="{{ item.article.image.url }}" role="button" data-toggle="modal"
                                            data-target="#imageModal">
-                                            <img src="{{ item.article.get_small_thumbnail_url }}" class="card-img img-thumbnail"
+                                            {% thumbnail item.article.image "small"|get_thumb_size crop="center" as im %}
+                                            <img src="{{ im.url }}" class="card-img img-thumbnail"
                                                  width="150" height="150">
+                                            {% endthumbnail %}
                                         </a>
                                     </div>
                                 {% with item.article.images.all as additional_images %}
@@ -84,8 +86,10 @@
                                         <div class="carousel-item">
                                             <a href="{{ i.image.url }}" role="button" data-toggle="modal"
                                                data-target="#imageModal">
-                                                <img src="{{ i.get_small_thumbnail_url }}" class="card-img img-thumbnail" width="150"
-                                                     height="150">
+                                                {% thumbnail i.image "small"|get_thumb_size crop="center" as im %}
+                                            <img src="{{ im.url }}" class="card-img img-thumbnail"
+                                                 width="150" height="150">
+                                            {% endthumbnail %}
                                             </a>
                                         </div>
                                     {% endfor %}

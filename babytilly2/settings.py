@@ -243,7 +243,7 @@ MPTT_ADMIN_LEVEL_INDENT = 30
 
 THUMBNAIL_SIZE = {
     'small': '150',
-    'big': '426',
+    'cart_small': '100',
 }
 PAGINATOR = [10, 25, 50, 100]
 
