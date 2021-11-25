@@ -7,12 +7,12 @@ from .models import Article, ArticleImage
 
 
 class ArticleAdminForm(forms.ModelForm):
+
     class Meta:
         model = Article
         fields = (
             "id",
             "category",
-            "image",
             "property",
         )
 
@@ -30,5 +30,5 @@ class ArticleAdminForm(forms.ModelForm):
     def save_images(self, article):
         """Process each uploaded image."""
         for upload in self.files.getlist("images"):
-            image = ArticleImage(article=article, image=upload)
+            image = ArticleImage(article=article, image=upload, departament_id=self.request.user.profile.departament_id)
             image.save()

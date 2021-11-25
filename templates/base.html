@@ -30,6 +30,7 @@
             </a>
         </div>
         <div class="col-md-6 mx-auto">
+            {% if request.user.is_authenticated %}
             <ul class="nav mt-3 justify-content-center">
                 <li class="nav-item">
                     <a class="nav-link nav-item text-dark font-weight-bold h6" href="/about/?{{ link }}" alt="about" title="{% trans "About"|upper %}">{% trans "About" %}</a>
@@ -51,6 +52,7 @@
                     <a class="nav-link text-dark font-weight-bold h6" href="/contacts/?{{ link }}" alt="contacts" title="{% trans "Contacts"|upper %}">{% trans "Contacts" %}</a>
                 </li>
             </ul>
+            {% endif %}
         </div>
         <div class="col-md-4 text-center">
             <form class="form-inline mt-3 d-flex flex-nowrap px-3" action="{% url 'search' %}?{{ link }}" method="GET">

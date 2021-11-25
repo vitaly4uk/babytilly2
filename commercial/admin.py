@@ -80,7 +80,7 @@ class CategoryAdmin(MPTTModelAdmin):
         return queryset  # .prefetch_related('property')
 
 
-class ArticlePropertyAdmin(admin.StackedInline):
+class ArticlePropertyAdmin(AdminImageMixin, admin.StackedInline):
     model = ArticleProperties
     min_num = 1
     autocomplete_fields = ['departament']
@@ -101,13 +101,24 @@ class ArticleImageInline(AdminImageMixin, admin.StackedInline):
     model = ArticleImage
     extra = 0
 
+    def get_queryset(self, request):
+        queryset = super(ArticleImageInline, self).get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
+        return queryset
 
-class ArticleAdmin(AdminImageMixin, admin.ModelAdmin):
+
+class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
     list_display = ['id', 'article_name']
     search_fields = ['id']
     list_filter = [ArticlePublishedFilter]
     form = ArticleAdminForm
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(ArticleAdmin, self).get_form(request, obj=obj, **kwargs)
+        form.request = request
+        return form
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)

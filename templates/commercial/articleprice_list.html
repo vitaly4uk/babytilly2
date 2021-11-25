@@ -73,15 +73,15 @@
                             <div class="carousel slide" data-ride="carousel" data-interval="false" id="carousel-{{ item.article.id }}">
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
-                                        <a href="{{ item.article.image.url }}" role="button" data-toggle="modal"
+                                        <a href="{{ item.main_image.url }}" role="button" data-toggle="modal"
                                            data-target="#imageModal">
-                                            {% thumbnail item.article.image "small"|get_thumb_size crop="center" as im %}
+                                            {% thumbnail item.main_image "small"|get_thumb_size crop="center" as im %}
                                             <img src="{{ im.url }}" class="card-img img-thumbnail"
                                                  width="150" height="150">
                                             {% endthumbnail %}
                                         </a>
                                     </div>
-                                {% with item.article.images.all as additional_images %}
+                                {% get_article_images item.article request.user as additional_images%}
                                     {% for i in additional_images %}
                                         <div class="carousel-item">
                                             <a href="{{ i.image.url }}" role="button" data-toggle="modal"
@@ -104,7 +104,6 @@
                                             <span class="sr-only">Следующий</span>
                                         </a>
                                     {% endif %}
-                                {% endwith %}
                             </div>
                         </div>
                         <div class="col-md-10">

@@ -5,7 +5,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy
 from babytilly2 import settings
-from commercial.models import Category, CategoryProperties, ArticleProperties
+from commercial.models import Category, CategoryProperties, ArticleProperties, ArticleImage
 
 register = template.Library()
 logger = logging.getLogger(__name__)
@@ -14,6 +14,10 @@ logger = logging.getLogger(__name__)
 @register.simple_tag
 def get_price(article, user):
     return "%.02f" % article.get_price(user)
+
+@register.simple_tag
+def get_article_images(article, user):
+    return ArticleImage.objects.filter(article=article, departament_id=user.profile.departament_id)
 
 @register.simple_tag
 def get_category_name(category, user):
