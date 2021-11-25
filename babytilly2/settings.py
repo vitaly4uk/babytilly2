@@ -69,6 +69,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mptt',
+    'ckeditor',
+    'ckeditor_uploader',
     'sorl.thumbnail',
     'commercial',
     'celery',
@@ -260,6 +262,29 @@ else:
         'wait_time_seconds': 10
 
     }
+
+CKEDITOR_UPLOAD_PATH = 'ckeditor_upload/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+
+AWS_QUERYSTRING_AUTH = False
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['Format', 'FontSize'],
+            ['Blockquote'],
+            ['Source', '-', 'Image']
+        ],
+        'allowedContent': True,
+        'extraPlugins': ','.join([
+            'uploadimage',
+        ]),
+    }
+}
 
 try:
     from local_settings import *

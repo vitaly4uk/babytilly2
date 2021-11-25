@@ -2,10 +2,12 @@
 
 {% load static %}
 
-{% block title %}{{ flatpage.title }} :: {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 <link href="{% static 'css/flatpage.css' %}" type="text/css" rel="stylesheet">
 {% endblock %}
 
-{% block content %}{{ flatpage.content }}{% endblock %}
+{% block content %}
+    <div class="row">{{ page.text|safe }}
+    </div>
+{% endblock %}

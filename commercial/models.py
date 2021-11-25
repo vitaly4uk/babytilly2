@@ -1,5 +1,6 @@
 import logging
 
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
@@ -308,3 +309,24 @@ class ImportSpecial(models.Model):
     class Meta:
         verbose_name = gettext_lazy('import special')
         verbose_name_plural = gettext_lazy('import specials')
+
+class Page(models.Model):
+    ABOUT = 'about'
+    CONTACTS = 'contacts'
+    TYPE = (
+        (ABOUT, gettext_lazy('about')),
+        (CONTACTS, gettext_lazy('contacts')),
+    )
+    slug = models.SlugField(gettext_lazy('slug'), choices=TYPE, null=True)
+    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
+    text = RichTextUploadingField(gettext_lazy('text'))
+
+    def __str__(self):
+        return f'{self.slug}'
+
+    def get_absolute_url(self):
+        return reverse('page_detail_url', kwargs={'slug': self.slug})
+
+    class Meta:
+        verbose_name = gettext_lazy('page')
+        verbose_name_plural = gettext_lazy('pages')
