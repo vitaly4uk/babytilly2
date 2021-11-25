@@ -189,10 +189,10 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_REGION_NAME = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'babytilly2')
-# AWS_PRELOAD_METADATA = True
-# AWS_DEFAULT_ACL = 'public-read'
-# AWS_QUERYSTRING_EXPIRE = None
-# AWS_QUERYSTRING_AUTH = False
+AWS_PRELOAD_METADATA = True
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_EXPIRE = None
+AWS_QUERYSTRING_AUTH = False
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -265,8 +265,6 @@ else:
 
 CKEDITOR_UPLOAD_PATH = 'ckeditor_upload/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
-
-AWS_QUERYSTRING_AUTH = False
 
 CKEDITOR_CONFIGS = {
     'default': {
