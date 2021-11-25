@@ -5,6 +5,7 @@ from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
 from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter
+from commercial.forms import ArticleAdminForm
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem
 
 
@@ -106,12 +107,11 @@ class ArticleAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ['id', 'article_name']
     search_fields = ['id']
     list_filter = [ArticlePublishedFilter]
+    form = ArticleAdminForm
 
-    def save_model(self, request, obj, form, change):
-        obj.save()
-
-        for afile in request.FILES.getlist('images_multiple'):
-            obj.images.create(image=afile)
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        form.save_images(form.instance)
 
     @admin.display(description=gettext_lazy('name'))
     def article_name(self, obj):
