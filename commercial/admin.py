@@ -197,3 +197,18 @@ class OrderAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             queryset = queryset.filter(user__profile__departament_id=request.user.profile.department_id)
         return queryset
+
+class PageAdmin(admin.ModelAdmin):
+    list_display = ['slug']
+
+    def get_list_display(self, request):
+        list_display = super(PageAdmin, self).get_list_display(request)
+        if request.user.is_superuser:
+            return list_display + ['departament']
+        return list_display
+
+    def get_queryset(self, request):
+        queryset = super(PageAdmin, self).get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
+        return queryset

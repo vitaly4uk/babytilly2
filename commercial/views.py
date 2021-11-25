@@ -10,7 +10,7 @@ from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView
 from django.core.cache import cache
 from braces.views import CsrfExemptMixin, JSONRequestResponseMixin, AjaxResponseMixin
-from commercial.models import StartPageImage, Category, Article, ArticleProperties, Order, OrderItem
+from commercial.models import StartPageImage, Category, Article, ArticleProperties, Order, OrderItem, Page
 from django.utils.decorators import method_decorator
 import logging
 
@@ -36,6 +36,15 @@ class HomePage(TemplateView):
             'file_list': [sp.image.url for sp in queryset],
         })
         return context
+
+class PageDetailView(DetailView):
+    template_name = 'flatpages/default.html'
+    context_object_name = 'page'
+
+    def get_queryset(self):
+        user_departament_id = self.request.user.profile.departament_id
+        queryset = Page.objects.filter(departament_id=user_departament_id)
+        return queryset
 
 class ArticleListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/articleprice_list.html'
