@@ -99,7 +99,6 @@ class Article(models.Model):
     category = TreeForeignKey(
         Category, verbose_name=gettext_lazy('category'), null=True, blank=True, on_delete=models.CASCADE
     )
-    image = ImageField(gettext_lazy('image'), upload_to='photos/')
     property = models.ManyToManyField(Departament, through='ArticleProperties', verbose_name=gettext_lazy('property'))
 
     def get_small_thumbnail_url(self):
@@ -132,6 +131,7 @@ class ArticleProperties(models.Model):
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
     is_new = models.BooleanField(gettext_lazy('is new'), default=False)
     is_special = models.BooleanField(gettext_lazy('is special'), default=False)
+    main_image = ImageField(gettext_lazy('main image'), upload_to='photos/', null=True)
 
     class Meta:
         verbose_name = gettext_lazy('article property')
@@ -144,6 +144,7 @@ class ArticleProperties(models.Model):
 class ArticleImage(models.Model):
     article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), related_name='images',
                                 on_delete=models.CASCADE)
+    departament = models.ForeignKey(Departament, on_delete=models.CASCADE, null=True)
     image = ImageField(gettext_lazy('image'), upload_to='photos/')
 
     def get_small_thumbnail_url(self):
