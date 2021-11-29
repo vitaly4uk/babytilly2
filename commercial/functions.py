@@ -2,15 +2,20 @@ import csv
 import logging
 import typing
 from io import BytesIO
-from django.template import loader
+
 from PIL import Image
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.template import loader
+
+from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties
 
 logger = logging.getLogger(__name__)
 
+
 def export_to_csv(request, order, encode):
     return loader.render_to_string('commercial/csv.html', {'order': order})
+
 
 def get_thumbnail_url(image, size):
     thumb_name = image.name.replace('upload/foto', 'thumb/{}'.format(size))
@@ -44,13 +49,29 @@ def get_thumbnail_url(image, size):
     return thumb_url
 
 
-def do_import_price(csv_file: typing.IO, country: str):
-    from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties
+def get_or_create_category(
+        category_id: str, category_name: str, departament: Departament, parent: Category = None
+) -> Category:
+    category, created = Category.objects.get_or_create(pk=category_id)
+    category_property, created = CategoryProperties.objects.get_or_create(
+        category=category,
+        departament=departament
+    )
+    category_property.name = category_name
+    category_property.published = True
+    category_property.save()
+    if parent:
+        category.parent = parent
+        category.save()
+    return category
 
+
+def do_import_price(csv_file: typing.IO, country: str):
     field_names = [
-        'id', 'name', 'article', 'is_category', 'parent_id',
-        '5', '6', '7', 'price', '9', '10', '11', '12', '13', '14', '15', '16', '17',
-        'image', '19', 'description', '21', '22'
+        'id', 'name', 'vendor_code', 'is_category', 'parent_id',
+        'parent_name', 'trade_price', 'retail_price', 'length', 'width', 'height',
+        'volume', 'weight', None, None, 'barcode', 'description', 'image_link',
+        'video_link', 'presence', 'site_link', 'company'
     ]
     reader = csv.DictReader(csv_file, fieldnames=field_names, delimiter=';')
     departament = Departament.objects.get(country=country)
@@ -61,77 +82,42 @@ def do_import_price(csv_file: typing.IO, country: str):
 
         if is_category:
             # print(row)
-            category_id = row['id'].strip().rjust(5, '0')
-
-            category, created = Category.objects.get_or_create(pk=category_id)
-            category_property, created = CategoryProperties.objects.get_or_create(
-                category=category,
-                departament=departament
-            )
-            category_property.name = row['name']
-            category_property.published = True
-            category_property.save()
-
-            parent_category_id = row['parent_id']
-            if parent_category_id:
-                parent_category_id = parent_category_id.strip().rjust(5, '0')
-                parent = Category.objects.get(pk=parent_category_id)
-                category.parent = parent
-                category.level = parent.level + 1
-                category.save()
+            parent = get_or_create_category(row['parent_id'], row['parent_name'], departament)
+            get_or_create_category(row['id'], row['name'], departament, parent=parent)
         else:
             # print(row)
-            parent_category_id = row['parent_id']
-            if parent_category_id:
-                parent_category_id = parent_category_id.strip().rjust(5, '0')
-                category, created = Category.objects.get_or_create(pk=parent_category_id)
-                article_id = row['id'].strip().rjust(5, '0')
-                article, created = Article.objects.get_or_create(pk=article_id)
-                article.category = category
-                article.image.name = 'upload/{}'.format(row['image'][3:].replace("\\", "/"))
-                article.save()
-                article_property, created = ArticleProperties.objects.get_or_create(
-                    article=article,
-                    departament=departament
-                )
-                article_property.name = row['name']
-                article_property.description = row['description']
-                article_property.price = row['price']
-                article_property.published = True
-                article_property.save()
+            parent = get_or_create_category(row['parent_id'], row['parent_name'], departament)
+            article_id = row['id']
+            article, created = Article.objects.get_or_create(pk=article_id)
+            article.category = parent
+            article.save()
+            article_property, created = ArticleProperties.objects.get_or_create(
+                article=article,
+                departament=departament
+            )
+            article_property.name = row['name']
+            article_property.description = row['description']
+            article_property.price = row['retail_price']
+            article_property.published = True
+            article_property.save()
 
     Category.objects.rebuild()
 
+
 def do_import_novelty(csv_file: typing.IO, departament_id: int):
-    from commercial.models import ArticleProperties
+    _perform_update_articles(csv_file, departament_id, 'is_new')
 
-    ArticleProperties.objects.filter(departament_id=departament_id).update(is_new=False)
-    reader = csv.reader(csv_file, delimiter=';')
-
-    for row in reader:
-        try:
-            article_id = row[0].strip().rjust(5, '0')
-        except IndexError:
-            continue
-
-        ArticleProperties.objects.filter(
-            departament_id=departament_id,
-            article_id=article_id
-        ).update(is_new=True)
 
 def do_import_special(csv_file: typing.IO, departament_id: int):
-    from commercial.models import ArticleProperties
+    _perform_update_articles(csv_file, departament_id, 'is_special')
 
-    ArticleProperties.objects.filter(departament_id=departament_id).update(is_special=False)
+
+def _perform_update_articles(csv_file: typing.IO, departament_id: int, field_name: str):
+    ArticleProperties.objects.filter(departament_id=departament_id).update(**{field_name: False})
     reader = csv.reader(csv_file, delimiter=';')
 
     for row in reader:
-        try:
-            article_id = row[0].strip().rjust(5, '0')
-        except IndexError:
-            continue
-
         ArticleProperties.objects.filter(
             departament_id=departament_id,
-            article_id=article_id
-        ).update(is_special=True)
+            article_id=row[0]
+        ).update(**{field_name: True})

@@ -159,7 +159,7 @@ class ImportPriceAdmin(admin.ModelAdmin):
     list_display = ['imported_at', 'user', 'departament']
     list_filter = ['departament']
     autocomplete_fields = ['departament']
-    ordering = ['imported_at']
+    ordering = ['-imported_at']
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
@@ -208,6 +208,7 @@ class OrderAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             queryset = queryset.filter(user__profile__departament_id=request.user.profile.department_id)
         return queryset
+
 
 class PageAdmin(admin.ModelAdmin):
     list_display = ['slug']
