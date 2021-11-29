@@ -1,22 +1,18 @@
+import logging
 from urllib.parse import urlencode
 
-from django.contrib.auth import logout
-from django.core.files.storage import get_storage_class
-from django.db.models import F, Q
 from django.conf import settings
-from django.http import HttpRequest, HttpResponseRedirect
+from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView
-from django.core.cache import cache
-from braces.views import CsrfExemptMixin, JSONRequestResponseMixin, AjaxResponseMixin
-from commercial.models import StartPageImage, Category, Article, ArticleProperties, Order, OrderItem, Page
 from django.utils.decorators import method_decorator
-import logging
+from django.views.generic import TemplateView, ListView, DetailView
 
+from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page
 from commonutils.views import ActiveRequiredMixin, is_active
 
 logger = logging.getLogger(__name__)
+
 
 def get_digits(string):
     pos = 0
@@ -25,6 +21,7 @@ def get_digits(string):
             return string[:pos]
         pos += 1
     return string if string else '0'
+
 
 class HomePage(TemplateView):
     template_name = 'index.html'
@@ -37,6 +34,7 @@ class HomePage(TemplateView):
         })
         return context
 
+
 class PageDetailView(DetailView):
     template_name = 'flatpages/default.html'
     context_object_name = 'page'
@@ -45,6 +43,7 @@ class PageDetailView(DetailView):
         user_departament_id = self.request.user.profile.departament_id
         queryset = Page.objects.filter(departament_id=user_departament_id)
         return queryset
+
 
 class ArticleListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/articleprice_list.html'
@@ -56,7 +55,8 @@ class ArticleListView(ActiveRequiredMixin, ListView):
     def get_queryset(self):
         sort = self.request.GET.get('sort', None)
         user_departament_id = self.request.user.profile.departament_id
-        queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id, article__category__id=self.kwargs['id']).order_by('name')
+        queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id,
+                                                    article__category__id=self.kwargs['id']).order_by('name')
 
         if sort == 'price':
             queryset = queryset.order_by('price')
@@ -78,6 +78,7 @@ class ArticleListView(ActiveRequiredMixin, ListView):
             'link': urlencode(params),
         })
         return context
+
 
 class ArticleSearchListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/articleprice_list.html'
@@ -116,6 +117,7 @@ class ArticleSearchListView(ActiveRequiredMixin, ListView):
         })
         return context
 
+
 class OrderListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/order_list.html'
     context_object_name = 'order_list'
@@ -123,6 +125,7 @@ class OrderListView(ActiveRequiredMixin, ListView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user, is_closed=True)
+
 
 class OrderDetailView(ActiveRequiredMixin, DetailView):
     template_name = 'commercial/editcart.html'
@@ -132,6 +135,7 @@ class OrderDetailView(ActiveRequiredMixin, DetailView):
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user, is_closed=True)
 
+
 @method_decorator(is_active('/'), 'dispatch')
 class AddToCartView(TemplateView):
     template_name = 'commercial/cart.html'
@@ -140,24 +144,29 @@ class AddToCartView(TemplateView):
         context = super(AddToCartView, self).get_context_data(**kwargs)
         user_departament_id = self.request.user.profile.departament_id
         order = getattr(self.request, 'order', None)
-        id = self.kwargs.get('id', None)
-        count = self.kwargs.get('count', 1)
+        article_id = self.kwargs.get('id', None)
+        try:
+            count = int(self.kwargs.get('count', '1'))
+        except ValueError:
+            count = 1
         logger.debug('add to cart: %s', order)
-        if id:
+        if article_id:
             if not order:
                 order = Order(user=self.request.user)
                 order.save()
                 self.request.session['order_id'] = order.pk
                 self.request.order = order
-            article = get_object_or_404(ArticleProperties, article_id=id, departament_id=user_departament_id)
-            (orderitem, _) = OrderItem.objects.get_or_create(order=order, article_id=article.article.id)
-            orderitem.count = int(count)
-            orderitem.price = str(article.price)
-            orderitem.save()
+            article_property = get_object_or_404(ArticleProperties, article_id=article_id,
+                                                 departament_id=user_departament_id)
+            order_item, _ = OrderItem.objects.get_or_create(order=order, article_id=article_id)
+            order_item.count = count
+            order_item.price = article_property.get_price_for_user(self.request.user)
+            order_item.save()
         context.update({
             'order': self.request.order
         })
         return context
+
 
 @is_active('/')
 def edit_cart(request):

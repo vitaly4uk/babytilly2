@@ -134,6 +134,12 @@ class ArticleProperties(models.Model):
 
     company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
 
+    def get_price_for_user(self, user):
+        price = self.price
+        if user.profile.sale:
+            price = price * user.profile.sale / 100
+        return price
+
     class Meta:
         verbose_name = gettext_lazy('article property')
         verbose_name_plural = gettext_lazy('article properties')
@@ -243,6 +249,7 @@ class OrderItem(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
+    sale = models.DecimalField(gettext_lazy('sale'), max_digits=5, decimal_places=2, default=0)
 
     def __str__(self):
         return f"Profile for {self.user}"

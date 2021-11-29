@@ -97,11 +97,11 @@
                                     {% if additional_images %}
                                         <a class="carousel-control-prev" href="#carousel-{{ item.article.id }}" role="button" data-slide="prev">
                                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Предыдуший</span>
+                                            <span class="sr-only">{% trans "previose"|upper %}</span>
                                         </a>
                                         <a class="carousel-control-next" href="#carousel-{{ item.article.id }}" role="button" data-slide="next">
                                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Следующий</span>
+                                            <span class="sr-only">{% trans "next"|upper %}</span>
                                         </a>
                                     {% endif %}
                             </div>
@@ -115,35 +115,27 @@
                             <div class="card-body">
                                 <p class="card-subtitle">
                                     {% if item.article.in_pack %}
-                                        <small>шт в ящ.: {{ item.article.in_pack }}</small>{% endif %}
+                                        <small>шт в ящ.: {{ item.article.in_pack }}</small>
+                                    {% endif %}
                                     {% if item.article.doze %}
-                                        <span class="badge badge-pill badge-warning">ДОЗЫ</span>{% endif %}
+                                        <span class="badge badge-pill badge-warning">ДОЗЫ</span>
+                                    {% endif %}
                                     {% if item.is_new %}
-                                        <span class="badge badge-pill badge-danger">{% trans 'new'|upper %}</span>{% endif %}
+                                        <span class="badge badge-pill badge-danger">{% trans 'new'|upper %}</span>
+                                    {% endif %}
                                     {% if item.is_special %}
-                                        <span class="badge badge-pill badge-success">{% trans 'sale'|upper %}</span>{% endif %}
+                                        <span class="badge badge-pill badge-success">{% trans 'sale'|upper %}</span>
+                                    {% endif %}
                                     {% if item.article.is_stock %}
-                                        <span class="badge badge-pill badge-success">СПЕЦ. ПРЕД.</span>{% endif %}
+                                        <span class="badge badge-pill badge-success">СПЕЦ. ПРЕД.</span>
+                                    {% endif %}
                                 </p>
 
-                                <p class="card-text truncated">{{ item.article.description|safe|truncatewords:15 }}</p>
-                                <p class="card-text d-none">{{ item.article.description|safe }}</p>
-                                {% if user.profile.type == 2 %}
-                                    {% if item.article.type == 1 %}
-                                        <div class="card-text">
-                                            <img src="{% static 'img/open_box.png' %}" class="box">
-                                        </div>
-                                    {% endif %}
-                                    {% if item.article.type == 2 %}
-                                        <div class="card-text">
-                                            <img src="{% static 'img/close_box.png' %}" class="box">
-                                            <img src="{% static 'img/open_box.png' %}" class="box">
-                                        </div>
-                                    {% endif %}
-                                {% endif %}
-                                    <div class="card-text">
-                                        за шт. <span class="h5">{{ item.price }}</span>
-                                    </div>
+                                <p class="card-text truncated">{{ item.description|safe|truncatewords:15 }}</p>
+                                <p class="card-text d-none">{{ item.description|safe }}</p>
+                                <div class="card-text">
+                                    за шт. <span class="h5">{% calculate_user_price item request.user %}</span>
+                                </div>
                                 <div class="card-text">
                                     <form class="form-inline mx-sm-3 mb-2">
                                         <label class="sr-only" for="{{ item.article.id }}_input">Количество</label>
