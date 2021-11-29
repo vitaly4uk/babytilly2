@@ -69,7 +69,7 @@ def get_or_create_category(
 def do_import_price(csv_file: typing.IO, country: str):
     field_names = [
         'id', 'name', 'vendor_code', 'is_category', 'parent_id',
-        'parent_name', 'trade_price', 'retail_price', 'length', 'width', 'height',
+        'parent_name', 'trade_price', 'retail_price', None, 'length', 'width', 'height',
         'volume', 'weight', None, None, 'barcode', 'description', 'image_link',
         'video_link', 'presence', 'site_link', 'company'
     ]
@@ -97,7 +97,23 @@ def do_import_price(csv_file: typing.IO, country: str):
             )
             article_property.name = row['name']
             article_property.description = row['description']
-            article_property.price = row['retail_price']
+            article_property.price = row['trade_price']
+            article_property.retail_price = row['retail_price']
+
+            article_property.length = row['length']
+            article_property.width = row['width']
+            article_property.height = row['height']
+
+            article_property.volume = row['volume']
+            article_property.weight = row['weight']
+
+            article_property.image_link = row['image_link']
+            article_property.video_link = row['video_link']
+            article_property.site_link = row['site_link']
+
+            article_property.barcode = row['barcode']
+            article_property.company = row['company']
+
             article_property.published = True
             article_property.save()
 

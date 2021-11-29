@@ -3,7 +3,6 @@ import logging
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.template.loader import render_to_string
@@ -13,8 +12,6 @@ from django.utils.translation import gettext_lazy
 from django_countries.fields import CountryField
 from mptt.models import MPTTModel, TreeForeignKey
 from sorl.thumbnail import ImageField
-
-from commercial.functions import get_thumbnail_url, export_to_csv
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +43,7 @@ class StartPageImage(models.Model):
         verbose_name_plural = gettext_lazy('start page images')
         ordering = ['order']
         indexes = [
-            models.Index(fields=['order'], include=['image'], name='order')
+            models.Index(fields=['order'], name='order')
         ]
 
 
@@ -99,39 +96,43 @@ class Article(models.Model):
     category = TreeForeignKey(
         Category, verbose_name=gettext_lazy('category'), null=True, blank=True, on_delete=models.CASCADE
     )
+    vendor_code = models.CharField(gettext_lazy('vendor code'), max_length=255, null=True)
     property = models.ManyToManyField(Departament, through='ArticleProperties', verbose_name=gettext_lazy('property'))
-
-    def get_small_thumbnail_url(self):
-        url = cache.get(f'small-thumb-url-{self.image.name}')
-        if url is None:
-            url = get_thumbnail_url(self.image, settings.THUMBNAIL_SIZE['small'])
-            cache.set(f'small-thumb-url-{self.image.name}', url)
-        return url
-
-    def get_big_thumbnail_url(self):
-        url = cache.get(f'big-thumb-url-{self.image.name}')
-        if url is None:
-            url = get_thumbnail_url(self.image, settings.THUMBNAIL_SIZE['big'])
-            cache.set(f'big-thumb-url-{self.image.name}', url)
-        return url
-
-    def get_image_url(self):
-        return self.image.url
 
     class Meta:
         verbose_name = gettext_lazy('article')
         verbose_name_plural = gettext_lazy('articles')
+        indexes = [
+            models.Index(fields=['vendor_code'], name='vendor_code')
+        ]
 
 
 class ArticleProperties(models.Model):
     departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     name = models.CharField(gettext_lazy('name'), max_length=255)
+    description = models.TextField(gettext_lazy('description'), null=True)
     published = models.BooleanField(gettext_lazy('published'), default=True)
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
+    retail_price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
     is_new = models.BooleanField(gettext_lazy('is new'), default=False)
     is_special = models.BooleanField(gettext_lazy('is special'), default=False)
     main_image = ImageField(gettext_lazy('main image'), upload_to='photos/', null=True)
+
+    length = models.DecimalField(gettext_lazy('length'), null=True, blank=True, decimal_places=1, max_digits=10)
+    width = models.DecimalField(gettext_lazy('width'), null=True, blank=True, decimal_places=1, max_digits=10)
+    height = models.DecimalField(gettext_lazy('height'), null=True, blank=True, decimal_places=1, max_digits=10)
+
+    volume = models.DecimalField(gettext_lazy('volume'), null=True, blank=True, decimal_places=1, max_digits=10)
+    weight = models.DecimalField(gettext_lazy('weight'), null=True, blank=True, decimal_places=1, max_digits=10)
+
+    barcode = models.CharField(gettext_lazy('barcode'), max_length=255, null=True, blank=True)
+
+    image_link = models.URLField(gettext_lazy('image_link'), null=True, blank=True)
+    video_link = models.URLField(gettext_lazy('image_link'), null=True, blank=True)
+    site_link = models.URLField(gettext_lazy('image_link'), null=True, blank=True)
+
+    company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
 
     class Meta:
         verbose_name = gettext_lazy('article property')
@@ -146,20 +147,6 @@ class ArticleImage(models.Model):
                                 on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, on_delete=models.CASCADE, null=True)
     image = ImageField(gettext_lazy('image'), upload_to='photos/')
-
-    def get_small_thumbnail_url(self):
-        url = cache.get(f'small-thumb-url-{self.image.name}')
-        if url is None:
-            url = get_thumbnail_url(self.image, settings.THUMBNAIL_SIZE['small'])
-            cache.set(f'small-thumb-url-{self.image.name}', url)
-        return url
-
-    def get_big_thumbnail_url(self):
-        url = cache.get(f'big-thumb-url-{self.image.name}')
-        if url is None:
-            url = get_thumbnail_url(self.image, settings.THUMBNAIL_SIZE['big'])
-            cache.set(f'big-thumb-url-{self.image.name}', url)
-        return url
 
     class Meta:
         verbose_name = gettext_lazy('image')
@@ -203,6 +190,7 @@ class Order(models.Model):
         return reverse('commercial_order_detail', kwargs={'pk': self.pk})
 
     def send(self):
+        from commercial.functions import export_to_csv
         context = {
             'cart': self.items.all(),
             'order': self,
@@ -310,6 +298,7 @@ class ImportSpecial(models.Model):
     class Meta:
         verbose_name = gettext_lazy('import special')
         verbose_name_plural = gettext_lazy('import specials')
+
 
 class Page(models.Model):
     ABOUT = 'about'
