@@ -128,9 +128,9 @@ class ArticleProperties(models.Model):
 
     barcode = models.CharField(gettext_lazy('barcode'), max_length=255, null=True, blank=True)
 
-    image_link = models.URLField(gettext_lazy('image_link'), null=True, blank=True)
-    video_link = models.URLField(gettext_lazy('image_link'), null=True, blank=True)
-    site_link = models.URLField(gettext_lazy('image_link'), null=True, blank=True)
+    image_link = models.URLField(gettext_lazy('image link'), null=True, blank=True)
+    video_link = models.URLField(gettext_lazy('video link'), null=True, blank=True)
+    site_link = models.URLField(gettext_lazy('site link'), null=True, blank=True)
 
     company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
 
