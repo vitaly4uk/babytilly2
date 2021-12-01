@@ -71,7 +71,7 @@
                     <div class="row no-gutters{% if item.article.id in order.get_article_ids %} bought{% endif %}">
                         <div class="col-md-2">
                             <div class="carousel slide" data-ride="carousel" data-interval="false" id="carousel-{{ item.article.id }}">
-                                <div class="carousel-inner">
+                                {% comment %}<div class="carousel-inner">
                                     <div class="carousel-item active">
                                         <a href="{{ item.main_image.url }}" role="button" data-toggle="modal"
                                            data-target="#imageModal">
@@ -93,7 +93,7 @@
                                             </a>
                                         </div>
                                     {% endfor %}
-                                </div>
+                                </div>{% endcomment %}
                                     {% if additional_images %}
                                         <a class="carousel-control-prev" href="#carousel-{{ item.article.id }}" role="button" data-slide="prev">
                                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -114,20 +114,32 @@
                             </div>
                             <div class="card-body">
                                 <p class="card-subtitle">
-                                    {% if item.article.in_pack %}
-                                        <small>шт в ящ.: {{ item.article.in_pack }}</small>
+                                    {% if item.length %}
+                                        <span><i class="bi bi-arrows-angle-expand horizont"></i> {% trans 'length'|capfirst %}: {{ item.length }}</span>
                                     {% endif %}
-                                    {% if item.article.doze %}
-                                        <span class="badge badge-pill badge-warning">ДОЗЫ</span>
+                                    {% if item.width %}
+                                        <span><i class="bi bi-arrows-angle-expand"></i> {% trans 'width'|capfirst %}: {{ item.width }}</span>
+                                    {% endif %}
+                                    {% if item.height %}
+                                        <span><i class="bi bi-arrows-angle-expand vertical"></i>{% trans 'height'|capfirst %}: {{ item.height }}</span>
+                                    {% endif %}
+                                    {% if item.volume %}
+                                        <span><i class="bi bi-box"></i> {% trans 'volume'|capfirst %}: {{ item.volume }}</span>
+                                    {% endif %}
+                                    {% if item.weight %}
+                                        <span><i class="bi bi-box-arrow-down"></i> {% trans 'weight'|capfirst %}: {{ item.weight }}</span>
                                     {% endif %}
                                     {% if item.is_new %}
-                                        <span class="badge badge-pill badge-danger">{% trans 'new'|upper %}</span>
+                                        <span>{% trans 'new'|upper %}</span>
                                     {% endif %}
                                     {% if item.is_special %}
                                         <span class="badge badge-pill badge-success">{% trans 'sale'|upper %}</span>
                                     {% endif %}
-                                    {% if item.article.is_stock %}
-                                        <span class="badge badge-pill badge-success">СПЕЦ. ПРЕД.</span>
+                                    {% if item.image_link %}
+                                        <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}" target="_blank">{% trans 'image'|capfirst %}</a> </span>
+                                    {% endif %}
+                                    {% if item.video_link %}
+                                        <span><i class="bi bi-camera-video"></i> <a href="{{ item.video_link }}" target="_blank">{% trans 'video'|capfirst %}</a> </span>
                                     {% endif %}
                                 </p>
 

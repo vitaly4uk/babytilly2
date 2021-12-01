@@ -147,6 +147,25 @@ nav.navbar-top a {
     filter: invert(100%);
 }
 
+.card-subtitle{
+    margin: -10px 0 0 -10px;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+.card-subtitle span{
+    padding: 0 3px;
+}
+.card-subtitle span i.bi::before{
+    color:grey
+}
+
+.card-subtitle .horizont::before{
+    transform: rotate(45deg);
+}
+
+.card-subtitle .vertical::before{
+    transform: rotate(135deg);
+}
+
 @media (max-width: 768px) {
     .w-sm-100 {
         width: 100%;
