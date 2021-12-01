@@ -160,6 +160,10 @@ class AddToCartView(TemplateView):
                                                  departament_id=user_departament_id)
             order_item, _ = OrderItem.objects.get_or_create(order=order, article_id=article_id)
             order_item.count = count
+            order_item.volume = article_property.volume
+            order_item.weight = article_property.weight
+            order_item.barcode = article_property.barcode
+            order_item.company = article_property.company
             order_item.price = article_property.get_price_for_user(self.request.user)
             order_item.save()
         context.update({

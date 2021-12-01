@@ -179,6 +179,12 @@ class Order(models.Model):
     def sum(self):
         return sum(i.price * i.count for i in self.get_order_items())
 
+    def volume(self):
+        return sum(i.volume * i.count for i in self.get_order_items())
+
+    def weight(self):
+        return sum(i.weight * i.count for i in self.get_order_items())
+
     sum.short_description = gettext_lazy('Sum')
 
     def add_item(self, article: Article, count: int):
@@ -230,7 +236,11 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, verbose_name=gettext_lazy('order'), related_name='items', on_delete=models.CASCADE)
     article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), on_delete=models.CASCADE)
     count = models.PositiveIntegerField(gettext_lazy('count'), default=0)
+    volume = models.PositiveIntegerField(gettext_lazy('volume'), default=0)
+    weight = models.PositiveIntegerField(gettext_lazy('weight'), default=0)
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
+    barcode = models.CharField(gettext_lazy('barcode'), max_length=255, null=True, blank=True)
+    company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
 
     def __str__(self):
         return smart_text(self.article.name)
