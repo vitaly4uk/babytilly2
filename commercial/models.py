@@ -235,6 +235,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, verbose_name=gettext_lazy('order'), related_name='items', on_delete=models.CASCADE)
     article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), on_delete=models.CASCADE)
+    name = models.CharField(gettext_lazy('name'), max_length=255, null=True)
     count = models.PositiveIntegerField(gettext_lazy('count'), default=0)
     volume = models.PositiveIntegerField(gettext_lazy('volume'), default=0)
     weight = models.PositiveIntegerField(gettext_lazy('weight'), default=0)
@@ -243,7 +244,7 @@ class OrderItem(models.Model):
     company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return smart_text(self.article.name)
+        return self.name
 
     def sum(self):
         return self.count * self.price

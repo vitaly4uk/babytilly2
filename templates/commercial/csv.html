@@ -1,5 +1,5 @@
 "{{ order.user }}";"";"{{ order.pk }}"
 "{{ order.comment }}";"";""
 "{{ order.sum }}";"{{ order.volume }}";"{{ order.weight }}"
-{% for item in order.items.all %}"{{ item.article.pk|safe }}";"{{ item.article|safe }}";"{{ item.count }}";"{{ item.price|floatformat:2 }}";"{{ item.sum|floatformat:2 }}";"{{ item.volume }}";"{{ item.weight }}";"{{ item.barcode }}";"{{ item.company }}"
+{% for item in order.items.all %}"{{ item.article.pk|safe }}";"{{ item.name }}";"{{ item.count }}";"{{ item.price|floatformat:2 }}";"{{ item.sum|floatformat:2 }}";"{{ item.volume }}";"{{ item.weight }}";"{{ item.barcode }}";"{{ item.company }}"
 {% endfor %}

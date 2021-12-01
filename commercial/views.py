@@ -160,6 +160,7 @@ class AddToCartView(TemplateView):
                                                  departament_id=user_departament_id)
             order_item, _ = OrderItem.objects.get_or_create(order=order, article_id=article_id)
             order_item.count = count
+            order_item.name = article_property.name
             order_item.volume = article_property.volume
             order_item.weight = article_property.weight
             order_item.barcode = article_property.barcode
@@ -175,11 +176,11 @@ class AddToCartView(TemplateView):
 @is_active('/')
 def edit_cart(request):
     if request.method == "POST":
-        if request.POST.get('submit') == 'Очистить':
+        if request.POST.get('submit') == 'Clear':
             if hasattr(request, 'order'):
                 order = request.order
                 OrderItem.objects.filter(order=order).delete()
-        if request.POST.get('submit') == 'Пересчитать':
+        if request.POST.get('submit') == 'Recalculate':
             for item in request.POST:
                 if item.startswith('del_'):
                     i = item.split('_')
@@ -203,7 +204,7 @@ def edit_cart(request):
                     else:
                         elem.count = count
                         elem.save()
-        elif request.POST.get('submit') == 'Отправить':
+        elif request.POST.get('submit') == 'Send':
             if hasattr(request, 'order'):
                 order = request.order
                 order.comment = request.POST.get('comment')

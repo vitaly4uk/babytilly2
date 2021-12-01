@@ -1,7 +1,8 @@
-Заказ {{ order }}
+{% load i18n %}
+{% trans 'Order' %} {{ order }}
 {{ order.comment }}
-## \t Наименование \t Цена \t Кол-во \t Сумма
+## \t {% trans 'name'|capfirst %} \t {% trans 'price'|capfirst %} \t {% trans 'count'|capfirst %} \t {% trans 'sum'|capfirst %} \t {% trans 'volume'|capfirst %} \t {% trans 'weight'|capfirst %} \t {% trans 'barcode'|capfirst %} \t {% trans 'company'|capfirst %}
 {% for item in cart %}
-{{ forloop.counter }} \t {{ item.article }} \t {% if user.profile.show_price %}{{ item.price|floatformat:2 }}{% endif %} \t {{ item.count }} \t {% if user.profile.show_price %}{{ item.sum|floatformat:2 }}{% endif %}
+{{ forloop.counter }} \t {{ item.name }} \t {{ item.price|floatformat:2 }} \t {{ item.count }} \t {{ item.sum|floatformat:2 }} \t {{ item.volume }} \t {{ item.weight }} \t {{ item.barcode }} \t {{ item.company }}
 {% endfor %}
-\t \t \t {{ order.count }} \t {% if user.profile.show_price %}{{ order.sum|floatformat:2 }}{% endif %}
+\t \t \t {{ order.count }} \t {{ order.sum|floatformat:2 }} \t {{ order.volume }} \t {{ order.weight }}

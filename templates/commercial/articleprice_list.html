@@ -71,7 +71,7 @@
                     <div class="row no-gutters{% if item.article.id in order.get_article_ids %} bought{% endif %}">
                         <div class="col-md-2">
                             <div class="carousel slide" data-ride="carousel" data-interval="false" id="carousel-{{ item.article.id }}">
-                                {% comment %}<div class="carousel-inner">
+                                <div class="carousel-inner">
                                     <div class="carousel-item active">
                                         <a href="{{ item.main_image.url }}" role="button" data-toggle="modal"
                                            data-target="#imageModal">
@@ -93,7 +93,7 @@
                                             </a>
                                         </div>
                                     {% endfor %}
-                                </div>{% endcomment %}
+                                </div>
                                     {% if additional_images %}
                                         <a class="carousel-control-prev" href="#carousel-{{ item.article.id }}" role="button" data-slide="prev">
                                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>

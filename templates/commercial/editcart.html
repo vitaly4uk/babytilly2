@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n commercial_tags thumbnail %}
 
-{% block title %}{% trans 'Корзина' %} :: {{ block.super }}{% endblock %}
+{% block title %}{% trans 'card'|capfirst %} :: {{ block.super }}{% endblock %}
 
 {% block content %}
     <form name="cartform" method="POST">
@@ -48,7 +48,7 @@
         </table>
     <div class="row">
 {#        <div class="col-2">#}
-{#            <input type="submit" value="Очистить" name="submit" class="btn btn-danger">#}
+{#            <input type="submit" value="{% trans 'Clear' %}" name="submit" class="btn btn-danger">#}
 {#        </div>#}
         {% if not order.is_closed %}
         <div class="col-12 text-right">

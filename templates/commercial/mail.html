@@ -1,23 +1,32 @@
-<b>Заказ {{ order }}</b>
+{% load i18n %}
+<b>{% trans 'order'|capfirst %} {{ order }}</b>
 <p>{{ order.comment }}</p>
 <table width="100%" border="1">
     <thead>
         <tr>
             <th width="5%">##</th>
-            <th>Наименование</th>
-            <th width="10%">Цена</th>
-            <th width="10%">Кол-во</th>
-            <th width="10%">Сумма</th>
+            <th>{% trans 'name'|capfirst %}</th>
+            <th width="10%">{% trans 'price'|capfirst %}</th>
+            <th width="10%">{% trans 'count'|capfirst %}</th>
+            <th width="10%">{% trans 'sum'|capfirst %}</th>
+            <th width="10%">{% trans 'volume'|capfirst %}</th>
+            <th width="10%">{% trans 'weight'|capfirst %}</th>
+            <th width="10%">{% trans 'barcode'|capfirst %}</th>
+            <th width="10%">{% trans 'company'|capfirst %}</th>
         </tr>
     </thead>
     <tbody>
         {% for item in cart %}
         <tr>
             <td align="right">{{ forloop.counter }}</td>
-            <td>{{ item.article }}</td>
-            {% if user.profile.show_price %}<td align="right">{{ item.price|floatformat:2 }}</td>{% else %}<td></td>{% endif %}
+            <td>{{ item.name }}</td>
+            <td align="right">{{ item.price|floatformat:2 }}</td>
             <td align="right">{{ item.count }}</td>
-            {% if user.profile.show_price %}<td align="right">{{ item.sum|floatformat:2 }}</td>{% else %}<td></td>{% endif %}
+            <td align="right">{{ item.sum|floatformat:2 }}</td>
+            <td align="right">{{ item.volume }}</td>
+            <td align="right">{{ item.weight }}</td>
+            <td align="right">{{ item.barcode }}</td>
+            <td align="right">{{ item.company }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -25,7 +34,9 @@
         <tr>
             <td colspan="3"></td>
             <td align="right">{{ order.count }}</td>
-            {% if user.profile.show_price %}<td align="right">{{ order.sum|floatformat:2 }}</td>{% else %}<td></td>{% endif %}
+            <td align="right">{{ order.sum|floatformat:2 }}</td>
+            <td align="right">{{ order.volume }}</td>
+            <td align="right">{{ order.weight }}</td>
         </tr>
     </tfoot>
 </table>
