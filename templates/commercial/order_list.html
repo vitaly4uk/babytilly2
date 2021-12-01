@@ -11,7 +11,7 @@
         <tr>
             <td scope="row"><a href="{{ order.get_absolute_url }}">{{ order.id }}</a></td>
             <td>{{ order.date }}</td>
-            <td>{{ order.sum|floatformat:2 }} {% trans 'uah' %}</td>
+            <td>{{ order.sum|floatformat:2 }}</td>
         </tr>
     {% endfor %}
     </table>
