@@ -139,7 +139,10 @@
                                         <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}" target="_blank">{% trans 'image'|capfirst %}</a> </span>
                                     {% endif %}
                                     {% if item.video_link %}
-                                        <span><i class="bi bi-camera-video"></i> <a href="{{ item.video_link }}" target="_blank">{% trans 'video'|capfirst %}</a> </span>
+                                        <span><i class="bi bi-youtube"></i> <a href="{{ item.video_link }}" target="_blank">{% trans 'video'|capfirst %}</a> </span>
+                                    {% endif %}
+                                    {% if item.site_link %}
+                                        <span><i class="bi bi-window"></i> <a href="{{ item.site_link }}" target="_blank">{% trans 'site'|capfirst %}</a> </span>
                                     {% endif %}
                                 </p>
 
