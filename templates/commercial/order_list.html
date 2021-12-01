@@ -1,19 +1,17 @@
 {% extends 'base.html' %}
-
-{% load static %}
-
+{% load static i18n %}
 {% block content %}
     <table class="table table-striped">
     <tr>
-        <th scope="col">Номер заказа</th>
-        <th scope="col">Дата заказа</th>
-        <th scope="col">Сумма заказа</th>
+        <th scope="col">{% trans 'order'|capfirst %} {% trans 'number' %}</th>
+        <th scope="col">{% trans 'order'|capfirst %} {% trans 'date' %}</th>
+        <th scope="col">{% trans 'order'|capfirst %} {% trans 'sum' %}</th>
     </tr>
     {% for order in order_list %}
         <tr>
             <td scope="row"><a href="{{ order.get_absolute_url }}">{{ order.id }}</a></td>
             <td>{{ order.date }}</td>
-            <td>{{ order.sum|floatformat:2 }} грн</td>
+            <td>{{ order.sum|floatformat:2 }}</td>
         </tr>
     {% endfor %}
     </table>

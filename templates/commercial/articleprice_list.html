@@ -114,25 +114,43 @@
                             </div>
                             <div class="card-body">
                                 <p class="card-subtitle">
-                                    {% if item.article.in_pack %}
-                                        <small>шт в ящ.: {{ item.article.in_pack }}</small>
+                                    {% if item.length %}
+                                        <span><i class="bi bi-arrows-angle-expand horizont"></i> {% trans 'length'|capfirst %}: {{ item.length }}</span>
                                     {% endif %}
-                                    {% if item.article.doze %}
-                                        <span class="badge badge-pill badge-warning">ДОЗЫ</span>
+                                    {% if item.width %}
+                                        <span><i class="bi bi-arrows-angle-expand"></i> {% trans 'width'|capfirst %}: {{ item.width }}</span>
+                                    {% endif %}
+                                    {% if item.height %}
+                                        <span><i class="bi bi-arrows-angle-expand vertical"></i>{% trans 'height'|capfirst %}: {{ item.height }}</span>
+                                    {% endif %}
+                                    {% if item.volume %}
+                                        <span><i class="bi bi-box"></i> {% trans 'volume'|capfirst %}: {{ item.volume }}</span>
+                                    {% endif %}
+                                    {% if item.weight %}
+                                        <span><i class="bi bi-box-arrow-down"></i> {% trans 'weight'|capfirst %}: {{ item.weight }}</span>
                                     {% endif %}
                                     {% if item.is_new %}
-                                        <span class="badge badge-pill badge-danger">{% trans 'new'|upper %}</span>
+                                        <span>{% trans 'new'|upper %}</span>
                                     {% endif %}
                                     {% if item.is_special %}
                                         <span class="badge badge-pill badge-success">{% trans 'sale'|upper %}</span>
                                     {% endif %}
-                                    {% if item.article.is_stock %}
-                                        <span class="badge badge-pill badge-success">СПЕЦ. ПРЕД.</span>
+                                    {% if item.image_link %}
+                                        <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}" target="_blank">{% trans 'image'|capfirst %}</a> </span>
+                                    {% endif %}
+                                    {% if item.video_link %}
+                                        <span><i class="bi bi-youtube"></i> <a href="{{ item.video_link }}" target="_blank">{% trans 'video'|capfirst %}</a> </span>
+                                    {% endif %}
+                                    {% if item.site_link %}
+                                        <span><i class="bi bi-window"></i> <a href="{{ item.site_link }}" target="_blank">{% trans 'site'|capfirst %}</a> </span>
                                     {% endif %}
                                 </p>
 
                                 <p class="card-text truncated">{{ item.description|safe|truncatewords:15 }}</p>
                                 <p class="card-text d-none">{{ item.description|safe }}</p>
+                                <div class="card-text">
+                                    <span class="h7 text-secondary">за шт. {{ item.retail_price }} {% trans 'retail price' %}</span>
+                                </div>
                                 <div class="card-text">
                                     за шт. <span class="h5">{% calculate_user_price item request.user %}</span>
                                 </div>

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n commercial_tags thumbnail %}
 
-{% block title %}Корзина :: {{ block.super }}{% endblock %}
+{% block title %}{% trans 'card'|capfirst %} :: {{ block.super }}{% endblock %}
 
 {% block content %}
     <form name="cartform" method="POST">
@@ -10,11 +10,11 @@
             <thead>
             <tr>
                 <th scope="col">##</th>
-                <th scope="col">Наименование</th>
-                <th scope="col">Цена</th>
-                <th scope="col">Кол-во</th>
-                <th scope="col">Сумма</th>
-                <th scope="col">{% if not order.is_closed %}Удалить{% endif %}</th>
+                <th scope="col">{% trans 'name'|capfirst %}</th>
+                <th scope="col">{% trans 'price'|capfirst %}</th>
+                <th scope="col">{% trans 'count'|capfirst %}</th>
+                <th scope="col">{% trans 'sum'|capfirst %}</th>
+                <th scope="col">{% if not order.is_closed %}{% trans 'delete'|capfirst %}{% endif %}</th>
                 <th></th>
             </tr>
             </thead>
@@ -48,18 +48,18 @@
         </table>
     <div class="row">
 {#        <div class="col-2">#}
-{#            <input type="submit" value="Очистить" name="submit" class="btn btn-danger">#}
+{#            <input type="submit" value="{% trans 'Clear' %}" name="submit" class="btn btn-danger">#}
 {#        </div>#}
         {% if not order.is_closed %}
         <div class="col-12 text-right">
-            <input type="submit" value="Пересчитать" name="submit" class="btn btn-secondary">
-            <input type="submit" value="Отправить" name="submit" class="btn btn-primary">
+            <input type="submit" value="{% trans 'Recalculate' %}" name="submit" class="btn btn-secondary">
+            <input type="submit" value="{% trans 'Send' %}" name="submit" class="btn btn-primary">
         </div>
         {% endif %}
     </div>
 <div class="row pt-2 pb-5">
     <div class="col w-75">
-        Комментарий:
+        {% trans 'Comment' %}:
         {% if order.is_closed %}
             <p>{{ order.comment }}</p>
         {% else %}
