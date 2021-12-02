@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy
 
 from babytilly2 import settings
-from commercial.models import Category, CategoryProperties, ArticleProperties, ArticleImage, Article
+from commercial.models import Category, CategoryProperties, ArticleProperties, ArticleImage
 
 register = template.Library()
 logger = logging.getLogger(__name__)
@@ -25,12 +25,24 @@ def get_article_images(article, user):
 
 @register.simple_tag
 def get_category_name(category, user):
-    return CategoryProperties.objects.get(category=category, departament_id=user.profile.departament_id).name
+    try:
+        category_property = CategoryProperties.objects.only('name').get(
+            category=category, departament_id=user.profile.departament_id
+        )
+    except CategoryProperties.DoesNotExist:
+        return ''
+    return category_property.name
 
 
 @register.simple_tag
 def get_article_name(article, user):
-    return ArticleProperties.objects.get(article=article, departament_id=user.profile.departament_id).name
+    try:
+        article_property = ArticleProperties.objects.only('name').get(
+            article=article, departament_id=user.profile.departament_id
+        )
+    except ArticleProperties.DoesNotExist:
+        return ''
+    return article_property.name
 
 
 def get_cached_trees(queryset):
