@@ -172,7 +172,7 @@ class ArticleProperties(models.Model):
     def get_price_for_user(self, user):
         price = self.price
         if user.profile.sale:
-            price = price * user.profile.sale / 100
+            price -= price * user.profile.sale / 100
         return price
 
     class Meta:
@@ -218,7 +218,7 @@ class Order(models.Model):
         order_sum = sum(i.price * i.count for i in self.get_order_items())
         if not self.user.profile.sale:
             sale = DepartamentSale.get_sale_for_departament(self.user.profile.departament, order_sum)
-            order_sum = order_sum * sale / 100 if sale else order_sum
+            order_sum -= order_sum * sale / 100 if sale else order_sum
         return order_sum
     sum.short_description = gettext_lazy('Sum')
 

@@ -187,12 +187,13 @@ class OrderItemInline(admin.StackedInline):
 class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'
     inlines = [OrderItemInline]
-    readonly_fields = []
+    readonly_fields = ['date', 'sum']
     ordering = ['date']
     list_filter = ['is_closed', ('user', admin.RelatedOnlyFieldListFilter)]
     actions = None
     search_fields = ['id']
     list_display = ['id', 'user', 'date', 'is_closed']
+    fields = ['user', 'date', 'comment', 'is_closed', 'sum']
 
     def has_add_permission(self, request):
         return request.user.is_superuser
