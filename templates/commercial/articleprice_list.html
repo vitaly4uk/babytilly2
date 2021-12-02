@@ -73,7 +73,7 @@
                             <div class="carousel slide" data-ride="carousel" data-interval="false" id="carousel-{{ item.article.id }}">
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
-                                        <a href="{{ item.main_image.url }}" role="button" data-toggle="modal"
+                                        <a href="{% if item.main_image %}{{ item.main_image.url }}{% endif %}" role="button" data-toggle="modal"
                                            data-target="#imageModal">
                                             {% thumbnail item.main_image "small"|get_thumb_size crop="center" as im %}
                                             <img src="{{ im.url }}" class="card-img img-thumbnail"
