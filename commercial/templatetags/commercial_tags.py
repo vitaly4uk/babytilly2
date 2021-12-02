@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy
 
 from babytilly2 import settings
-from commercial.models import Category, CategoryProperties, ArticleProperties, ArticleImage
+from commercial.models import Category, CategoryProperties, ArticleProperties, ArticleImage, Order
 
 register = template.Library()
 logger = logging.getLogger(__name__)

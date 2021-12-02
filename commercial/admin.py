@@ -6,7 +6,7 @@ from sorl.thumbnail.admin import AdminImageMixin
 
 from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter
 from commercial.forms import ArticleAdminForm
-from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem
+from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale
 
 
 class ProfileAdmin(admin.TabularInline):
@@ -15,6 +15,11 @@ class ProfileAdmin(admin.TabularInline):
     can_delete = False
     min_num = 1
     max_num = 1
+
+
+class DepartamentSaleAdmin(admin.TabularInline):
+    model = DepartamentSale
+    extra = 1
 
 
 class CategoryPropertyAdmin(admin.StackedInline):
@@ -39,6 +44,7 @@ class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
 
 
 class DepartamentAdmin(admin.ModelAdmin):
+    inlines = [DepartamentSaleAdmin]
     list_display = ['country', 'email']
     search_fields = ['country']
     actions = None

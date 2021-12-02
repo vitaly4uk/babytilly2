@@ -1,13 +1,14 @@
 import logging
+from decimal import Decimal
 
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils.encoding import smart_text
 from django.utils.translation import gettext_lazy
 from django_countries.fields import CountryField
 from mptt.models import MPTTModel, TreeForeignKey
@@ -28,6 +29,40 @@ class Departament(models.Model):
         verbose_name_plural = gettext_lazy('departaments')
         constraints = [
             models.UniqueConstraint(fields=['country', 'email'], name='unique_departament')
+        ]
+
+
+class DepartamentSale(models.Model):
+    departament = models.ForeignKey(
+        Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE
+    )
+    order_sum = models.DecimalField(
+        gettext_lazy('order sum'), max_digits=10, decimal_places=2,
+        validators=[MinValueValidator(0)]
+    )
+    sale = models.DecimalField(
+        gettext_lazy('sale in %'), max_digits=5, decimal_places=2, default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(100)]
+    )
+
+    @classmethod
+    def get_sale_for_departament(cls, departament: Departament, order_sum: Decimal) -> Decimal:
+        departament_sale = cls.objects.only('sale').filter(
+            departament=departament, order_sum__lte=order_sum
+        ).first()
+        if departament_sale:
+            return departament_sale.sale
+        return 0
+
+    def __str__(self):
+        return f"{self.order_sum} - {self.sale}%"
+
+    class Meta:
+        verbose_name = gettext_lazy('departament sale')
+        verbose_name_plural = gettext_lazy('departament sales')
+        ordering = ['-order_sum']
+        constraints = [
+            models.UniqueConstraint(fields=['departament', 'order_sum', 'sale'], name='unique_departament_order_sum_sale')
         ]
 
 
@@ -154,6 +189,9 @@ class ArticleImage(models.Model):
     departament = models.ForeignKey(Departament, on_delete=models.CASCADE, null=True)
     image = ImageField(gettext_lazy('image'), upload_to='photos/')
 
+    def __str__(self):
+        return str(self.image)
+
     class Meta:
         verbose_name = gettext_lazy('image')
         verbose_name_plural = gettext_lazy('images')
@@ -173,30 +211,22 @@ class Order(models.Model):
             self._items = list(self.items.all())
         return self._items
 
-    def count(self):
+    def count(self) -> int:
         return sum(i.count for i in self.get_order_items())
 
-    def sum(self):
-        return sum(i.price * i.count for i in self.get_order_items())
+    def sum(self) -> Decimal:
+        order_sum = sum(i.price * i.count for i in self.get_order_items())
+        if not self.user.profile.sale:
+            sale = DepartamentSale.get_sale_for_departament(self.user.profile.departament, order_sum)
+            order_sum = order_sum * sale / 100 if sale else order_sum
+        return order_sum
+    sum.short_description = gettext_lazy('Sum')
 
     def volume(self):
         return sum(i.volume * i.count for i in self.get_order_items())
 
     def weight(self):
         return sum(i.weight * i.count for i in self.get_order_items())
-
-    sum.short_description = gettext_lazy('Sum')
-
-    def add_item(self, article: Article, count: int):
-        cart_item, _ = OrderItem.objects.get_or_create(
-            cart=self,
-            article=article,
-            price=article.price,
-        )
-        cart_item.count += count
-        cart_item.save()
-        self.items.add(cart_item)
-        self.recalculate()
 
     def get_absolute_url(self):
         return reverse('commercial_order_detail', kwargs={'pk': self.pk})
@@ -260,7 +290,10 @@ class OrderItem(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
-    sale = models.DecimalField(gettext_lazy('sale'), max_digits=5, decimal_places=2, default=0)
+    sale = models.DecimalField(
+        gettext_lazy('sale in %'), max_digits=5, decimal_places=2, default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(100)]
+    )
 
     def __str__(self):
         return f"Profile for {self.user}"
