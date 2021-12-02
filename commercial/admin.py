@@ -9,7 +9,7 @@ from commercial.forms import ArticleAdminForm
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale
 
 
-class ProfileAdmin(admin.TabularInline):
+class ProfileAdmin(admin.StackedInline):
     model = Profile
     autocomplete_fields = ['departament']
     can_delete = False
@@ -22,7 +22,7 @@ class DepartamentSaleAdmin(admin.TabularInline):
     extra = 1
 
 
-class CategoryPropertyAdmin(admin.StackedInline):
+class CategoryPropertyAdmin(admin.TabularInline):
     model = CategoryProperties
     min_num = 1
     autocomplete_fields = ['departament']
