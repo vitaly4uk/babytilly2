@@ -60,7 +60,7 @@ def get_or_create_category(
     category_property.name = category_name
     category_property.published = True
     category_property.save()
-    if parent:
+    if not category.parent == parent:
         category.parent = parent
         category.save()
     return category
@@ -82,7 +82,10 @@ def do_import_price(csv_file: typing.IO, country: str):
 
         if is_category:
             # print(row)
-            parent = get_or_create_category(row['parent_id'], row['parent_name'], departament)
+            if row['parent_id'] and row['parent_name']:
+                parent = get_or_create_category(row['parent_id'], row['parent_name'], departament)
+            else:
+                parent = None
             get_or_create_category(row['id'], row['name'], departament, parent=parent)
         else:
             # print(row)
