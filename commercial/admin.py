@@ -174,13 +174,13 @@ class ImportPriceAdmin(admin.ModelAdmin):
 
 class OrderItemInline(admin.StackedInline):
     model = OrderItem
-    readonly_fields = []
+    readonly_fields = ['article']
     extra = 0
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super(OrderItemInline, self).get_readonly_fields(request, obj)
         if obj and not request.user.is_superuser:
-            return readonly_fields + ['article', 'count', 'price']
+            return readonly_fields + ['count', 'price']
         return readonly_fields
 
 
