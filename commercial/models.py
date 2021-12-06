@@ -200,7 +200,7 @@ class ArticleImage(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     date = models.DateTimeField(gettext_lazy('date'), auto_now_add=True)
-    comment = models.TextField(default='')
+    comment = models.TextField(default='', blank=True)
     is_closed = models.BooleanField(gettext_lazy('closed'), default=False)
 
     def __str__(self):
