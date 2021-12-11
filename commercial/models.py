@@ -211,6 +211,9 @@ class Order(models.Model):
             self._items = list(self.items.all())
         return self._items
 
+    def get_order_article_ids(self):
+        return list(i.article_id for i in self.get_order_items())
+
     def count(self) -> int:
         return sum(i.count for i in self.get_order_items())
 
