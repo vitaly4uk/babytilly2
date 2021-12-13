@@ -158,8 +158,8 @@ class ArticleProperties(models.Model):
     width = models.DecimalField(gettext_lazy('width'), null=True, blank=True, decimal_places=1, max_digits=10)
     height = models.DecimalField(gettext_lazy('height'), null=True, blank=True, decimal_places=1, max_digits=10)
 
-    volume = models.DecimalField(gettext_lazy('volume'), null=True, blank=True, decimal_places=1, max_digits=10)
-    weight = models.DecimalField(gettext_lazy('weight'), null=True, blank=True, decimal_places=1, max_digits=10)
+    volume = models.DecimalField(gettext_lazy('volume'), default=0, blank=True, decimal_places=1, max_digits=10)
+    weight = models.DecimalField(gettext_lazy('weight'), default=0, blank=True, decimal_places=1, max_digits=10)
 
     barcode = models.CharField(gettext_lazy('barcode'), max_length=255, null=True, blank=True)
 
@@ -217,6 +217,9 @@ class Order(models.Model):
     def count(self) -> int:
         return sum(i.count for i in self.get_order_items())
 
+    def full_sum(self):
+        return sum(i.full_price * i.count for i in self.get_order_items())
+
     def sum(self) -> Decimal:
         order_sum = sum(i.price * i.count for i in self.get_order_items())
         if not self.user.profile.sale:
@@ -270,9 +273,10 @@ class OrderItem(models.Model):
     article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), on_delete=models.CASCADE)
     name = models.CharField(gettext_lazy('name'), max_length=255, null=True)
     count = models.PositiveIntegerField(gettext_lazy('count'), default=0)
-    volume = models.PositiveIntegerField(gettext_lazy('volume'), default=0)
-    weight = models.PositiveIntegerField(gettext_lazy('weight'), default=0)
+    volume = models.DecimalField(gettext_lazy('volume'), default=0, blank=True, decimal_places=1, max_digits=10)
+    weight = models.DecimalField(gettext_lazy('weight'), default=0, blank=True, decimal_places=1, max_digits=10)
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
+    full_price = models.DecimalField(gettext_lazy('full price'), max_digits=10, decimal_places=3, default=0, editable=False)
     barcode = models.CharField(gettext_lazy('barcode'), max_length=255, null=True, blank=True)
     company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
 
@@ -281,6 +285,9 @@ class OrderItem(models.Model):
 
     def sum(self):
         return self.count * self.price
+
+    def full_sum(self):
+        return self.count * self.full_price
 
     class Meta:
         verbose_name = gettext_lazy('order item')
