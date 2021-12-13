@@ -14,7 +14,7 @@
                 <th scope="col">{% trans 'price'|capfirst %}</th>
                 <th scope="col">{% trans 'count'|capfirst %}</th>
                 <th scope="col">{% trans 'sum'|capfirst %}</th>
-                <th scope="col">{% trans 'full sum'|capfirst %}</th>
+                <th scope="col" class="text-muted">{% trans 'full sum'|capfirst %}</th>
                 <th scope="col">{% if not order.is_closed %}{% trans 'delete'|capfirst %}{% endif %}</th>
                 <th></th>
             </tr>
@@ -27,7 +27,7 @@
                     <td align="right">{{ item.price }}</td>
                     <td align="right">{% if order.is_closed %}{{ item.count }}{% else %}<input type="text" value="{{ item.count }}" size="5" name="{{ item.pk }}">{% endif %}</td>
                     <td align="right">{{ item.sum|floatformat:2 }}</td>
-                    <td align="right">{{ item.full_sum|floatformat:2 }}</td>
+                    <td align="right" class="text-muted">{{ item.full_sum|floatformat:2 }}</td>
                     <td align="center">{% if not order.is_closed %}<input type="checkbox" name="del_{{ item.pk }}">{% endif %}</td>
                     <td align="right">
                         {% thumbnail item.article.image "cart_small"|get_thumb_size crop="center" as im %}
@@ -42,7 +42,7 @@
                 <td scope="row">## {{ order.count }}</td>
                 <td align="right">{% if order.volume %}{% trans 'volume'|capfirst %}: {{ order.volume|floatformat:2 }}{% endif %}</td>
                 <td align="right" colspan="3">{{ order.sum|floatformat:2 }}</td>
-                <td align="right">{{ order.full_sum|floatformat:2 }}</td>
+                <td align="right" class="text-muted">{{ order.full_sum|floatformat:2 }}</td>
                 <td scope="row"></td>
                 <td></td>
                 <td></td>
