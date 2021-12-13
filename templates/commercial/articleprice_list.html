@@ -68,7 +68,7 @@
         <div class="row py-1">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="row no-gutters{% if item.article.id in order.get_article_ids %} bought{% endif %}">
+                    <div class="row no-gutters{% if item.article.id in request.order.get_order_article_ids %} bought{% endif %}">
                         <div class="col-md-2">
                             <div class="carousel slide" data-ride="carousel" data-interval="false" id="carousel-{{ item.article.id }}">
                                 <div class="carousel-inner">

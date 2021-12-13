@@ -25,7 +25,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('search/', ArticleSearchListView.as_view(), name='search'),
     path('commerce/', include('commercial.urls')),
-    path('commerce/', include('commercial.urls')),
     path('<slug:slug>/', PageDetailView.as_view(), name='page_detail_url'),
     path('', HomePage.as_view(), name='home_page'),
 ] + staticfiles_urlpatterns()

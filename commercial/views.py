@@ -166,6 +166,7 @@ class AddToCartView(TemplateView):
             order_item.barcode = article_property.barcode
             order_item.company = article_property.company
             order_item.price = article_property.get_price_for_user(self.request.user)
+            order_item.full_price = article_property.price
             order_item.save()
         context.update({
             'order': self.request.order

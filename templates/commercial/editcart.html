@@ -37,10 +37,17 @@
             </tbody>
             <tfoot>
             <tr>
-                <td scope="row" colspan="3"></td>
-                <td align="right">{{ order.count }}</td>
-                <td align="right">{{ order.volume|floatformat:2 }}</td>
+                <td align="right" class="text-muted" colspan="4">{% trans 'full price'|capfirst %}</td>
+                <td align="right" class="text-muted">{{ order.full_sum|floatformat:2 }}</td>
+                <td scope="row"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td scope="row">{{ order.count }}</td>
+                <td align="right">{% if order.volume %}{% trans 'volume'|capfirst %}: {{ order.volume|floatformat:2 }}{% endif %}</td>
+                <td align="right" colspan="2">{% trans 'order sum'|capfirst %}</td>
                 <td align="right">{{ order.sum|floatformat:2 }}</td>
+                <td scope="row"></td>
                 <td></td>
                 <td></td>
             </tr>
