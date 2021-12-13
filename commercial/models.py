@@ -52,7 +52,7 @@ class DepartamentSale(models.Model):
         ).first()
         if departament_sale:
             return departament_sale.sale
-        return 0
+        return 100
 
     def __str__(self):
         return f"{self.order_sum} - {self.sale}%"
