@@ -1,7 +1,6 @@
 import logging
-from decimal import Decimal
-
 from ckeditor_uploader.fields import RichTextUploadingField
+from decimal import Decimal
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
@@ -319,6 +318,9 @@ class ImportPrice(models.Model):
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
 
+    def __str__(self):
+        return f'ImportPrice by {self.user} at {self.imported_at.strftime("%Y-%m-%d %H:%M:%S")}'
+
     def save(self, *args, **kwargs):
         from commercial.tasks import import_price
         super(ImportPrice, self).save(*args, **kwargs)
@@ -335,6 +337,9 @@ class ImportNew(models.Model):
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
 
+    def __str__(self):
+        return f'ImportNew by {self.user} at {self.imported_at.strftime("%Y-%m-%d %H:%M:%S")}'
+
     def save(self, *args, **kwargs):
         from commercial.tasks import import_novelty
         super(ImportPrice, self).save(*args, **kwargs)
@@ -350,6 +355,9 @@ class ImportSpecial(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
+
+    def __str__(self):
+        return f'ImportSpecial by {self.user} at {self.imported_at.strftime("%Y-%m-%d %H:%M:%S")}'
 
     def save(self, *args, **kwargs):
         from commercial.tasks import import_special
