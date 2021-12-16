@@ -73,9 +73,10 @@
                     <li>{% trans "Wellcome" %},&nbsp;{{ user.username|truncatechars:9 }}</li>
                     <li>
                         {% if user.is_staff %}
-                            <a href="{% url 'admin:index' %}" class="text-dark font-weight-bold">Админка</a>
+                            <a href="{% url 'admin:index' %}" class="text-dark font-weight-bold">{% trans "Admin" %}</a>
+                        {% else %}
                             <a href="{% url 'commercial_order_list' %}" class="text-dark font-weight-bold">{% trans "Dashboard" %}</a>
-                            {% endif %}
+                        {% endif %}
                         <a href="{% url 'logout' %}?next=/" class="text-dark font-weight-bold">{% trans "Logout" %}</a>
                     </li>
                 </ul>
