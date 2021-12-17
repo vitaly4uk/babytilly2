@@ -1,7 +1,7 @@
 # Create your views here.
 from functools import wraps
+
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 
@@ -22,15 +22,6 @@ def is_active(redirect_url):
 
         return _check_user
     return _dec
-
-
-class LoginRequiredMixin(object):
-    """Ensures that user must be authenticated in order to access view."""
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
-
 
 class ActiveRequiredMixin(object):
     """Ensure that user must have active status in order to access view."""

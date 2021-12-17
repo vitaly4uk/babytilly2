@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, DetailView
 
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page
@@ -35,7 +34,7 @@ class HomePage(TemplateView):
         return context
 
 
-class PageDetailView(DetailView):
+class PageDetailView(ActiveRequiredMixin, DetailView):
     template_name = 'flatpages/default.html'
     context_object_name = 'page'
 
@@ -142,8 +141,7 @@ class OrderDetailView(ActiveRequiredMixin, DetailView):
         return Order.objects.filter(user=self.request.user, is_closed=True)
 
 
-@method_decorator(is_active('/'), 'dispatch')
-class AddToCartView(TemplateView):
+class AddToCartView(ActiveRequiredMixin, TemplateView):
     template_name = 'commercial/cart.html'
 
     def get_context_data(self, **kwargs):
