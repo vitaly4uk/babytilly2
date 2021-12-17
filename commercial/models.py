@@ -250,9 +250,12 @@ class Order(models.Model):
         to_emails = [settings.DEFAULT_FROM_EMAIL, stuff_email]
         if self.user.email:
             to_emails.append(self.user.email)
+        additional_emails = filter(bool, [e.strip() for e in self.user.profile.additional_emails.split(',')])
+        if additional_emails:
+            to_emails += additional_emails
         logger.debug('Sending order to: {}'.format(to_emails))
         msg = EmailMultiAlternatives(
-            subject='Заказ {} {}'.format(self, self.user),
+            subject='Order {} {}'.format(self, self.user),
             body=text_body,
             to=to_emails
         )
@@ -304,6 +307,9 @@ class Profile(models.Model):
         gettext_lazy('sale in %'), max_digits=5, decimal_places=2, default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
+    additional_emails = models.CharField(gettext_lazy('additional email addresses'), max_length=128, default='',
+                                         help_text=gettext_lazy('Enter multiple mailboxes separated by commas'),
+                                         blank=True)
 
     def __str__(self):
         return f"Profile for {self.user}"
