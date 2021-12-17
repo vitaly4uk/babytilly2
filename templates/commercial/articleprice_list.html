@@ -116,12 +116,6 @@
                                     {% if item.weight %}
                                         <span><i class="bi bi-box-arrow-down"></i> {% trans 'weight'|capfirst %}: {{ item.weight }}</span>
                                     {% endif %}
-                                    {% if item.is_new %}
-                                        <p class="badge badge-danger mb-2">{% trans 'new'|upper %}</p>
-                                    {% endif %}
-                                    {% if item.is_special %}
-                                        <p class="badge badge-success mb-2">{% trans 'sale'|upper %}</p>
-                                    {% endif %}
                                     {% if item.image_link %}
                                         <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}" target="_blank">{% trans 'image'|capfirst %}</a> </span>
                                     {% endif %}
@@ -130,6 +124,12 @@
                                     {% endif %}
                                     {% if item.site_link %}
                                         <span><i class="bi bi-window"></i> <a href="{{ item.site_link }}" target="_blank">{% trans 'site'|capfirst %}</a> </span>
+                                    {% endif %}
+                                    {% if item.is_new %}
+                                        <p class="badge badge-danger mb-2">{% trans 'new'|upper %}</p>
+                                    {% endif %}
+                                    {% if item.is_special %}
+                                        <p class="badge badge-success mb-2">{% trans 'sale'|upper %}</p>
                                     {% endif %}
                                 </p>
 
