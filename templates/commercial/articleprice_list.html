@@ -117,7 +117,7 @@
                                         <span><i class="bi bi-box-arrow-down"></i> {% trans 'weight'|capfirst %}: {{ item.weight }}</span>
                                     {% endif %}
                                     {% if item.is_new %}
-                                        <span>{% trans 'new'|upper %}</span>
+                                        <span class="badge badge-pill badge-danger">{% trans 'new'|upper %}</span>
                                     {% endif %}
                                     {% if item.is_special %}
                                         <span class="badge badge-pill badge-success">{% trans 'sale'|upper %}</span>
