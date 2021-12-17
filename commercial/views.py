@@ -1,12 +1,11 @@
 import logging
-from urllib.parse import urlencode
-
 from django.conf import settings
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, DetailView
+from urllib.parse import urlencode
 
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page
 from commonutils.views import ActiveRequiredMixin, is_active
@@ -70,12 +69,18 @@ class ArticleListView(ActiveRequiredMixin, ListView):
         params = self.request.GET.copy()
         if 'page' in params:
             del params['page']
+        category = get_object_or_404(Category, id=self.kwargs['id'])
+        property = category.categoryproperties_set.filter(
+            departament_id=self.request.user.profile.departament_id
+        ).only('name').first(),
+        page_title = property.name if property else ''
         context.update({
-            'category': get_object_or_404(Category, id=self.kwargs['id']),
+            'category': category,
             'sort': self.request.GET.get('sort', None),
             'per_page': self.get_paginate_by(None),
             'paginator_list': settings.PAGINATOR,
             'link': urlencode(params),
+            'page_title': page_title
         })
         return context
 

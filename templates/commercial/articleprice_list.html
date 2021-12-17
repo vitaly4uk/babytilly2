@@ -21,7 +21,7 @@
         <div class="{% if category %} col-md-8{% else %} col{% endif %}">
                 <form class="form-inline float-right w-sm-100" method="GET" name="ordering">
                     <div class="form-group mx-2 d-none d-xl-block">
-                        <label for="perPageCount" class="d-inline-block">количество:</label>
+                        <label for="perPageCount" class="d-inline-block">{% trans "amount" %}:</label>
                         <select class="custom-select custom-select-sm" id="perPageCount" name="per_page"
                                 onchange="goToPage(1)">
                             {% for value in paginator_list %}
@@ -32,32 +32,19 @@
                         </select>
                     </div>
                     <div class="form-group mx-2 w-sm-100">
-                    <label for="sortSelect" class="d-none d-xl-block">цена:</label>
+                    <label for="sortSelect" class="d-none d-xl-block">{% trans "price" %}:</label>
                     <select class="custom-select custom-select-sm d-inline-block" id="sortSelect" name="sort" onchange="goToPage(1)">
                         <option value="name">
-                            нет сортировки
+                            {% trans "no ordering" %}
                         </option>
                         <option value="price" {% if sort == 'price' %}selected{% endif %}>
-                            от дешевых к дорогим
+                            {% trans "from cheap to expensive" %}
                         </option>
                         <option value="-price" {% if sort == '-price' %}selected{% endif %}>
-                            от дорогих к дешевым
+                            {% trans "from expensive to cheap" %}
                         </option>
                     </select>
                     </div>
-                    {% if user.profile.type == 2 %}
-                        <div class="form-group mx-2 d-none d-xl-block">
-                        <label for="typeSelect" class="d-inline-block">расположение:</label>
-                        <select class="custom-select custom-select-sm" id="typeSelect" name="type"
-                                onchange="goToPage(1)">
-                            {% for type in source_type %}
-                                <option value="{{ type.0 }}" {% if request.GET.type|upper == type.0|upper %}selected{% endif %}>
-                                    {{ type.1 }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                        </div>
-                    {% endif %}
                     {% if request.GET.query %}
                         <input type="hidden" name="query" value="{{ request.GET.query }}">
                     {% endif %}
