@@ -1,4 +1,5 @@
 import io
+
 from babytilly2.celery import app
 
 
@@ -38,16 +39,16 @@ def import_novelty(import_id: int):
 
 @app.task()
 def import_special(import_id: int):
-    from commercial.models import ImportNew
+    from commercial.models import ImportSpecial
     from commercial.functions import do_import_special
-    import_price = ImportNew.objects.get(id=import_id)
+    import_special = ImportSpecial.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
-    with import_price.file.open(mode='r') as import_file:
+    with import_special.file.open(mode='r') as import_file:
         in_memory_file.writelines([l.decode('cp1251') for l in import_file.readlines()])
         in_memory_file.seek(0)
 
     do_import_special(
         csv_file=in_memory_file,
-        departament_id=import_price.departament_id
+        departament_id=import_special.departament_id
     )
