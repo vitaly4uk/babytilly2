@@ -1,6 +1,7 @@
 import logging
-from ckeditor_uploader.fields import RichTextUploadingField
 from decimal import Decimal
+
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
@@ -342,7 +343,7 @@ class ImportNew(models.Model):
 
     def save(self, *args, **kwargs):
         from commercial.tasks import import_novelty
-        super(ImportPrice, self).save(*args, **kwargs)
+        super(ImportNew, self).save(*args, **kwargs)
         import_novelty.delay(self.id)
 
     class Meta:
@@ -361,7 +362,7 @@ class ImportSpecial(models.Model):
 
     def save(self, *args, **kwargs):
         from commercial.tasks import import_special
-        super(ImportPrice, self).save(*args, **kwargs)
+        super(ImportSpecial, self).save(*args, **kwargs)
         import_special.delay(self.id)
 
     class Meta:
