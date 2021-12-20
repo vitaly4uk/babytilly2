@@ -14,9 +14,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import dj_database_url
-from kombu.utils.url import safequote
-
 import sentry_sdk
+from kombu.utils.url import safequote
 from sentry_sdk.integrations.django import DjangoIntegration
 
 sentry_sdk.init(
@@ -244,8 +243,8 @@ LOGIN_URL = LOGOUT_URL = LOGIN_REDIRECT_URL = '/'
 MPTT_ADMIN_LEVEL_INDENT = 30
 
 THUMBNAIL_SIZE = {
-    'small': '150',
-    'cart_small': '100',
+    'small': '450',
+    'cart_small': '300',
 }
 PAGINATOR = [10, 25, 50, 100]
 
