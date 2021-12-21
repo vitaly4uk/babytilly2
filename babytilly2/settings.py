@@ -33,8 +33,8 @@ sentry_sdk.init(
 )
 
 EMAIL_BACKEND = 'django_ses.SESBackend'
-DEFAULT_FROM_EMAIL = 'tilly.zakaz@gmail.com'
-SERVER_EMAIL = 'tilly.zakaz@gmail.com'
+DEFAULT_FROM_EMAIL = 'carrello.zakaz@gmail.com'
+SERVER_EMAIL = 'carrello.zakaz@gmail.com'
 ADMINS = (
     ('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),
 )
