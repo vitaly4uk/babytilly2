@@ -67,7 +67,7 @@ class DepartamentSale(models.Model):
 
 
 class StartPageImage(models.Model):
-    image = ImageField(gettext_lazy('image'), upload_to='start_page/')
+    image = ImageField(gettext_lazy('image'), upload_to='start_page/%Y/%m/%d/%H/%m/')
     order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
 
     def __str__(self):
@@ -152,7 +152,7 @@ class ArticleProperties(models.Model):
     retail_price = models.DecimalField(gettext_lazy('retail price'), max_digits=10, decimal_places=3, default=0)
     is_new = models.BooleanField(gettext_lazy('is new'), default=False)
     is_special = models.BooleanField(gettext_lazy('is special'), default=False)
-    main_image = ImageField(gettext_lazy('main image'), upload_to='photos/', null=True)
+    main_image = ImageField(gettext_lazy('main image'), upload_to='photos/%Y/%m/%d/%H/%m/', null=True)
 
     length = models.DecimalField(gettext_lazy('length'), null=True, blank=True, decimal_places=1, max_digits=10)
     width = models.DecimalField(gettext_lazy('width'), null=True, blank=True, decimal_places=1, max_digits=10)
@@ -187,7 +187,7 @@ class ArticleImage(models.Model):
     article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), related_name='images',
                                 on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, on_delete=models.CASCADE, null=True)
-    image = ImageField(gettext_lazy('image'), upload_to='photos/')
+    image = ImageField(gettext_lazy('image'), upload_to='photos/%Y/%m/%d/%H/%m/')
 
     def __str__(self):
         return str(self.image)
@@ -320,7 +320,7 @@ class Profile(models.Model):
 
 
 class ImportPrice(models.Model):
-    file = models.FileField(gettext_lazy('file'), upload_to='import_price/%Y/%m/%d/')
+    file = models.FileField(gettext_lazy('file'), upload_to='import_price/%Y/%m/%d/%H/%m/')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
@@ -339,7 +339,7 @@ class ImportPrice(models.Model):
 
 
 class ImportNew(models.Model):
-    file = models.FileField(gettext_lazy('file'), upload_to='import_new/%Y/%m/%d/')
+    file = models.FileField(gettext_lazy('file'), upload_to='import_new/%Y/%m/%d/%H/%m/')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
@@ -358,7 +358,7 @@ class ImportNew(models.Model):
 
 
 class ImportSpecial(models.Model):
-    file = models.FileField(gettext_lazy('file'), upload_to='import_special/%Y/%m/%d/')
+    file = models.FileField(gettext_lazy('file'), upload_to='import_special/%Y/%m/%d/%H/%m/')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)

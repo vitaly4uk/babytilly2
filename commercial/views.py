@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.utils.translation import gettext_lazy
 from django.views.generic import TemplateView, ListView, DetailView
 
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page
@@ -115,6 +116,76 @@ class ArticleSearchListView(ActiveRequiredMixin, ListView):
             del params['page']
         context.update({
             'page_title': self.request.GET.get('query', '').strip(),
+            'sort': self.request.GET.get('sort', None),
+            'per_page': self.get_paginate_by(None),
+            'paginator_list': settings.PAGINATOR,
+            'link': urlencode(params),
+        })
+        return context
+
+
+class ArticleNewListView(ActiveRequiredMixin, ListView):
+    template_name = 'commercial/articleprice_list.html'
+    context_object_name = 'object_list'
+
+    def get_paginate_by(self, queryset):
+        return int(self.request.GET.get('per_page', settings.PAGINATOR[2]))
+
+    def get_queryset(self):
+        sort = self.request.GET.get('sort', None)
+        user_departament_id = self.request.user.profile.departament_id
+        queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id,
+                                                    is_new=True).order_by('name')
+
+        if sort == 'price':
+            queryset = queryset.order_by('price')
+        if sort == '-price':
+            queryset = queryset.order_by('-price')
+
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ArticleNewListView, self).get_context_data(*args, **kwargs)
+        params = self.request.GET.copy()
+        if 'page' in params:
+            del params['page']
+        context.update({
+            'page_title': gettext_lazy('New'),
+            'sort': self.request.GET.get('sort', None),
+            'per_page': self.get_paginate_by(None),
+            'paginator_list': settings.PAGINATOR,
+            'link': urlencode(params),
+        })
+        return context
+
+
+class ArticleSaleListView(ActiveRequiredMixin, ListView):
+    template_name = 'commercial/articleprice_list.html'
+    context_object_name = 'object_list'
+
+    def get_paginate_by(self, queryset):
+        return int(self.request.GET.get('per_page', settings.PAGINATOR[2]))
+
+    def get_queryset(self):
+        sort = self.request.GET.get('sort', None)
+        user_departament_id = self.request.user.profile.departament_id
+        queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id,
+                                                    is_special=True).order_by('name')
+
+        if sort == 'price':
+            queryset = queryset.order_by('price')
+        if sort == '-price':
+            queryset = queryset.order_by('-price')
+
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ArticleSaleListView, self).get_context_data(*args, **kwargs)
+        params = self.request.GET.copy()
+        if 'page' in params:
+            del params['page']
+        context.update({
+            'page_title': gettext_lazy('Sale'),
             'sort': self.request.GET.get('sort', None),
             'per_page': self.get_paginate_by(None),
             'paginator_list': settings.PAGINATOR,

@@ -18,7 +18,10 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path
 from django.views.generic import TemplateView
 
-from commercial.views import ArticleListView, AddToCartView, OrderListView, edit_cart, OrderDetailView
+from commercial.views import (
+    ArticleListView, AddToCartView, OrderListView, edit_cart, OrderDetailView,
+    ArticleNewListView, ArticleSaleListView,
+)
 
 urlpatterns = [
     path('cart/', edit_cart, {}, 'commercial_edit_cart'),
@@ -29,5 +32,7 @@ urlpatterns = [
     path('dashboard/order/', OrderListView.as_view(), name='commercial_order_list'),
     path('dashboard/order/<int:pk>/', OrderDetailView.as_view(), name='commercial_order_detail'),
     path('category/<str:id>/', ArticleListView.as_view(), name='category_detail_url'),
+    path('new/', ArticleNewListView.as_view(), name='new_list_url'),
+    path('sale/', ArticleSaleListView.as_view(), name='sale_list_url'),
     path('', login_required(TemplateView.as_view(template_name='index.html'))),
 ] + staticfiles_urlpatterns()

@@ -33,12 +33,15 @@
             {% if request.user.is_authenticated %}
             <ul class="nav mt-3 justify-content-center">
                 <li class="nav-item">
+                    <a class="nav-link text-dark font-weight-bold h6" href="{% url 'new_list_url' %}?{{ link }}" alt="new" title="new">{% trans "new"|upper %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark font-weight-bold h6" href="{% url 'sale_list_url' %}?{{ link }}" alt="sale" title="sale">{% trans "sale"|upper %}</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link nav-item text-dark font-weight-bold h6" href="/about/?{{ link }}" alt="about" title="{% trans "About"|upper %}">{% trans "About" %}</a>
                 </li>
                 {% comment %}
-                <li class="nav-item">
-                    <a class="nav-link text-dark font-weight-bold h6" href="{% url 'commercial_newest_items' %}?{{ link }}" alt="new" title="НОВИНКИ">Новинки</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark font-weight-bold h6" href="{% url 'commercial_stock_items' %}?{{ link }}" alt="stock"
                        title="СПЕЦ, ПРЕД.">Спец. Пред.</a>
