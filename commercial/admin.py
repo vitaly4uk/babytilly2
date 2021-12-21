@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
-from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter
+from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter, ArticleNewFilter, ArticleSaleFilter
 from commercial.forms import ArticleAdminForm
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale
 
@@ -118,7 +118,7 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
     list_display = ['id', 'article_name']
     search_fields = ['id', 'articleproperties__name']
-    list_filter = [ArticlePublishedFilter]
+    list_filter = [ArticlePublishedFilter, ArticleNewFilter, ArticleSaleFilter]
     form = ArticleAdminForm
 
     def get_form(self, request, obj=None, **kwargs):
