@@ -228,6 +228,9 @@ class Order(models.Model):
         return order_sum
     sum.short_description = gettext_lazy('Sum')
 
+    def discount(self):
+        return self.full_sum() - self.sum()
+
     def volume(self):
         return sum(i.volume * i.count for i in self.get_order_items())
 
