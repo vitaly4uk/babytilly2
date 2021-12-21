@@ -68,7 +68,7 @@ class DepartamentAdmin(admin.ModelAdmin):
 class CategoryAdmin(MPTTModelAdmin):
     inlines = [CategoryPropertyAdmin]
     list_display = ['id', 'category_name']
-    search_fields = ['id']
+    search_fields = ['id', 'categoryproperties__name']
     list_filter = [CategoryPublishedFilter]
 
     @admin.display(description=gettext_lazy('name'))
@@ -117,7 +117,7 @@ class ArticleImageInline(AdminImageMixin, admin.StackedInline):
 class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
     list_display = ['id', 'article_name']
-    search_fields = ['id']
+    search_fields = ['id', 'articleproperties__name']
     list_filter = [ArticlePublishedFilter]
     form = ArticleAdminForm
 
