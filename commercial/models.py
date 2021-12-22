@@ -260,7 +260,8 @@ class Order(models.Model):
         msg = EmailMultiAlternatives(
             subject='Order {} {}'.format(self, self.user),
             body=text_body,
-            to=to_emails
+            to=to_emails,
+            reply_to='carrello.zakaz@gmail.com'
         )
         msg.attach_alternative(html_body, 'text/html')
         msg.attach('zakaz{}.csv'.format(self.pk), export_to_csv(None, self, 'cp1251'), 'text/csv')
