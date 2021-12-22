@@ -188,7 +188,7 @@ class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'
     inlines = [OrderItemInline]
     readonly_fields = ['date', 'sum']
-    ordering = ['date']
+    ordering = ['-date']
     list_filter = ['is_closed', ('user', admin.RelatedOnlyFieldListFilter)]
     actions = None
     search_fields = ['id']
