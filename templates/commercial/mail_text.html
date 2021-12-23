@@ -3,6 +3,6 @@
 {{ order.comment }}
 ## \t {% trans 'name'|capfirst %} \t {% trans 'price'|capfirst %} \t {% trans 'count'|capfirst %} \t {% trans 'sum'|capfirst %} \t {% trans 'volume'|capfirst %} \t {% trans 'weight'|capfirst %} \t {% trans 'barcode'|capfirst %} \t {% trans 'company'|capfirst %}
 {% for item in cart %}
-{{ forloop.counter }} \t {{ item.name }} \t {{ item.price|floatformat:2 }} \t {{ item.count }} \t {{ item.sum|floatformat:2 }} \t {{ item.volume }} \t {{ item.weight }} \t {{ item.barcode }} \t {{ item.company }}
+{{ forloop.counter }} \t {{ item.name }} \t {{ item.price|floatformat:2 }} \t {{ item.count }} \t {{ item.sum|floatformat:2 }} \t {{ item.volume|floatformat:2 }} \t {{ item.weight }} \t {{ item.barcode }} \t {{ item.company }}
 {% endfor %}
-\t \t \t {{ order.count }} \t {{ order.sum|floatformat:2 }} \t {{ order.volume }} \t {{ order.weight }}
+\t \t \t {{ order.count }} \t {{ order.sum|floatformat:2 }} \t {{ order.volume|floatformat:2 }} \t {{ order.weight }}

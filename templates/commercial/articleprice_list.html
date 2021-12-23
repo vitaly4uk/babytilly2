@@ -98,6 +98,9 @@
                                 <h5 class="card-title">
                                     {{ item.name }}
                                 </h5>
+                                    {% if item.less_aviable %}
+                                        <p class="badge badge-danger mb-3">{% trans 'less than 5'|upper %}</p>
+                                    {% endif %}
                             </div>
                             <div class="card-body">
                                 <p class="card-subtitle">

@@ -23,7 +23,7 @@
             <td align="right">{{ item.price|floatformat:2 }}</td>
             <td align="right">{{ item.count }}</td>
             <td align="right">{{ item.sum|floatformat:2 }}</td>
-            <td align="right">{{ item.volume }}</td>
+            <td align="right">{{ item.volume|floatformat:2 }}</td>
             <td align="right">{{ item.weight }}</td>
             <td align="right">{{ item.barcode }}</td>
             <td align="right">{{ item.company }}</td>
@@ -35,7 +35,7 @@
             <td colspan="3"></td>
             <td align="right">{{ order.count }}</td>
             <td align="right">{{ order.sum|floatformat:2 }}</td>
-            <td align="right">{{ order.volume }}</td>
+            <td align="right">{{ order.volume|floatformat:2 }}</td>
             <td align="right">{{ order.weight }}</td>
         </tr>
     </tfoot>

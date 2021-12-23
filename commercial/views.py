@@ -56,7 +56,7 @@ class ArticleListView(ActiveRequiredMixin, ListView):
         sort = self.request.GET.get('sort', None)
         user_departament_id = self.request.user.profile.departament_id
         queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id,
-                                                    article__category__id=self.kwargs['id']).order_by('name')
+                                                    article__category__id=self.kwargs['id'])
 
         if sort == 'price':
             queryset = queryset.order_by('price')
@@ -135,7 +135,7 @@ class ArticleNewListView(ActiveRequiredMixin, ListView):
         sort = self.request.GET.get('sort', None)
         user_departament_id = self.request.user.profile.departament_id
         queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id,
-                                                    is_new=True).order_by('name')
+                                                    is_new=True)
 
         if sort == 'price':
             queryset = queryset.order_by('price')
@@ -170,7 +170,7 @@ class ArticleSaleListView(ActiveRequiredMixin, ListView):
         sort = self.request.GET.get('sort', None)
         user_departament_id = self.request.user.profile.departament_id
         queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id,
-                                                    is_special=True).order_by('name')
+                                                    is_special=True)
 
         if sort == 'price':
             queryset = queryset.order_by('price')
