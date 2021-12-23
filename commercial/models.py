@@ -168,6 +168,7 @@ class ArticleProperties(models.Model):
     site_link = models.URLField(gettext_lazy('site link'), null=True, blank=True)
 
     company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
+    order = models.PositiveSmallIntegerField(gettext_lazy('article order'), default=1000)
 
     def get_price_for_user(self, user):
         price = self.price
@@ -181,6 +182,7 @@ class ArticleProperties(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['departament', 'article'], name='unique_article_property')
         ]
+        ordering = ['order', 'name']
 
 
 class ArticleImage(models.Model):

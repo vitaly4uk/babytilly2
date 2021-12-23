@@ -116,7 +116,7 @@ class ArticleImageInline(AdminImageMixin, admin.StackedInline):
 
 class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
-    list_display = ['id', 'article_name']
+    list_display = ['id', 'article_name', 'article_order']
     search_fields = ['id', 'articleproperties__name']
     list_filter = [ArticlePublishedFilter, ArticleNewFilter, ArticleSaleFilter]
     form = ArticleAdminForm
@@ -137,6 +137,14 @@ class ArticleAdmin(admin.ModelAdmin):
         ).only('name').first()
         if property:
             return property.name
+
+    @admin.display(description=gettext_lazy('order'))
+    def article_order(self, obj):
+        property = obj.articleproperties_set.filter(
+            departament_id=self.request.user.profile.departament_id
+        ).only('order').first()
+        if property:
+            return property.order
 
     def get_queryset(self, request):
         queryset = super(ArticleAdmin, self).get_queryset(request)
