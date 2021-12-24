@@ -98,7 +98,7 @@
                                 <h5 class="card-title">
                                     {{ item.name }}
                                 </h5>
-                                    {% if item.less_aviable %}
+                                    {% if item.presence %}
                                         <p class="badge badge-danger mb-3">{% trans 'less than 5'|upper %}</p>
                                     {% endif %}
                             </div>
@@ -119,9 +119,9 @@
                                     {% if item.weight %}
                                         <span><i class="bi bi-box-arrow-down"></i> {% trans 'weight'|capfirst %}: {{ item.weight }}</span>
                                     {% endif %}
-                                    {% if item.image_link %}
-                                        <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}" target="_blank">{% trans 'image'|capfirst %}</a> </span>
-                                    {% endif %}
+{#                                    {% if item.image_link %}#}
+{#                                        <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}" target="_blank">{% trans 'image'|capfirst %}</a> </span>#}
+{#                                    {% endif %}#}
                                     {% if item.video_link %}
                                         <span><i class="bi bi-youtube"></i> <a href="{{ item.video_link }}" target="_blank">{% trans 'video'|capfirst %}</a> </span>
                                     {% endif %}

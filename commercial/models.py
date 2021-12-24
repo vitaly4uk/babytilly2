@@ -153,6 +153,7 @@ class ArticleProperties(models.Model):
     is_new = models.BooleanField(gettext_lazy('is new'), default=False)
     is_special = models.BooleanField(gettext_lazy('is special'), default=False)
     main_image = ImageField(gettext_lazy('main image'), upload_to='photos/%Y/%m/%d/%H/%m/', null=True)
+    presence = models.CharField(gettext_lazy('presence'), max_length=127, null=True, blank=True)
 
     length = models.DecimalField(gettext_lazy('length'), null=True, blank=True, decimal_places=1, max_digits=10)
     width = models.DecimalField(gettext_lazy('width'), null=True, blank=True, decimal_places=1, max_digits=10)
@@ -266,7 +267,8 @@ class Order(models.Model):
             reply_to=['carrello.zakaz@gmail.com']
         )
         msg.attach_alternative(html_body, 'text/html')
-        msg.attach('zakaz{}.csv'.format(self.pk), export_to_csv(None, self, 'cp1251'), 'text/csv')
+        for number, csv_file in enumerate(export_to_csv(None, self, 'cp1251')):
+            msg.attach(f'zakaz{self.pk}-{number}.csv', csv_file, 'text/csv')
         msg.send()
 
     class Meta:

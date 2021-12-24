@@ -1,6 +1,7 @@
 import csv
 import logging
 import typing
+from collections import defaultdict
 from io import BytesIO
 
 from PIL import Image
@@ -8,13 +9,19 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.template import loader
 
-from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties
+from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties, Order
 
 logger = logging.getLogger(__name__)
 
 
-def export_to_csv(request, order, encode):
-    return loader.render_to_string('commercial/csv.html', {'order': order})
+def export_to_csv(request, order: Order, encode):
+    order_items_by_company = defaultdict(list)
+    for item in order.get_order_items():
+        order_items_by_company[item.company].append(item)
+    csv_files = []
+    for order_items in order_items_by_company.values():
+        csv_files.append(loader.render_to_string('commercial/csv.html', {'order': order, 'order_items': order_items}))
+    return csv_files
 
 
 def get_thumbnail_url(image, size):
@@ -102,6 +109,7 @@ def do_import_price(csv_file: typing.IO, country: str):
             article_property.description = row['description']
             article_property.price = row['trade_price']
             article_property.retail_price = row['retail_price']
+            article_property.presence = row['presence']
 
             article_property.length = row['length']
             article_property.width = row['width']
