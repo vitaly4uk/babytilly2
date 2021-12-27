@@ -271,8 +271,8 @@ class Order(models.Model):
             reply_to=['carrello.zakaz@gmail.com']
         )
         msg.attach_alternative(html_body, 'text/html')
-        for number, csv_file in enumerate(export_to_csv(None, self, 'cp1251')):
-            msg.attach(f'zakaz{self.pk}-{number}.csv', csv_file, 'text/csv')
+        for company, csv_file in export_to_csv(None, self, 'cp1251'):
+            msg.attach(f'zakaz{self.pk} {company}.csv', csv_file, 'text/csv')
         msg.send()
 
     class Meta:

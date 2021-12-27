@@ -19,8 +19,10 @@ def export_to_csv(request, order: Order, encode):
     for item in order.get_order_items():
         order_items_by_company[item.company].append(item)
     csv_files = []
-    for order_items in order_items_by_company.values():
-        csv_files.append(loader.render_to_string('commercial/csv.html', {'order': order, 'order_items': order_items}))
+    for company, order_items in order_items_by_company.items():
+        csv_files.append(
+            (company, loader.render_to_string('commercial/csv.html', {'order': order, 'order_items': order_items}))
+        )
     return csv_files
 
 
