@@ -173,7 +173,7 @@ class ArticleProperties(models.Model):
 
     @property
     def is_less_then_five(self):
-        return self.presence.lower() == 'меньше 5'
+        return self.presence.lower() == '1'
 
     def get_price_for_user(self, user):
         price = self.price
@@ -288,8 +288,8 @@ class OrderItem(models.Model):
     article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), on_delete=models.CASCADE)
     name = models.CharField(gettext_lazy('name'), max_length=255, null=True)
     count = models.PositiveIntegerField(gettext_lazy('count'), default=0)
-    volume = models.DecimalField(gettext_lazy('volume'), default=0, blank=True, decimal_places=1, max_digits=10)
-    weight = models.DecimalField(gettext_lazy('weight'), default=0, blank=True, decimal_places=1, max_digits=10)
+    volume = models.DecimalField(gettext_lazy('volume'), default=0, blank=True, decimal_places=2, max_digits=10)
+    weight = models.DecimalField(gettext_lazy('weight'), default=0, blank=True, decimal_places=2, max_digits=10)
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
     full_price = models.DecimalField(gettext_lazy('full price'), max_digits=10, decimal_places=3, default=0, editable=False)
     barcode = models.CharField(gettext_lazy('barcode'), max_length=255, null=True, blank=True)
