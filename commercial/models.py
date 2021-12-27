@@ -155,12 +155,12 @@ class ArticleProperties(models.Model):
     main_image = ImageField(gettext_lazy('main image'), upload_to='photos/%Y/%m/%d/%H/%m/', null=True)
     presence = models.CharField(gettext_lazy('presence'), max_length=127, null=True, blank=True)
 
-    length = models.DecimalField(gettext_lazy('length'), null=True, blank=True, decimal_places=1, max_digits=10)
-    width = models.DecimalField(gettext_lazy('width'), null=True, blank=True, decimal_places=1, max_digits=10)
-    height = models.DecimalField(gettext_lazy('height'), null=True, blank=True, decimal_places=1, max_digits=10)
+    length = models.DecimalField(gettext_lazy('length'), null=True, blank=True, decimal_places=2, max_digits=10)
+    width = models.DecimalField(gettext_lazy('width'), null=True, blank=True, decimal_places=2, max_digits=10)
+    height = models.DecimalField(gettext_lazy('height'), null=True, blank=True, decimal_places=2, max_digits=10)
 
-    volume = models.DecimalField(gettext_lazy('volume'), default=0, blank=True, decimal_places=1, max_digits=10)
-    weight = models.DecimalField(gettext_lazy('weight'), default=0, blank=True, decimal_places=1, max_digits=10)
+    volume = models.DecimalField(gettext_lazy('volume'), default=0, blank=True, decimal_places=2, max_digits=10)
+    weight = models.DecimalField(gettext_lazy('weight'), default=0, blank=True, decimal_places=2, max_digits=10)
 
     barcode = models.CharField(gettext_lazy('barcode'), max_length=255, null=True, blank=True)
 
