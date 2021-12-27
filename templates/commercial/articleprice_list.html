@@ -98,7 +98,7 @@
                                 <h5 class="card-title">
                                     {{ item.name }}
                                 </h5>
-                                    {% if item.presence %}
+                                    {% if item.is_less_then_five %}
                                         <p class="badge badge-danger mb-3">{% trans 'less than 5'|upper %}</p>
                                     {% endif %}
                             </div>
