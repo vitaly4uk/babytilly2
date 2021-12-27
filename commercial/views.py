@@ -98,7 +98,8 @@ class ArticleSearchListView(ActiveRequiredMixin, ListView):
         search_str = self.request.GET.get('query', '').strip()
         user_departament_id = self.request.user.profile.departament_id
         if search_str:
-            queryset = ArticleProperties.objects.filter(name__icontains=search_str, departament_id=user_departament_id)
+            queryset = ArticleProperties.objects.filter(published=True,
+                name__icontains=search_str, departament_id=user_departament_id)
         else:
             queryset = ArticleProperties.objects.none()
 
