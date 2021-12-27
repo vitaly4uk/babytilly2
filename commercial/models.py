@@ -171,6 +171,10 @@ class ArticleProperties(models.Model):
     company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
     order = models.PositiveSmallIntegerField(gettext_lazy('article order'), default=1000)
 
+    @property
+    def is_less_then_five(self):
+        return self.presence.lower() == 'меньше 5'
+
     def get_price_for_user(self, user):
         price = self.price
         if user.profile.sale:
