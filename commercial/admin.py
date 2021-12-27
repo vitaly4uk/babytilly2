@@ -83,7 +83,7 @@ class CategoryAdmin(MPTTModelAdmin):
         self.request = request
         queryset = super(CategoryAdmin, self).get_queryset(request)
         # queryset = queryset.select_related('categoryproperties').filter(categoryproperties__departament_id=request.user.profile.departament_id)
-        return queryset  # .prefetch_related('property')
+        return queryset.order_by('categoryproperties__name')
 
 
 class ArticlePropertyAdmin(AdminImageMixin, admin.StackedInline):
