@@ -21,14 +21,14 @@
             <tbody>
             {% for item in order.get_order_items %}
                 <tr>
-                    <td scope="row">{{ forloop.counter }}</td>
+                    <td scope="row">{{ forloop.counter }} {{ item.article.main_image }}</td>
                     <td>{% get_article_name item.article request.user %}</td>
                     <td align="right">{{ item.price }}</td>
                     <td align="right">{% if order.is_closed %}{{ item.count }}{% else %}<input type="text" value="{{ item.count }}" size="5" name="{{ item.pk }}">{% endif %}</td>
                     <td align="right">{{ item.sum|floatformat:2 }}</td>
                     <td align="center">{% if not order.is_closed %}<input type="checkbox" name="del_{{ item.pk }}">{% endif %}</td>
                     <td align="right">
-                        {% thumbnail item.article.image "cart_small"|get_thumb_size crop="center" as im %}
+                        {% thumbnail item.main_image_url "cart_small"|get_thumb_size crop="center" as im %}
                         <img src="{{ im.url }}" width="100" height="100" border="0">
                         {% endthumbnail %}
                     </td>
