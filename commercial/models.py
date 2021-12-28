@@ -303,7 +303,7 @@ class OrderItem(models.Model):
     full_price = models.DecimalField(gettext_lazy('full price'), max_digits=10, decimal_places=3, default=0, editable=False)
     barcode = models.CharField(gettext_lazy('barcode'), max_length=255, null=True, blank=True)
     company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
-    main_image_url = models.URLField(gettext_lazy('main image url'), null=True, blank=True, editable=True)
+    main_image_url = models.URLField(gettext_lazy('main image url'), null=True, blank=True, editable=False)
 
     def __str__(self):
         return self.name
