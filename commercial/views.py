@@ -226,7 +226,7 @@ class AddToCartView(ActiveRequiredMixin, TemplateView):
             count = int(self.kwargs.get('count', '1'))
         except ValueError:
             count = 1
-        count = min(count, sys.maxsize)
+        count = max(min(count, sys.maxsize), 1)
         logger.debug('add to cart: %s', order)
         if article_id:
             if not order:
