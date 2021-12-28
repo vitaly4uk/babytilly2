@@ -275,7 +275,10 @@ def edit_cart(request):
                         elem = OrderItem.objects.get(pk=obj_id)
                     except OrderItem.DoesNotExist:
                         continue
-                    count = int(get_digits(request.POST.get(item, 0)))
+                    try:
+                        count = int(get_digits(request.POST.get(item, 0)))
+                    except ValueError:
+                        count = 0
                     if count == 0:
                         elem.delete()
                     else:
