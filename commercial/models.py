@@ -49,7 +49,7 @@ class DepartamentSale(models.Model):
     def get_sale_for_departament(cls, departament: Departament, order_sum: Decimal) -> Decimal:
         departament_sale = cls.objects.only('sale').filter(
             departament=departament, order_sum__lte=order_sum
-        ).order_by('order_sum').first()
+        ).order_by('-order_sum').first()
         if departament_sale:
             return departament_sale.sale
         return Decimal('0.0')
