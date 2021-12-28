@@ -146,13 +146,15 @@
                                 </div>
                                 <div class="card-text">
                                     <form class="form-inline mx-sm-3 mb-2">
-                                        <label class="sr-only" for="{{ item.article.id }}_input">Количество</label>
-                                        <input type="text" name="{{ item.article.id }}" id="{{ item.article.id }}_input"
-                                               size=4 value="1" class="form-control form-control-sm">
+                                        <label class="sr-only" for="{{ item.article.id }}_input">{% trans 'count'|capfirst %}</label>
+                                        <input type="number" name="{{ item.article.id }}" id="{{ item.article.id }}_input"
+                                               size=4 {% if item.article.id in request.order.get_order_article_ids %}
+                                               value="{% get_order_item_count item.article request.order %}"
+                                               {% else %}value="1"{% endif %} class="form-control form-control-sm" min="1">
                                         <a id="{{ item.article.id }}"
                                            href="{% url 'commercial_addto_cart_one' item.article.id %}/"
                                            class="btn btn-primary btn-sm ml-2"
-                                           onclick="addToCart('{{ item.article.id }}');return false;">&nbsp;Да&nbsp;</a>
+                                           onclick="addToCart('{{ item.article.id }}');return false;">{% trans 'yes'|capfirst %}</a>
                                     </form>
                                 </div>
                             </div>
