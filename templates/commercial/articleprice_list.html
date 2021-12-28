@@ -119,9 +119,9 @@
                                     {% if item.weight %}
                                         <span><i class="bi bi-box-arrow-down"></i> {% trans 'weight'|capfirst %}: {{ item.weight }}</span>
                                     {% endif %}
-{#                                    {% if item.image_link %}#}
-{#                                        <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}" target="_blank">{% trans 'image'|capfirst %}</a> </span>#}
-{#                                    {% endif %}#}
+                                    {% comment %}{% if item.image_link %}
+                                        <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}" target="_blank">{% trans 'image'|capfirst %}</a> </span>
+                                    {% endif %}{% endcomment %}
                                     {% if item.video_link %}
                                         <span><i class="bi bi-youtube"></i> <a href="{{ item.video_link }}" target="_blank">{% trans 'video'|capfirst %}</a> </span>
                                     {% endif %}
