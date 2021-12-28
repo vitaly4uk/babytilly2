@@ -1,4 +1,5 @@
 import logging
+import sys
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -225,6 +226,7 @@ class AddToCartView(ActiveRequiredMixin, TemplateView):
             count = int(self.kwargs.get('count', '1'))
         except ValueError:
             count = 1
+        count = min(count, sys.maxsize)
         logger.debug('add to cart: %s', order)
         if article_id:
             if not order:
