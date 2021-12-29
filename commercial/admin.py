@@ -167,6 +167,12 @@ class UserAdmin(DefaultUserAdmin):
             readonly_fields += ('is_superuser',)
         return readonly_fields + ('date_joined', 'last_login')
 
+    def get_queryset(self, request):
+        queryset = super(UserAdmin, self).get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(profile__departament_id=request.user.profile.departament_id)
+        return queryset
+
 
 class ImportPriceAdmin(admin.ModelAdmin):
     readonly_fields = ['imported_at', 'user']
