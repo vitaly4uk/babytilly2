@@ -221,7 +221,7 @@ class OrderAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super(OrderAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(user__profile__departament_id=request.user.profile.department_id)
+            queryset = queryset.filter(user__profile__departament_id=request.user.profile.departament_id)
         return queryset
 
 
