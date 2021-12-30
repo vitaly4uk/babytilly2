@@ -164,7 +164,7 @@ class UserAdmin(DefaultUserAdmin):
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super(UserAdmin, self).get_readonly_fields(request, obj=obj)
         if not request.user.is_superuser:
-            readonly_fields += ('is_superuser',)
+            readonly_fields += ('is_superuser', 'is_staff')
         return readonly_fields + ('date_joined', 'last_login')
 
     def get_queryset(self, request):
