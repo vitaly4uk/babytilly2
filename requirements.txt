@@ -1,5 +1,5 @@
 django==3.2.10
-psycopg2-binary==2.9.2
+psycopg2-binary==2.9.3
 django-countries==7.2.1
 pyuca==1.2
 django-mptt==0.13.4
