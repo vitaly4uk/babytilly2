@@ -136,8 +136,9 @@ class ArticleNewListView(ActiveRequiredMixin, ListView):
     def get_queryset(self):
         sort = self.request.GET.get('sort', None)
         user_departament_id = self.request.user.profile.departament_id
-        queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id,
-                                                    is_new=True)
+        queryset = ArticleProperties.objects.filter(
+            published=True, departament_id=user_departament_id, is_new=True
+        ).select_related('article')
 
         if sort == 'price':
             queryset = queryset.order_by('price')

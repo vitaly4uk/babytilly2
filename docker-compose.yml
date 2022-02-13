@@ -18,6 +18,8 @@ services:
       - cache
   db:
     image: library/postgres:11.12
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:
