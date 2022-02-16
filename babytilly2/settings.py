@@ -32,16 +32,15 @@ sentry_sdk.init(
     send_default_pii=True
 )
 
-EMAIL_BACKEND = 'django_ses.SESBackend'
-# EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
-# EMAIL_HOST_USER = 'AKIAIYNHQDMK3MVLYTCQ'
-# EMAIL_HOST_PASSWORD = 'AlD3r34xeI4dOtvrJbF6d4IUi1n4hklYxrT8qeoLdha1'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp-relay.sendinblue.com'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 EMAIL_SUBJECT_PREFIX = '[b2b carrello] '
-
 DEFAULT_FROM_EMAIL = 'no-reply@b2bcarrello.com'
 SERVER_EMAIL = 'no-reply@b2bcarrello.com'
+
 ADMINS = (
     ('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),
 )
