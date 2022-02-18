@@ -31,4 +31,5 @@ urlpatterns = [
     path('commerce/', include('commercial.urls')),
     path('<slug:slug>/', PageDetailView.as_view(), name='page_detail_url'),
     path('', HomePage.as_view(), name='home_page'),
+    path('__debug__/', include('debug_toolbar.urls')),
 ] + staticfiles_urlpatterns()

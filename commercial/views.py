@@ -56,8 +56,10 @@ class ArticleListView(ActiveRequiredMixin, ListView):
     def get_queryset(self):
         sort = self.request.GET.get('sort', None)
         user_departament_id = self.request.user.profile.departament_id
-        queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id,
-                                                    article__category__id=self.kwargs['id'])
+        queryset = ArticleProperties.objects.filter(
+            published=True, departament_id=user_departament_id,
+            article__category__id=self.kwargs['id']
+        ).select_related('article')
 
         if sort == 'price':
             queryset = queryset.order_by('price')
@@ -74,7 +76,7 @@ class ArticleListView(ActiveRequiredMixin, ListView):
         category = get_object_or_404(Category, id=self.kwargs['id'])
         property = category.categoryproperties_set.filter(
             departament_id=self.request.user.profile.departament_id
-        ).only('name').first()
+        ).first()
         page_title = property.name if property else ''
         context.update({
             'category': category,
