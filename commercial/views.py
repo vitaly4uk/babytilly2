@@ -297,7 +297,7 @@ def edit_cart(request):
                 order.comment = request.POST.get('comment')
                 order.is_closed = True
                 order.save()
-                send_order_email.apply(order.id)
+                send_order_email.delay(order.id)
             logout(request)
             return HttpResponseRedirect("/")
 
