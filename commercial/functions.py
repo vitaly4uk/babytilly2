@@ -29,7 +29,7 @@ def export_to_csv(order: Order):
                 item.article.pk, item.name, item.count, item.price, item.sum(), item.volume, item.weight, item.barcode, item.company
             ])
         content = buffer.getvalue().strip()
-        file_name = default_storage.save(file_name, ContentFile(content))
+        file_name = default_storage.save(file_name, ContentFile(content.encode('utf-8')))
         csv_files.append(
             (file_name, default_storage.url(file_name))
         )
