@@ -6,3 +6,5 @@ db.sqlite3
 __pycache__/
 import.csv
 postgres_data/
+.DS_Store
+*.dump
