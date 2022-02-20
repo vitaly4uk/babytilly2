@@ -4,10 +4,8 @@ from decimal import Decimal
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import EmailMultiAlternatives
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy
 from django_countries.fields import CountryField
@@ -255,35 +253,6 @@ class Order(models.Model):
 
     def get_absolute_url(self):
         return reverse('commercial_order_detail', kwargs={'pk': self.pk})
-
-    def send(self):
-        from commercial.functions import export_to_csv
-
-        context = {
-            'cart': self.items.all(),
-            'order': self,
-            'profile': self.user,
-        }
-        html_body = str(render_to_string('commercial/mail.html', context))
-        text_body = str(render_to_string('commercial/mail_text.html', context))
-        stuff_email = Departament.objects.get(id=self.user.profile.departament_id).email
-        to_emails = [settings.DEFAULT_FROM_EMAIL, stuff_email]
-        if self.user.email:
-            to_emails.append(self.user.email)
-        additional_emails = filter(bool, [e.strip() for e in self.user.profile.additional_emails.split(',')])
-        if additional_emails:
-            to_emails += additional_emails
-        logger.debug('Sending order to: {}'.format(to_emails))
-        msg = EmailMultiAlternatives(
-            subject='Order {} {}'.format(self, self.user),
-            body=text_body,
-            to=to_emails,
-            reply_to=['carrello.zakaz@gmail.com']
-        )
-        msg.attach_alternative(html_body, 'text/html')
-        for company, csv_file in export_to_csv(self):
-            msg.attach(f'zakaz{self.pk} {company}.csv', csv_file, 'text/csv')
-        msg.send()
 
     class Meta:
         verbose_name = gettext_lazy('order')

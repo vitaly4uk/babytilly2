@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy
 from django.views.generic import TemplateView, ListView, DetailView
 
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page
+from commercial.tasks import send_order_email
 from commonutils.views import ActiveRequiredMixin, is_active
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,6 @@ class HomePage(TemplateView):
     template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
-        print(ArticleProperties.objects.first().name)
         context = super(HomePage, self).get_context_data()
         queryset = StartPageImage.objects.only('image')
         context.update({
@@ -297,7 +297,7 @@ def edit_cart(request):
                 order.comment = request.POST.get('comment')
                 order.is_closed = True
                 order.save()
-                order.send()
+                send_order_email.apply(order.id)
             logout(request)
             return HttpResponseRedirect("/")
 
