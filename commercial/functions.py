@@ -33,6 +33,7 @@ def export_to_csv(order: Order):
         csv_files.append(
             (file_name, default_storage.url(file_name))
         )
+    print(csv_files)
     return csv_files
 
 
