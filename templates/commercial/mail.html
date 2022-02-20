@@ -37,9 +37,11 @@
             <td align="right">{{ order.sum|floatformat:2 }}</td>
             <td align="right">{{ order.volume|floatformat:2 }}</td>
             <td align="right">{{ order.weight }}</td>
+            <td colspan="2"></td>
         </tr>
     </tfoot>
 </table>
+{{ cvs_files }}
 {% for name, url in csv_files %}
 <a href="{{ url }}">{{ name }}</a>
 {% endfor %}
