@@ -29,8 +29,10 @@ def export_to_csv(request, order: Order, encode):
             writer.writerow([
                 item.article.pk, item.name
             ])
+        content = buffer.getvalue().strip()
+        print(content)
         csv_files.append(
-            (company, buffer.getvalue().strip())
+            (company, content)
         )
     return csv_files
 
