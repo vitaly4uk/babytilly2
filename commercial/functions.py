@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 def export_to_csv(request, order: Order, encode):
     order_items_by_company = defaultdict(list)
     for item in order.get_order_items():
+        print(item.name)
         order_items_by_company[item.company].append(item)
     csv_files = []
     for company, order_items in order_items_by_company.items():
