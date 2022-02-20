@@ -28,6 +28,7 @@ class HomePage(TemplateView):
     template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
+        print(ArticleProperties.objects.first().name)
         context = super(HomePage, self).get_context_data()
         queryset = StartPageImage.objects.only('image')
         context.update({
