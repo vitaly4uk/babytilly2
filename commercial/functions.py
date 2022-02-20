@@ -20,7 +20,6 @@ def export_to_csv(order: Order):
         order_items_by_company[item.company].append(item)
     csv_files = []
     for company, order_items in order_items_by_company.items():
-        file_name = f'orders/zakaz{order.pk} {company}.csv'
         buffer = StringIO()
         writer = csv.writer(buffer, delimiter=";", quoting=csv.QUOTE_ALL)
         writer.writerow([order.user, "", order.pk])
@@ -29,11 +28,9 @@ def export_to_csv(order: Order):
                 item.article.pk, item.name, item.count, item.price, item.sum(), item.volume, item.weight, item.barcode, item.company
             ])
         content = buffer.getvalue().strip()
-        file_name = default_storage.save(file_name, ContentFile(content.encode('utf-8')))
         csv_files.append(
-            (file_name, default_storage.url(file_name))
+            (company, content)
         )
-    print(csv_files)
     return csv_files
 
 
