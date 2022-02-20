@@ -32,10 +32,10 @@ sentry_sdk.init(
     send_default_pii=True
 )
 
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp-relay.sendinblue.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 465
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_SUBJECT_PREFIX = '[b2b carrello] '
 DEFAULT_FROM_EMAIL = 'vitalii.omelchuk@icloud.com'
