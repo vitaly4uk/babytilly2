@@ -14,25 +14,24 @@ from commercial.models import Departament, Category, CategoryProperties, Article
 logger = logging.getLogger(__name__)
 
 
-def export_to_csv(request, order: Order, encode):
+def export_to_csv(order: Order):
     order_items_by_company = defaultdict(list)
     for item in order.get_order_items():
-        print(item.name)
         order_items_by_company[item.company].append(item)
     csv_files = []
     for company, order_items in order_items_by_company.items():
+        file_name = f'orders/zakaz{order.pk} {company}.csv'
         buffer = StringIO()
         writer = csv.writer(buffer, delimiter=";", quoting=csv.QUOTE_ALL)
         writer.writerow([order.user, "", order.pk])
         for item in order_items:
-            print(item.name)
             writer.writerow([
-                item.article.pk, item.name
+                item.article.pk, item.name, item.count, item.price, item.sum(), item.volume, item.weight, item.barcode, item.company
             ])
         content = buffer.getvalue().strip()
-        print(content)
+        file_name = default_storage.save(file_name, ContentFile(content))
         csv_files.append(
-            (company, content)
+            (file_name, default_storage.url(file_name))
         )
     return csv_files
 

@@ -40,3 +40,6 @@
         </tr>
     </tfoot>
 </table>
+{% for name, url in csv_files %}
+<a href="{{ url }}">{{ name }}</a>
+{% endfor %}
