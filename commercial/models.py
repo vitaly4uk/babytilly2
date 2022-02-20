@@ -277,7 +277,7 @@ class Order(models.Model):
             subject='Order {} {}'.format(self, self.user),
             body=text_body,
             to=to_emails,
-            reply_to=['vitalii.omelchuk@icloud.com']
+            reply_to=['carrello.zakaz@gmail.com']
         )
         msg.attach_alternative(html_body, 'text/html')
         for company, csv_file in export_to_csv(None, self, 'cp1251'):
