@@ -2,7 +2,7 @@ import csv
 import logging
 import typing
 from collections import defaultdict
-from io import BytesIO
+from io import BytesIO, StringIO
 
 from PIL import Image
 from django.core.files.base import ContentFile
@@ -21,8 +21,16 @@ def export_to_csv(request, order: Order, encode):
         order_items_by_company[item.company].append(item)
     csv_files = []
     for company, order_items in order_items_by_company.items():
+        buffer = StringIO()
+        writer = csv.writer(buffer, delimiter=";", quoting=csv.QUOTE_ALL)
+        writer.writerow([order.user, "", order.pk])
+        for item in order_items:
+            print(item.name)
+            writer.writerow([
+                item.article.pk, item.name
+            ])
         csv_files.append(
-            (company, loader.render_to_string('commercial/csv.html', {'order': order, 'order_items': order_items}))
+            (company, buffer.getvalue().strip())
         )
     return csv_files
 
