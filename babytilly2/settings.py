@@ -38,8 +38,8 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_SUBJECT_PREFIX = '[b2b carrello] '
-DEFAULT_FROM_EMAIL = 'no-reply@b2bcarrello.com'
-SERVER_EMAIL = 'no-reply@b2bcarrello.com'
+DEFAULT_FROM_EMAIL = 'carrello.zakaz@gmail.com'
+SERVER_EMAIL = 'carrello.zakaz@gmail.com'
 
 ADMINS = (
     ('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),
