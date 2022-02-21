@@ -78,6 +78,7 @@ def send_order_email(order_id: int):
     additional_emails = filter(bool, [e.strip() for e in order.user.profile.additional_emails.split(',')])
     if additional_emails:
         to_emails += additional_emails
+    print(f'Sending order #{order_id} to: {to_emails}')
     msg = EmailMultiAlternatives(
         subject='Order {} {}'.format(order, order.user),
         body=text_body,
