@@ -1,6 +1,6 @@
 django==3.2.12
 psycopg2-binary==2.9.3
-django-countries==7.2.1
+django-countries==7.3.2
 pyuca==1.2
 django-mptt==0.13.4
 Pillow==9.0.1
