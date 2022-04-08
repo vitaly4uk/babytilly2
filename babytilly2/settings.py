@@ -32,11 +32,13 @@ sentry_sdk.init(
     send_default_pii=True
 )
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
 EMAIL_SUBJECT_PREFIX = '[b2b carrello] '
 DEFAULT_FROM_EMAIL = 'carrello.zakaz@gmail.com'
 SERVER_EMAIL = 'carrello.zakaz@gmail.com'

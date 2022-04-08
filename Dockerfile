@@ -1,4 +1,4 @@
-FROM python:3.9.10
+FROM python:3.9.12
 ENV PYTHONUNBUFFERED 1
 ENV ENV LOCAL
 RUN apt update && apt install -y locales
