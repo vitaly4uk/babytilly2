@@ -202,6 +202,7 @@ AWS_PRELOAD_METADATA = True
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_EXPIRE = None
 AWS_QUERYSTRING_AUTH = False
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
