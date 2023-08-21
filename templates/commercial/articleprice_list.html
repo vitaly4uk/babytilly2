@@ -139,10 +139,10 @@
                                 <p class="card-text truncated">{{ item.description|safe|truncatewords:15 }}</p>
                                 <p class="card-text d-none">{{ item.description|safe }}</p>
                                 <div class="card-text">
-                                    <span class="h7 text-secondary">за шт. {{ item.retail_price }} {% trans 'retail price' %}</span>
+                                    <span class="h7 text-secondary">per pc {{ item.retail_price }} {% trans 'retail price' %}</span>
                                 </div>
                                 <div class="card-text">
-                                    за шт. <span class="h5">{% calculate_user_price item request.user %}</span>
+                                    per pc <span class="h5">{% calculate_user_price item request.user %}</span>
                                 </div>
                                 <div class="card-text">
                                     <form class="form-inline mx-sm-3 mb-2">
