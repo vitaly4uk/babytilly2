@@ -1,4 +1,5 @@
 import logging
+import typing
 from decimal import Decimal
 
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 class Departament(models.Model):
     country = CountryField(gettext_lazy('country'))
     email = models.EmailField(gettext_lazy('email'))
+    delivery_price = models.DecimalField(gettext_lazy('delivery price'), max_digits=10, decimal_places=3, default=0)
 
     def __str__(self):
         return str(self.country)
@@ -211,7 +213,7 @@ class Order(models.Model):
     def __str__(self):
         return str(self.pk)
 
-    def get_order_items(self):
+    def get_order_items(self) -> typing.List['OrderItem']:
         if getattr(self, '_items', None) is None:
             self._items = list(self.items.all())
         return self._items
@@ -219,7 +221,7 @@ class Order(models.Model):
     def get_order_article_ids(self):
         return list(i.article_id for i in self.get_order_items())
 
-    def count(self) -> int:
+    def full_count(self) -> int:
         return sum(i.count for i in self.get_order_items())
 
     def full_sum(self):
@@ -244,6 +246,25 @@ class Order(models.Model):
             'sum': 0,
             'percent': 0
         }
+
+    def total_sum_with_delivery(self) -> typing.Dict:
+        delivery_price = self.user.profile.departament.delivery_price
+        total_sum = self.full_sum()
+        if delivery_price:
+            delivery_full_price = delivery_price * self.full_count()
+            return {
+                'delivery_price': delivery_full_price,
+                'total_sum': self.full_sum() - delivery_full_price
+            }
+        return {
+            'delivery_price': 0,
+            'total_sum': self.full_sum()
+        }
+
+
+
+
+
 
     def volume(self):
         return sum(i.volume * i.count for i in self.get_order_items())
