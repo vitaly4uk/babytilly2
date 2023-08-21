@@ -60,7 +60,13 @@
             <tr>
                 <td align="right" colspan="4">{% trans 'delivery'|capfirst %}</td>
                 <td align="right">{{ order.total_sum_with_delivery.delivery_price|floatformat:2 }}</td>
-                <td scope="row">{{ order.total_sum_with_delivery.total_sum.percent|floatformat:2 }}</td>
+                <td scope="row"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td align="right" colspan="4">{% trans 'delivery'|capfirst %}</td>
+                <td align="right">{{ order.total_sum_with_delivery.total_sum|floatformat:2 }}</td>
+                <td scope="row"></td>
                 <td></td>
             </tr>
             </tfoot>
