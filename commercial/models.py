@@ -249,16 +249,15 @@ class Order(models.Model):
 
     def total_sum_with_delivery(self) -> typing.Dict:
         delivery_price = self.user.profile.departament.delivery_price
-        total_sum = self.full_sum()
         if delivery_price:
             delivery_full_price = delivery_price * self.full_count()
             return {
                 'delivery_price': delivery_full_price,
-                'total_sum': self.full_sum() - delivery_full_price
+                'total_sum': self.sum() - delivery_full_price
             }
         return {
             'delivery_price': 0,
-            'total_sum': self.full_sum()
+            'total_sum': self.sum()
         }
 
 
