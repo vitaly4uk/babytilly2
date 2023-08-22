@@ -253,7 +253,7 @@ class Order(models.Model):
             delivery_full_price = delivery_price * self.full_count()
             return {
                 'delivery_price': delivery_full_price,
-                'total_sum': self.sum() - delivery_full_price
+                'total_sum': self.sum() + delivery_full_price
             }
         return {
             'delivery_price': 0,
