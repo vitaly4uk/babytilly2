@@ -90,6 +90,7 @@ class ArticlePropertyAdmin(AdminImageMixin, admin.StackedInline):
     model = ArticleProperties
     min_num = 1
     autocomplete_fields = ['departament']
+    extra = 0
 
     def get_queryset(self, request):
         queryset = super(ArticlePropertyAdmin, self).get_queryset(request)
