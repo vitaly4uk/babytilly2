@@ -1,2 +1,3 @@
-web: gunicorn babytilly2.wsgi --workers 2 --preload --max-requests 600 --max-requests-jitter 10 --timeout 120 --capture-output --enable-stdio-inheritance
+web: gunicorn babytilly2.wsgi --workers 3 --preload --max-requests 600 --max-requests-jitter 10 --timeout 120 --capture-output --enable-stdio-inheritance --access-logfile -
+
 worker: celery -A babytilly2 worker -c 1 --loglevel=INFO
