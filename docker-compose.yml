@@ -6,6 +6,7 @@ services:
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
       - MEMCACHED_URL=memcached://cache:11211
+      - REDIS_URL=redis://redis:6379/0
     env_file:
       - .env
     volumes:
@@ -15,6 +16,7 @@ services:
     depends_on:
       - db
       - cache
+      - redis
   db:
     image: library/postgres:11.12
     volumes:
