@@ -7,7 +7,6 @@ from io import BytesIO, StringIO
 from PIL import Image
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.template import loader
 
 from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties, Order
 
@@ -96,18 +95,19 @@ def do_import_price(csv_file: typing.IO, country: str):
     ArticleProperties.objects.filter(departament=departament).update(published=False)
     for row in reader:
         is_category = row['is_category'] == '1'
-
+        row_id = str(row['id']).strip()
+        parent_id = str(row['parent_id']).strip()
         if is_category:
             # print(row)
-            if row['parent_id'] and row['parent_name']:
-                parent = get_or_create_category(row['parent_id'], row['parent_name'], departament)
+            if parent_id and row['parent_name']:
+                parent = get_or_create_category(parent_id, row['parent_name'], departament)
             else:
                 parent = None
-            get_or_create_category(row['id'], row['name'], departament, parent=parent)
+            get_or_create_category(row_id, row['name'], departament, parent=parent)
         else:
             # print(row)
-            parent = get_or_create_category(row['parent_id'], row['parent_name'], departament)
-            article_id = row['id']
+            parent = get_or_create_category(parent_id, row['parent_name'], departament)
+            article_id = row_id
             article, created = Article.objects.get_or_create(pk=article_id)
             article.category = parent
             article.save()
