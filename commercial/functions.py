@@ -156,5 +156,5 @@ def _perform_update_articles(csv_file: typing.IO, departament_id: int, field_nam
     for row in reader:
         ArticleProperties.objects.filter(
             departament_id=departament_id,
-            article_id=row[0]
+            article_id=str(row[0]).strip()
         ).update(**{field_name: True})
