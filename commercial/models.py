@@ -222,7 +222,7 @@ class ArticleImage(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     date = models.DateTimeField(gettext_lazy('date'), auto_now_add=True)
-    delivery = models.ForeignKey(Delivery, verbose_name=gettext_lazy('delivery'), on_delete=models.SET_NULL, null=True)
+    delivery = models.ForeignKey(Delivery, verbose_name=gettext_lazy('delivery'), on_delete=models.SET_NULL, null=True, blank=True)
     comment = models.TextField(default='', blank=True)
     is_closed = models.BooleanField(gettext_lazy('closed'), default=False)
 
@@ -265,7 +265,10 @@ class Order(models.Model):
         }
 
     def total_sum_with_delivery(self) -> typing.Dict:
-        delivery_price = self.delivery.price if self.delivery else 0
+        try:
+            delivery_price = self.delivery.price
+        except ValueError:
+            delivery_price = 0
         if delivery_price:
             delivery_full_price = delivery_price * self.full_count()
             return {
