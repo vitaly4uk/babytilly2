@@ -9,6 +9,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.translation import gettext_lazy
 from django.views.generic import TemplateView, ListView, DetailView
 
+from commercial.forms import EditOrderForm
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page
 from commercial.tasks import send_order_email
 from commonutils.views import ActiveRequiredMixin, is_active
@@ -266,6 +267,9 @@ def edit_cart(request):
                 order = request.order
                 OrderItem.objects.filter(order=order).delete()
         if request.POST.get('submit') == 'Recalculate':
+            order: Order = request.order
+            order.delivery_id = request.POST.get('delivery')
+            order.save()
             for item in request.POST:
                 if item.startswith('del_'):
                     i = item.split('_')
@@ -295,6 +299,7 @@ def edit_cart(request):
         elif request.POST.get('submit') == 'Send':
             if hasattr(request, 'order'):
                 order = request.order
+                order.delivery_id = request.POST.get('delivery')
                 order.comment = request.POST.get('comment')
                 order.is_closed = True
                 order.save()
@@ -302,4 +307,8 @@ def edit_cart(request):
             logout(request)
             return HttpResponseRedirect("/")
 
-    return render(request, 'commercial/editcart.html', {'order': request.order})
+    return render(
+        request,
+        'commercial/editcart.html',
+        {'order': request.order, 'form': EditOrderForm(instance=request.order)}
+    )

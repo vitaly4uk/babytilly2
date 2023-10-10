@@ -2,12 +2,10 @@ from django import forms
 from django.core.validators import validate_image_file_extension
 from django.utils.translation import gettext
 
-
-from .models import Article, ArticleImage
+from .models import Article, ArticleImage, Order
 
 
 class ArticleAdminForm(forms.ModelForm):
-
     class Meta:
         model = Article
         fields = (
@@ -17,7 +15,7 @@ class ArticleAdminForm(forms.ModelForm):
         )
 
     images = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={"multiple": True}),
+        widget=forms.ClearableFileInput(attrs={"allow_multiple_selected": True}),
         label=gettext("Add images"),
         required=False,
     )
@@ -32,3 +30,13 @@ class ArticleAdminForm(forms.ModelForm):
         for upload in self.files.getlist("images"):
             image = ArticleImage(article=article, image=upload, departament_id=self.request.user.profile.departament_id)
             image.save()
+
+
+class EditOrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ('delivery', 'comment')
+        widgets = {
+            'comment': forms.Textarea(attrs={'cols': 75}),
+            'delivery': forms.Select(attrs={'class': 'custom-select custom-select-sm d-inline-block'})
+        }

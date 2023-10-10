@@ -9,3 +9,4 @@ postgres_data/
 .DS_Store
 *.dump
 .env
+.venv/

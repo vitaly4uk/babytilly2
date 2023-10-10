@@ -65,6 +65,10 @@ class DepartamentAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
 
+class DeliveryAdmin(admin.ModelAdmin):
+    list_display = ['country', 'price']
+    search_fields = ['country']
+
 class CategoryAdmin(MPTTModelAdmin):
     inlines = [CategoryPropertyAdmin]
     list_display = ['id', 'category_name']

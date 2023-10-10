@@ -72,11 +72,11 @@
             </tfoot>
         </table>
     <div class="row">
-{#        <div class="col-2">#}
-{#            <input type="submit" value="{% trans 'Clear' %}" name="submit" class="btn btn-danger">#}
-{#        </div>#}
         {% if not order.is_closed %}
-        <div class="col-12 text-right">
+        <div class="col-6 text-right">
+            {{ form.delivery }}
+        </div>
+        <div class="col-6 text-right">
             <input type="submit" value="{% trans 'Recalculate' %}" name="submit" class="btn btn-secondary">
             <input type="submit" value="{% trans 'Send' %}" name="submit" class="btn btn-primary">
         </div>
@@ -88,7 +88,7 @@
         {% if order.is_closed %}
             <p>{{ order.comment }}</p>
         {% else %}
-        <textarea name="comment" class="w-75"></textarea>
+            {{ form.comment }}
         {% endif %}
     </div>
 </div>

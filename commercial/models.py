@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 class Departament(models.Model):
     country = CountryField(gettext_lazy('country'))
     email = models.EmailField(gettext_lazy('email'))
-    delivery_price = models.DecimalField(gettext_lazy('delivery price'), max_digits=10, decimal_places=3, default=0)
 
     def __str__(self):
         return str(self.country)
@@ -62,7 +61,23 @@ class DepartamentSale(models.Model):
         verbose_name_plural = gettext_lazy('departament sales')
         ordering = ['-order_sum']
         constraints = [
-            models.UniqueConstraint(fields=['departament', 'order_sum', 'sale'], name='unique_departament_order_sum_sale')
+            models.UniqueConstraint(fields=['departament', 'order_sum', 'sale'],
+                                    name='unique_departament_order_sum_sale')
+        ]
+
+
+class Delivery(models.Model):
+    country = CountryField(gettext_lazy('country'))
+    price = models.DecimalField(gettext_lazy('delivery price'), max_digits=10, decimal_places=3, default=0)
+
+    def __str__(self):
+        return f"{self.country.name} - {self.price}"
+
+    class Meta:
+        verbose_name = gettext_lazy('delivery price')
+        verbose_name_plural = gettext_lazy('delivery prices')
+        constraints = [
+            models.UniqueConstraint(fields=['country', 'price'], name='unique_delivery_price')
         ]
 
 
@@ -207,6 +222,7 @@ class ArticleImage(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     date = models.DateTimeField(gettext_lazy('date'), auto_now_add=True)
+    delivery = models.ForeignKey(Delivery, verbose_name=gettext_lazy('delivery'), on_delete=models.SET_NULL, null=True)
     comment = models.TextField(default='', blank=True)
     is_closed = models.BooleanField(gettext_lazy('closed'), default=False)
 
@@ -233,6 +249,7 @@ class Order(models.Model):
             sale = DepartamentSale.get_sale_for_departament(self.user.profile.departament, order_sum)
             order_sum -= order_sum * sale / 100 if sale else 0
         return order_sum
+
     sum.short_description = gettext_lazy('Sum')
 
     def discount(self):
@@ -248,7 +265,7 @@ class Order(models.Model):
         }
 
     def total_sum_with_delivery(self) -> typing.Dict:
-        delivery_price = self.user.profile.departament.delivery_price
+        delivery_price = self.delivery.price if self.delivery else 0
         if delivery_price:
             delivery_full_price = delivery_price * self.full_count()
             return {
@@ -259,11 +276,6 @@ class Order(models.Model):
             'delivery_price': 0,
             'total_sum': self.sum()
         }
-
-
-
-
-
 
     def volume(self):
         return sum(i.volume * i.count for i in self.get_order_items())
@@ -290,7 +302,8 @@ class OrderItem(models.Model):
     volume = models.DecimalField(gettext_lazy('volume'), default=0, blank=True, decimal_places=2, max_digits=10)
     weight = models.DecimalField(gettext_lazy('weight'), default=0, blank=True, decimal_places=2, max_digits=10)
     price = models.DecimalField(gettext_lazy('price'), max_digits=10, decimal_places=3, default=0)
-    full_price = models.DecimalField(gettext_lazy('full price'), max_digits=10, decimal_places=3, default=0, editable=False)
+    full_price = models.DecimalField(gettext_lazy('full price'), max_digits=10, decimal_places=3, default=0,
+                                     editable=False)
     barcode = models.CharField(gettext_lazy('barcode'), max_length=255, null=True, blank=True)
     company = models.CharField(gettext_lazy('company'), max_length=255, null=True, blank=True)
     main_image_url = models.URLField(gettext_lazy('main image url'), null=True, blank=True, editable=False)
