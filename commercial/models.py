@@ -267,7 +267,7 @@ class Order(models.Model):
     def total_sum_with_delivery(self) -> typing.Dict:
         try:
             delivery_price = self.delivery.price
-        except ValueError:
+        except (ValueError, AttributeError):
             delivery_price = 0
         if delivery_price:
             delivery_full_price = delivery_price * self.full_count()
