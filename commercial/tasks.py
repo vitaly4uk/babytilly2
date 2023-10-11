@@ -14,8 +14,8 @@ def import_price(import_id: int):
     import_price = ImportPrice.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
-    with import_price.file.open(mode='r') as import_file:
-        in_memory_file.writelines([l.decode('cp1251') for l in import_file.readlines()])
+    with import_price.file.open(mode='rb') as import_file:
+        in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
         in_memory_file.seek(0)
 
     do_import_price(
@@ -31,7 +31,7 @@ def import_novelty(import_id: int):
     import_price = ImportNew.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
-    with import_price.file.open(mode='r') as import_file:
+    with import_price.file.open(mode='rb') as import_file:
         in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
         in_memory_file.seek(0)
 
@@ -48,7 +48,7 @@ def import_special(import_id: int):
     import_special = ImportSpecial.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
-    with import_special.file.open(mode='r') as import_file:
+    with import_special.file.open(mode='rb') as import_file:
         in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
         in_memory_file.seek(0)
 
@@ -87,5 +87,5 @@ def send_order_email(order_id: int):
     )
     msg.attach_alternative(html_body, 'text/html')
     for company, csv_file in export_to_csv(order):
-        msg.attach(f'zakaz{order.pk} {company}.csv', csv_file, 'text/csv')
+        msg.attach(f'order{order.pk} {company}.csv', csv_file, 'text/csv')
     msg.send()
