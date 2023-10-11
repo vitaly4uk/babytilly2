@@ -38,11 +38,12 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-dj-database-url==0.5.0
+dj-database-url==2.1.0
     # via -r requirements.in
 django==3.2.22
     # via
     #   -r requirements.in
+    #   dj-database-url
     #   django-debug-toolbar
     #   django-js-asset
     #   django-ses
@@ -118,6 +119,7 @@ tomli==2.0.1
 typing-extensions==4.8.0
     # via
     #   asgiref
+    #   dj-database-url
     #   django-countries
 urllib3==1.26.17
     # via
