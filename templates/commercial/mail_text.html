@@ -1,8 +1,8 @@
 {% load i18n %}
 {% trans 'Order' %} {{ order }}
 {{ order.comment }}
-## \t {% trans 'name'|capfirst %} \t {% trans 'price'|capfirst %} \t {% trans 'count'|capfirst %} \t {% trans 'sum'|capfirst %} \t {% trans 'volume'|capfirst %} \t {% trans 'weight'|capfirst %} \t {% trans 'barcode'|capfirst %} \t {% trans 'company'|capfirst %}
+## \t {% trans 'name'|capfirst %} \t {% trans 'price'|capfirst %} \t {% trans 'count'|capfirst %} \t {% trans 'sum'|capfirst %} \t {% trans 'volume'|capfirst %} \t {% trans 'weight'|capfirst %} \t {% trans 'barcode'|capfirst %} \t
 {% for item in cart %}
 {{ forloop.counter }} \t {{ item.name }} \t {{ item.price|floatformat:2 }} \t {{ item.count }} \t {{ item.sum|floatformat:2 }} \t {{ item.volume|floatformat:2 }} \t {{ item.weight }} \t {{ item.barcode }} \t {{ item.company }}
 {% endfor %}
-\t \t {{ order.count }} \t {{ order.sum|floatformat:2 }} \t {{ order.volume|floatformat:2 }} \t {{ order.weight }} \t {{ order.delivery }} \t {{ order.total_sum_with_delivery.delivery_price|floatformat:2 }}
+\t \t {{ order.count }} \t {{ order.sum|floatformat:2 }} \t {{ order.volume|floatformat:2 }} \t {{ order.weight }} \t {{ order.delivery }} \t {{ order.total_sum_with_delivery.total_sum|floatformat:2 }}

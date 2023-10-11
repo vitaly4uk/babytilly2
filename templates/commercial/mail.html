@@ -12,7 +12,7 @@
             <th width="10%">{% trans 'volume'|capfirst %}</th>
             <th width="10%">{% trans 'weight'|capfirst %}</th>
             <th width="10%">{% trans 'barcode'|capfirst %}</th>
-            <th width="10%">{% trans 'company'|capfirst %}</th>
+            <th width="10%"></th>
         </tr>
     </thead>
     <tbody>
@@ -38,7 +38,7 @@
             <td align="right">{{ order.volume|floatformat:2 }}</td>
             <td align="right">{{ order.weight }}</td>
             <td>{{ order.delivery }}</td>
-            <td>{{ order.total_sum_with_delivery.delivery_price|floatformat:2 }}</td>
+            <td>{{ order.total_sum_with_delivery.total_sum|floatformat:2 }}</td>
         </tr>
     </tfoot>
 </table>

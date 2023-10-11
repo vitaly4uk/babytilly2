@@ -73,7 +73,8 @@
         </table>
     <div class="row">
         {% if not order.is_closed %}
-        <div class="col-6 text-right">
+        <div class="col-6">
+            <label for="{{ form.delivery.id_for_label }}">Country of delivery</label>
             {{ form.delivery }}
         </div>
         <div class="col-6 text-right">

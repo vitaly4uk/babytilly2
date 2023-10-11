@@ -4,6 +4,8 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import gettext_lazy
@@ -12,9 +14,18 @@ from django.views.generic import TemplateView, ListView, DetailView
 from commercial.forms import EditOrderForm
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page
 from commercial.tasks import send_order_email
-from commonutils.views import ActiveRequiredMixin, is_active
 
 logger = logging.getLogger(__name__)
+
+
+def is_active(user):
+    return user.is_authenticated and user.is_active
+
+
+class ActiveRequiredMixin(UserPassesTestMixin):
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_active
 
 
 def get_digits(string):
@@ -104,7 +115,7 @@ class ArticleSearchListView(ActiveRequiredMixin, ListView):
         user_departament_id = self.request.user.profile.departament_id
         if search_str:
             queryset = ArticleProperties.objects.filter(published=True,
-                name__icontains=search_str, departament_id=user_departament_id)
+                                                        name__icontains=search_str, departament_id=user_departament_id)
         else:
             queryset = ArticleProperties.objects.none()
 
@@ -259,7 +270,7 @@ class AddToCartView(ActiveRequiredMixin, TemplateView):
         return context
 
 
-@is_active('/')
+@user_passes_test(is_active)
 def edit_cart(request):
     if request.method == "POST":
         if request.POST.get('submit') == 'Clear':

@@ -71,7 +71,7 @@ class Delivery(models.Model):
     price = models.DecimalField(gettext_lazy('delivery price'), max_digits=10, decimal_places=3, default=0)
 
     def __str__(self):
-        return f"{self.country.name} - {self.price}"
+        return self.country.name
 
     class Meta:
         verbose_name = gettext_lazy('delivery price')

@@ -83,7 +83,7 @@ def send_order_email(order_id: int):
         subject='Order {} {}'.format(order, order.user),
         body=text_body,
         to=to_emails,
-        reply_to=['carrello.zakaz@gmail.com']
+        reply_to=['order.carrello@gmail.com']
     )
     msg.attach_alternative(html_body, 'text/html')
     for company, csv_file in export_to_csv(order):
