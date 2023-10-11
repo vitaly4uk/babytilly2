@@ -13,5 +13,5 @@ class Command(BaseCommand):
         parser.add_argument('country')
 
     def handle(self, *args, **options):
-        with codecs.open(options['file_name'], 'r', encoding='cp1251') as csv_file:
+        with codecs.open(options['file_name'], 'r', encoding='utf-8-sig') as csv_file:
             do_import_price(csv_file, options['country'])

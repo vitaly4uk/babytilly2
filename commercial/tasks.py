@@ -32,7 +32,7 @@ def import_novelty(import_id: int):
 
     in_memory_file = io.StringIO()
     with import_price.file.open(mode='r') as import_file:
-        in_memory_file.writelines([l.decode('cp1251') for l in import_file.readlines()])
+        in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
         in_memory_file.seek(0)
 
     do_import_novelty(
@@ -49,7 +49,7 @@ def import_special(import_id: int):
 
     in_memory_file = io.StringIO()
     with import_special.file.open(mode='r') as import_file:
-        in_memory_file.writelines([l.decode('cp1251') for l in import_file.readlines()])
+        in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
         in_memory_file.seek(0)
 
     do_import_special(
