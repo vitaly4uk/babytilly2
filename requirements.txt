@@ -25,8 +25,6 @@ build==1.0.3
     # via pip-tools
 celery[sqs]==5.2.3
     # via -r requirements.in
-certifi==2023.7.22
-    # via sentry-sdk
 click==8.1.7
     # via
     #   celery
@@ -63,7 +61,7 @@ django-mptt==0.13.4
     # via -r requirements.in
 django-ses==3.0.1
     # via -r requirements.in
-django-storages==1.12.3
+django-storages==1.14.2
     # via -r requirements.in
 gunicorn==21.2.0
     # via -r requirements.in
@@ -104,8 +102,6 @@ pyuca==1.2
     # via -r requirements.in
 s3transfer==0.5.2
     # via boto3
-sentry-sdk==1.5.9
-    # via -r requirements.in
 six==1.16.0
     # via python-dateutil
 sorl-thumbnail==12.8.0
@@ -127,7 +123,6 @@ urllib3==1.26.17
     # via
     #   botocore
     #   kombu
-    #   sentry-sdk
 vine==5.0.0
     # via
     #   amqp
