@@ -11,9 +11,9 @@
             <thead>
             <tr>
                 <th scope="col">{% trans 'name'|capfirst %}</th>
-                <th scope="col" align="right">{% trans 'price'|capfirst %}</th>
-                <th scope="col" align="right">{% trans 'count'|capfirst %}</th>
-                <th scope="col" align="right">{% trans 'sum'|capfirst %}</th>
+                <th scope="col">{% trans 'price'|capfirst %}</th>
+                <th scope="col">{% trans 'count'|capfirst %}</th>
+                <th scope="col">{% trans 'sum'|capfirst %}</th>
                 <th scope="col">{% if not order.is_closed %}{% trans 'delete'|capfirst %}{% endif %}</th>
                 <th></th>
             </tr>
@@ -22,9 +22,9 @@
                 {% for order_item_form in order_items_formset %}
                     <tr>
                         <td>{{ order_item_form.id }}{% get_article_name order_item_form.instance.article request.user %}</td>
-                        <td align="right">{{ order_item_form.instance.price|floatformat:2 }}</td>
-                        <td align="right">{% if order.is_closed %}{{ order_item_form.count.value }}{% else %}{{ order_item_form.count }}{% endif %}</td>
-                        <td align="right">{{ order_item_form.instance.sum|floatformat:2 }}</td>
+                        <td>{{ order_item_form.instance.price|floatformat:2 }}</td>
+                        <td>{% if order.is_closed %}{{ order_item_form.count.value }}{% else %}{{ order_item_form.count }}{% endif %}</td>
+                        <td>{{ order_item_form.instance.sum|floatformat:2 }}</td>
                         <td>{{ order_item_form.DELETE }}</td>
                         <td align="right">
                             {% thumbnail order_item_form.instance.main_image_url "cart_small"|get_thumb_size crop="center" as im %}
@@ -37,35 +37,35 @@
             <tfoot>
             <tr>
                 <td></td>
-                <td align="right" colspan="2">{% trans 'full price'|capfirst %}</td>
-                <td align="right">{{ order.full_sum|floatformat:2 }}</td>
+                <td colspan="2">{% trans 'full price'|capfirst %}</td>
+                <td>{{ order.full_sum|floatformat:2 }}</td>
                 <td colspan="2"></td>
             </tr>
             <tr>
                 <td></td>
-                <td align="right" colspan="2">{% trans 'discount'|capfirst %}</td>
-                <td align="right">{{ order.discount.sum|floatformat:2 }} ({{ order.discount.percent|floatformat:2 }}%)</td>
+                <td colspan="2">{% trans 'discount'|capfirst %}</td>
+                <td>{{ order.discount.sum|floatformat:2 }} ({{ order.discount.percent|floatformat:2 }}%)</td>
                 <td colspan="2"></td>
             </tr>
             <tr>
-                <td align="right">{% if order.volume %}{% trans 'volume'|capfirst %}: {{ order.volume|floatformat:2 }}{% endif %}</td>
-                <td align="right" colspan="2">{% trans 'order sum'|capfirst %}</td>
-                <td align="right">{{ order.sum|floatformat:2 }}</td>
+                <td>{% if order.volume %}{% trans 'volume'|capfirst %}: {{ order.volume|floatformat:2 }}{% endif %}</td>
+                <td colspan="2">{% trans 'order sum'|capfirst %}</td>
+                <td>{{ order.sum|floatformat:2 }}</td>
                 <td colspan="2"></td>
             </tr>
             <tr>
                 <td></td>
-                <td align="right" colspan="2">
+                <td colspan="2">
                     <label for="{{ form.delivery.id_for_label }}">Country of delivery</label>
                     {{ form.delivery }}
                     {{ form.delivery.errors }}
                 </td>
-                <td align="right">{{ order.total_sum_with_delivery.delivery_price|floatformat:2 }}</td>
+                <td>{{ order.total_sum_with_delivery.delivery_price|floatformat:2 }}</td>
                 <td colspan="2"></td>
             </tr>
             <tr>
-                <td align="right" colspan="3">{% trans 'total sum'|capfirst %}</td>
-                <td align="right">{{ order.total_sum_with_delivery.total_sum|floatformat:2 }}</td>
+                <td colspan="3">{% trans 'total sum'|capfirst %}</td>
+                <td>{{ order.total_sum_with_delivery.total_sum|floatformat:2 }}</td>
                 <td colspan="2"></td>
             </tr>
             </tfoot>
