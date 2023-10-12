@@ -36,12 +36,14 @@
             </tbody>
             <tfoot>
             <tr>
-                <td align="right" colspan="3">{% trans 'full price'|capfirst %}</td>
+                <td></td>
+                <td align="right" colspan="2">{% trans 'full price'|capfirst %}</td>
                 <td align="right">{{ order.full_sum|floatformat:2 }}</td>
                 <td colspan="2"></td>
             </tr>
             <tr>
-                <td align="right" colspan="3">{% trans 'discount'|capfirst %}</td>
+                <td></td>
+                <td align="right" colspan="2">{% trans 'discount'|capfirst %}</td>
                 <td align="right">{{ order.discount.sum|floatformat:2 }} ({{ order.discount.percent|floatformat:2 }}%)</td>
                 <td colspan="2"></td>
             </tr>
