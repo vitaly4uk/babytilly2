@@ -2,7 +2,7 @@ from django import forms
 from django.core.validators import validate_image_file_extension
 from django.utils.translation import gettext
 
-from .models import Article, ArticleImage, Order
+from .models import Article, ArticleImage, Order, OrderItem
 
 
 class ArticleAdminForm(forms.ModelForm):
@@ -38,5 +38,22 @@ class EditOrderForm(forms.ModelForm):
         fields = ('delivery', 'comment')
         widgets = {
             'comment': forms.Textarea(attrs={'cols': 75}),
-            'delivery': forms.Select(attrs={'class': 'custom-select custom-select-sm d-inline-block'})
+            'delivery': forms.Select(
+                attrs={
+                    'class': 'custom-select custom-select-sm d-inline-block',
+                    'onchange': 'document.getElementById("cartform").submit()'
+                }
+            )
         }
+
+
+class OrderItemForm(forms.ModelForm):
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'count']
+        widgets = {
+            'id': forms.HiddenInput(),
+            'count': forms.NumberInput(attrs={'size': '5'}),
+        }
+
+

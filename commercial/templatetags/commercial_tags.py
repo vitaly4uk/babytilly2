@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy
 
 from babytilly2 import settings
-from commercial.models import Category, CategoryProperties, ArticleProperties, ArticleImage, Order, OrderItem
+from commercial.models import Category, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, Article
 
 register = template.Library()
 logger = logging.getLogger(__name__)
@@ -43,6 +43,11 @@ def get_article_name(article, user):
     except ArticleProperties.DoesNotExist:
         return ''
     return article_property.name
+
+
+@register.simple_tag
+def get_article_by_id(article_id):
+    return Article.objects.get(id=article_id)
 
 @register.simple_tag
 def get_order_item_count(article, order):

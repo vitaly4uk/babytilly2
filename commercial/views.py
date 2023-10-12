@@ -4,22 +4,20 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy
+from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic.base import TemplateResponseMixin
 
-from commercial.forms import EditOrderForm
+from commercial.forms import EditOrderForm, OrderItemForm
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page
 from commercial.tasks import send_order_email
 
 logger = logging.getLogger(__name__)
-
-
-def is_active(user):
-    return user.is_authenticated and user.is_active
 
 
 class ActiveRequiredMixin(UserPassesTestMixin):
@@ -270,56 +268,40 @@ class AddToCartView(ActiveRequiredMixin, TemplateView):
         return context
 
 
-@user_passes_test(is_active)
-def edit_cart(request):
-    if request.method == "POST":
-        if request.POST.get('submit') == 'Clear':
-            if hasattr(request, 'order'):
-                order = request.order
-                OrderItem.objects.filter(order=order).delete()
-        if request.POST.get('submit') == 'Recalculate':
-            order: Order = request.order
-            order.delivery_id = request.POST.get('delivery')
-            order.save()
-            for item in request.POST:
-                if item.startswith('del_'):
-                    i = item.split('_')
-                    try:
-                        elem = OrderItem.objects.get(pk=i[1])
-                        elem.delete()
-                    except OrderItem.DoesNotExist:
-                        continue
-                else:
-                    try:
-                        obj_id = int(item)
-                    except ValueError:
-                        continue
-                    try:
-                        elem = OrderItem.objects.get(pk=obj_id)
-                    except OrderItem.DoesNotExist:
-                        continue
-                    try:
-                        count = int(get_digits(request.POST.get(item, 0)))
-                    except ValueError:
-                        count = 0
-                    if count == 0:
-                        elem.delete()
-                    else:
-                        elem.count = count
-                        elem.save()
-        elif request.POST.get('submit') == 'Send':
-            if hasattr(request, 'order'):
-                order = request.order
-                order.delivery_id = request.POST.get('delivery')
-                order.comment = request.POST.get('comment')
-                order.is_closed = True
-                order.save()
-                send_order_email.delay(order.id)
-            logout(request)
-            return HttpResponseRedirect("/")
+class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
+    template_name = 'commercial/editcart.html'
 
-    return render(
-        request,
-        'commercial/editcart.html',
-        {'order': request.order, 'form': EditOrderForm(instance=request.order)}
-    )
+    def get(self, request, *args, **kwargs):
+        OrderItemFormSet = modelformset_factory(OrderItem, form=OrderItemForm, can_delete=True, extra=0)
+        order_form = EditOrderForm(instance=self.request.order)
+        order_items_formset = OrderItemFormSet(queryset=OrderItem.objects.filter(order=self.request.order))
+        context = {
+            'order': request.order,
+            'form': order_form,
+            'order_items_formset': order_items_formset
+        }
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        OrderItemFormSet = modelformset_factory(OrderItem, form=OrderItemForm, can_delete=True, extra=0)
+        order_form = EditOrderForm(request.POST, instance=request.order)
+        order_items_formset = OrderItemFormSet(request.POST, queryset=OrderItem.objects.filter(order=request.order))
+        if order_form.is_valid() and order_items_formset.is_valid():
+            order_form.save()
+            order_items_formset.save()
+            if order_items_formset.deleted_objects:
+                order_items_formset = OrderItemFormSet(queryset=OrderItem.objects.filter(order=request.order))
+            if request.POST.get('send') == 'true':
+                if hasattr(request, 'order'):
+                    order = request.order
+                    order.is_closed = True
+                    order.save()
+                    send_order_email.delay(order.id)
+                logout(request)
+                return HttpResponseRedirect("/")
+        context = {
+            'order': request.order,
+            'form': order_form,
+            'order_items_formset': order_items_formset
+        }
+        return self.render_to_response(context)

@@ -222,7 +222,7 @@ class ArticleImage(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
     date = models.DateTimeField(gettext_lazy('date'), auto_now_add=True)
-    delivery = models.ForeignKey(Delivery, verbose_name=gettext_lazy('delivery'), on_delete=models.SET_NULL, null=True, blank=True)
+    delivery = models.ForeignKey(Delivery, verbose_name=gettext_lazy('delivery'), on_delete=models.SET_NULL, null=True)
     comment = models.TextField(default='', blank=True)
     is_closed = models.BooleanField(gettext_lazy('closed'), default=False)
 

@@ -16,12 +16,6 @@ from urllib.parse import urlparse
 import dj_database_url
 from kombu.utils.url import safequote
 
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-
 EMAIL_BACKEND = 'django_ses.SESBackend'
 EMAIL_SUBJECT_PREFIX = '[b2b carrello] '
 DEFAULT_FROM_EMAIL = 'order.carrello@gmail.com'
@@ -220,7 +214,7 @@ MPTT_ADMIN_LEVEL_INDENT = 30
 
 THUMBNAIL_SIZE = {
     'small': '450',
-    'cart_small': '300',
+    'cart_small': '100',
 }
 PAGINATOR = [10, 25, 50, 100]
 
