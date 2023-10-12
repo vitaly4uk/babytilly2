@@ -37,11 +37,11 @@ class EditOrderForm(forms.ModelForm):
         model = Order
         fields = ('delivery', 'comment')
         widgets = {
-            'comment': forms.Textarea(attrs={'cols': 50}),
+            'comment': forms.Textarea(attrs={'cols': 40}),
             'delivery': forms.Select(
                 attrs={
                     'class': 'custom-select custom-select-sm d-inline-block',
-                    'onchange': 'document.getElementById("cartform").submit()'
+                    'onchange': 'document.getElementById("cartform").submit()',
                 }
             )
         }
@@ -53,7 +53,7 @@ class OrderItemForm(forms.ModelForm):
         fields = ['id', 'count']
         widgets = {
             'id': forms.HiddenInput(),
-            'count': forms.NumberInput(attrs={'size': '5'}),
+            'count': forms.NumberInput(attrs={'size': '5', 'style': 'width: 50px;'}),
         }
 
 
