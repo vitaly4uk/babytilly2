@@ -37,7 +37,7 @@ class EditOrderForm(forms.ModelForm):
         model = Order
         fields = ('delivery', 'comment')
         widgets = {
-            'comment': forms.Textarea(attrs={'cols': 75}),
+            'comment': forms.Textarea(attrs={'cols': 50}),
             'delivery': forms.Select(
                 attrs={
                     'class': 'custom-select custom-select-sm d-inline-block',
