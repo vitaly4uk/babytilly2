@@ -48,7 +48,6 @@
                 <td></td>
             </tr>
             <tr>
-                <td scope="row">{{ order.count }}</td>
                 <td align="right">{% if order.volume %}{% trans 'volume'|capfirst %}: {{ order.volume|floatformat:2 }}{% endif %}</td>
                 <td align="right">{% trans 'order sum'|capfirst %}</td>
                 <td align="right">{{ order.sum|floatformat:2 }}</td>
@@ -57,8 +56,7 @@
                 <td></td>
             </tr>
             <tr>
-                <td></td>
-                <td align="right" colspan="2">
+                <td align="right" colspan="3">
                     <label for="{{ form.delivery.id_for_label }}">Country of delivery</label>
                     {{ form.delivery }}
                     {{ form.delivery.errors }}
