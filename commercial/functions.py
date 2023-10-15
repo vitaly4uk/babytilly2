@@ -1,4 +1,5 @@
 import csv
+import datetime
 import logging
 import typing
 from collections import defaultdict
@@ -8,7 +9,8 @@ from PIL import Image
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
-from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties, Order
+from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties, Order, Profile, \
+    UserDebs
 
 logger = logging.getLogger(__name__)
 
@@ -147,6 +149,20 @@ def do_import_novelty(csv_file: typing.IO, departament_id: int):
 
 def do_import_special(csv_file: typing.IO, departament_id: int):
     _perform_update_articles(csv_file, departament_id, 'is_special')
+
+
+def do_import_debs(csv_file: typing.IO):
+    UserDebs.objects.all().delete()
+    reader = csv.DictReader(csv_file, fieldnames=('inn', 'document', 'date', 'amount'), delimiter=';')
+    for row in reader:
+        profile = Profile.objects.filter(inn=row['inn'].strip()).first()
+        if profile:
+            UserDebs.objects.create(
+                user_id=profile.user_id,
+                document=row['document'].strip(),
+                date_of_sale=datetime.datetime.strptime(row['date'].strip(), '%d.%m.%Y'),
+                amount=row['amount'].strip().replace(',', '.')
+            )
 
 
 def _perform_update_articles(csv_file: typing.IO, departament_id: int, field_name: str):

@@ -14,7 +14,7 @@ from django.views.generic import TemplateView, ListView, DetailView
 from django.views.generic.base import TemplateResponseMixin
 
 from commercial.forms import EditOrderForm, OrderItemForm
-from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page
+from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page, UserDebs
 from commercial.tasks import send_order_email
 
 logger = logging.getLogger(__name__)
@@ -278,7 +278,8 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
         context = {
             'order': request.order,
             'form': order_form,
-            'order_items_formset': order_items_formset
+            'order_items_formset': order_items_formset,
+            'debts': UserDebs.objects.filter(user=request.user),
         }
         return self.render_to_response(context)
 
@@ -302,6 +303,7 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
         context = {
             'order': request.order,
             'form': order_form,
-            'order_items_formset': order_items_formset
+            'order_items_formset': order_items_formset,
+            'debts': UserDebs.objects.filter(user=request.user),
         }
         return self.render_to_response(context)

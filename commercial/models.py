@@ -338,6 +338,7 @@ class Profile(models.Model):
     additional_emails = models.CharField(gettext_lazy('additional email addresses'), max_length=128, default='',
                                          help_text=gettext_lazy('Enter multiple mailboxes separated by commas'),
                                          blank=True)
+    inn = models.CharField(gettext_lazy('inn'), max_length=127, null=True, blank=True)
 
     def __str__(self):
         return f"Profile for {self.user}"
@@ -347,9 +348,28 @@ class Profile(models.Model):
         verbose_name_plural = gettext_lazy('profiles')
 
 
+class UserDebs(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
+    document = models.CharField(gettext_lazy('document'), max_length=127)
+    date_of_sale = models.DateField(gettext_lazy('date of sale'))
+    amount = models.DecimalField(gettext_lazy('amount'), max_digits=10, decimal_places=3, default=0)
+
+    def __str__(self):
+        return f"{self.user} {self.document}"
+
+    class Meta:
+        verbose_name = gettext_lazy('debt')
+        verbose_name_plural = gettext_lazy('debts')
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'document'], name='unique_user_document')
+        ]
+
+
 class ImportPrice(models.Model):
     file = models.FileField(gettext_lazy('file'), upload_to='import_price/%Y/%m/%d/%H/%m/')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE, limit_choices_to={'is_staff': True}
+    )
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
 
@@ -368,7 +388,9 @@ class ImportPrice(models.Model):
 
 class ImportNew(models.Model):
     file = models.FileField(gettext_lazy('file'), upload_to='import_new/%Y/%m/%d/%H/%m/')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE, limit_choices_to={'is_staff': True}
+    )
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
 
@@ -387,7 +409,9 @@ class ImportNew(models.Model):
 
 class ImportSpecial(models.Model):
     file = models.FileField(gettext_lazy('file'), upload_to='import_special/%Y/%m/%d/%H/%m/')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE, limit_choices_to={'is_staff': True}
+    )
     departament = models.ForeignKey(Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
 
@@ -402,6 +426,26 @@ class ImportSpecial(models.Model):
     class Meta:
         verbose_name = gettext_lazy('import special')
         verbose_name_plural = gettext_lazy('import specials')
+
+
+class ImportDebs(models.Model):
+    file = models.FileField(gettext_lazy('file'), upload_to='import_debs/%Y/%m/%d/%H/%m/')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE, limit_choices_to={'is_staff': True}
+    )
+    imported_at = models.DateTimeField(gettext_lazy('imported at'), auto_now_add=True)
+
+    def __str__(self):
+        return f'ImportSpecial by {self.user} at {self.imported_at.strftime("%Y-%m-%d %H:%M:%S")}'
+
+    def save(self, *args, **kwargs):
+        from commercial.tasks import import_debs
+        super(ImportDebs, self).save(*args, **kwargs)
+        import_debs.delay(self.id)
+
+    class Meta:
+        verbose_name = gettext_lazy('import debt')
+        verbose_name_plural = gettext_lazy('import debts')
 
 
 class Page(models.Model):

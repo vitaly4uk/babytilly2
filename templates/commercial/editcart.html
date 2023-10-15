@@ -90,4 +90,25 @@
     </div>
 </div>
     </form>
+    {% if debs %}
+    <div class="row pt-2 pb-5">
+    <div class="col w-50">
+        <p class="lead">Invoices to pay:</p>
+        <table class="table table-striped">
+            <thead>
+                <th>Document</th>
+                <th>Date of sale</th>
+                <th>Gross amount</th>
+            </thead>
+            <tbody>
+                {% for row in debts %}
+                    <td>{{ row.document }}</td>
+                    <td>{{ row.date_of_sale }}</td>
+                    <td>{{ row.amount }}</td>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    {% endif %}
 {% endblock %}

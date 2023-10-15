@@ -6,7 +6,8 @@ from sorl.thumbnail.admin import AdminImageMixin
 
 from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter, ArticleNewFilter, ArticleSaleFilter
 from commercial.forms import ArticleAdminForm
-from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale
+from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale, \
+    UserDebs
 
 
 class ProfileAdmin(admin.StackedInline):
@@ -15,6 +16,9 @@ class ProfileAdmin(admin.StackedInline):
     can_delete = False
     min_num = 1
     max_num = 1
+
+class DebsAdmin(admin.TabularInline):
+    model = UserDebs
 
 
 class DepartamentSaleAdmin(admin.TabularInline):
@@ -158,7 +162,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(DefaultUserAdmin):
-    inlines = [ProfileAdmin]
+    inlines = [ProfileAdmin, DebsAdmin]
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
@@ -182,13 +186,24 @@ class UserAdmin(DefaultUserAdmin):
 class ImportPriceAdmin(admin.ModelAdmin):
     readonly_fields = ['imported_at', 'user']
     list_display = ['imported_at', 'user', 'departament']
-    list_filter = ['departament']
-    autocomplete_fields = ['departament']
+    list_filter = ['user', 'departament']
+    autocomplete_fields = ['departament', 'user']
     ordering = ['-imported_at']
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
         super(ImportPriceAdmin, self).save_model(request, obj, form, change)
+
+
+class ImportDebtsAdmin(admin.ModelAdmin):
+    readonly_fields = ['imported_at', 'user']
+    list_display = ['imported_at', 'user']
+    list_filter = ['user']
+    ordering = ['-imported_at']
+
+    def save_model(self, request, obj, form, change):
+        obj.user = request.user
+        super(ImportDebtsAdmin, self).save_model(request, obj, form, change)
 
 
 class OrderItemInline(admin.StackedInline):

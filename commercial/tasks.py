@@ -59,6 +59,20 @@ def import_special(import_id: int):
 
 
 @app.task()
+def import_debs(import_id: int):
+    from commercial.models import ImportDebs
+    from commercial.functions import do_import_debs
+    import_debs = ImportDebs.objects.get(id=import_id)
+
+    in_memory_file = io.StringIO()
+    with import_debs.file.open(mode='rb') as import_file:
+        in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
+        in_memory_file.seek(0)
+
+    do_import_debs(csv_file=in_memory_file)
+
+
+@app.task()
 def send_order_email(order_id: int):
     from commercial.models import Order, Departament
     from commercial.functions import export_to_csv

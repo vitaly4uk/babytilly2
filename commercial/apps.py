@@ -10,7 +10,7 @@ class CommercialConfig(AppConfig):
     def ready(self):
         from .admin import (
             DepartamentAdmin, CategoryAdmin, UserAdmin, ImportPriceAdmin, ArticleAdmin, OrderAdmin, StartPageImageAdmin,
-            PageAdmin, DeliveryAdmin
+            PageAdmin, DeliveryAdmin, ImportDebtsAdmin
         )
 
         Departament = self.get_model('Departament')
@@ -21,6 +21,7 @@ class CommercialConfig(AppConfig):
         ImportPrice = self.get_model('ImportPrice')
         ImportNew = self.get_model('ImportNew')
         ImportSpecial = self.get_model('ImportSpecial')
+        ImportDebs = self.get_model('ImportDebs')
         Page = self.get_model('Page')
         Delivery = self.get_model('Delivery')
         User = get_user_model()
@@ -36,6 +37,7 @@ class CommercialConfig(AppConfig):
         admin.site.register(ImportPrice, ImportPriceAdmin)
         admin.site.register(ImportNew, ImportPriceAdmin)
         admin.site.register(ImportSpecial, ImportPriceAdmin)
+        admin.site.register(ImportDebs, ImportDebtsAdmin)
         admin.site.register(Page, PageAdmin)
         admin.site.register(Delivery, DeliveryAdmin)
 
