@@ -3,7 +3,7 @@ psycopg2-binary==2.9.9
 django-countries==7.5.1
 pyuca==1.2
 django-mptt==0.13.4
-Pillow==10.0.1
+Pillow==10.1.0
 sorl-thumbnail==12.10.0
 boto3==1.28.62
 dj-database-url==2.1.0

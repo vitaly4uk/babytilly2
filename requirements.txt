@@ -78,7 +78,7 @@ packaging==23.2
     # via
     #   build
     #   gunicorn
-pillow==10.0.1
+pillow==10.1.0
     # via -r requirements.in
 pip-tools==7.3.0
     # via -r requirements.in
