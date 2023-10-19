@@ -102,9 +102,11 @@
             </thead>
             <tbody>
                 {% for row in debts %}
+                    <tr>
                     <td>{{ row.document }}</td>
                     <td>{{ row.date_of_sale }}</td>
                     <td>{{ row.amount }}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
