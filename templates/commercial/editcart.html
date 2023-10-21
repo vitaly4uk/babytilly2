@@ -80,7 +80,7 @@
         {% endif %}
     </div>
 <div class="row pt-2 pb-5">
-    <div class="col-6 w-75">
+    <div class="col-sm">
         {% trans 'Comment' %}:
         {% if order.is_closed %}
             <p>{{ order.comment }}</p>
@@ -89,7 +89,7 @@
         {% endif %}
     </div>
 {% if debts %}
-    <div class="col-6 w-50">
+    <div class="col-sm pb-5">
         <p class="lead">Invoices to pay:</p>
         <table class="table table-striped">
             <thead>

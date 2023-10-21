@@ -20,12 +20,13 @@ from django.views.generic import TemplateView
 
 from commercial.views import (
     ArticleListView, AddToCartView, OrderListView, OrderDetailView,
-    ArticleNewListView, ArticleSaleListView, EditCartView,
+    ArticleNewListView, ArticleSaleListView, EditCartView, DownloadArticleImages,
 )
 
 urlpatterns = [
     path('cart/', EditCartView.as_view(), name='commercial_edit_cart'),
     path('showcart/', AddToCartView.as_view(), name='commercial_show_cart'),
+    path('getimages/<str:id>/', DownloadArticleImages.as_view(), name='commercial_download_images_url'),
     path('addtocart/<str:id>/', AddToCartView.as_view(), name='commercial_addto_cart_one'),
     path('addtocart/<str:id>/<int:count>/', AddToCartView.as_view(),
                       name='commercial_addto_cart'),

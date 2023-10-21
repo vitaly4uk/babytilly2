@@ -1,12 +1,14 @@
+import io
 import logging
 import sys
+import zipfile
 from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.forms import modelformset_factory
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, FileResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy
 from django.views import View
@@ -14,7 +16,8 @@ from django.views.generic import TemplateView, ListView, DetailView
 from django.views.generic.base import TemplateResponseMixin
 
 from commercial.forms import EditOrderForm, OrderItemForm
-from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page, UserDebs
+from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page, UserDebs, \
+    ArticleImage
 from commercial.tasks import send_order_email
 
 logger = logging.getLogger(__name__)
@@ -307,3 +310,23 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
             'debts': UserDebs.objects.filter(user=request.user),
         }
         return self.render_to_response(context)
+
+
+class DownloadArticleImages(View):
+
+    def get(self, request, *args, **kwargs):
+        article_id = self.kwargs.get('id')
+        user_departament_id = self.request.user.profile.departament
+        article_property = get_object_or_404(ArticleProperties, article_id=article_id,
+                                             departament_id=user_departament_id)
+        images = ArticleImage.objects.filter(
+            departament=user_departament_id,
+            article_id=article_id,
+        )
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, 'w') as zip_file:
+            zip_file.writestr(article_property.main_image.name.rsplit('/', 1)[-1], article_property.main_image.read())
+            for image in images:
+                zip_file.writestr(image.image.name.rsplit('/', 1)[-1], image.image.read())
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=f'{article_id}.zip')

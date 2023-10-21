@@ -8,10 +8,10 @@ from babytilly2.celery import app
 
 
 @app.task()
-def import_price(import_id: int):
+def import_price(import_id: int) -> None:
     from commercial.models import ImportPrice
     from commercial.functions import do_import_price
-    import_price = ImportPrice.objects.get(id=import_id)
+    import_price: ImportPrice = ImportPrice.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
     with import_price.file.open(mode='rb') as import_file:
@@ -25,10 +25,10 @@ def import_price(import_id: int):
 
 
 @app.task()
-def import_novelty(import_id: int):
+def import_novelty(import_id: int) -> None:
     from commercial.models import ImportNew
     from commercial.functions import do_import_novelty
-    import_price = ImportNew.objects.get(id=import_id)
+    import_price: ImportNew = ImportNew.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
     with import_price.file.open(mode='rb') as import_file:
