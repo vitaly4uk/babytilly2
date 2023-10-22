@@ -10,11 +10,12 @@ asgiref==3.7.2
     # via
     #   django
     #   django-countries
-billiard==3.6.4.0
+billiard==4.1.0
     # via celery
 boto3==1.28.65
     # via
     #   -r requirements.in
+    #   celery
     #   django-ses
     #   kombu
 botocore==1.31.65
@@ -23,7 +24,7 @@ botocore==1.31.65
     #   s3transfer
 build==1.0.3
     # via pip-tools
-celery[sqs]==5.2.3
+celery[sqs]==5.3.4
     # via -r requirements.in
 click==8.1.7
     # via
@@ -72,7 +73,7 @@ jmespath==0.10.0
     # via
     #   boto3
     #   botocore
-kombu[sqs]==5.2.4
+kombu[sqs]==5.3.2
     # via celery
 packaging==23.2
     # via
@@ -87,16 +88,19 @@ prompt-toolkit==3.0.39
 psycopg2-binary==2.9.9
     # via -r requirements.in
 pycurl==7.44.1
-    # via kombu
+    # via
+    #   celery
+    #   kombu
 pymemcache==4.0.0
     # via -r requirements.in
 pyproject-hooks==1.0.0
     # via build
 python-dateutil==2.8.2
-    # via botocore
+    # via
+    #   botocore
+    #   celery
 pytz==2023.3.post1
     # via
-    #   celery
     #   django
     #   django-ses
 pyuca==1.2
@@ -121,9 +125,13 @@ typing-extensions==4.8.0
     #   asgiref
     #   dj-database-url
     #   django-countries
+    #   kombu
+tzdata==2023.3
+    # via celery
 urllib3==1.26.18
     # via
     #   botocore
+    #   celery
     #   kombu
 vine==5.0.0
     # via
