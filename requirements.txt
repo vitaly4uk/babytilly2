@@ -12,13 +12,13 @@ asgiref==3.7.2
     #   django-countries
 billiard==4.1.0
     # via celery
-boto3==1.28.65
+boto3==1.28.68
     # via
     #   -r requirements.in
     #   celery
     #   django-ses
     #   kombu
-botocore==1.31.65
+botocore==1.31.68
     # via
     #   boto3
     #   s3transfer
