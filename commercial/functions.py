@@ -2,12 +2,14 @@ import csv
 import datetime
 import logging
 import typing
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from io import BytesIO, StringIO
 
 from PIL import Image
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.utils.timezone import now
 
 from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties, Order, Profile, \
     UserDebs
@@ -26,7 +28,8 @@ def export_to_csv(order: Order):
         writer.writerow([order.user, "", order.pk])
         for item in order_items:
             writer.writerow([
-                item.article.pk, item.name, item.count, item.price, item.sum(), item.volume, item.weight, item.barcode, item.company
+                item.article.pk, item.name, item.count, item.price, item.sum(), item.volume, item.weight, item.barcode,
+                item.company
             ])
         content = buffer.getvalue().strip()
         csv_files.append(
@@ -174,3 +177,42 @@ def _perform_update_articles(csv_file: typing.IO, departament_id: int, field_nam
             departament_id=departament_id,
             article_id=str(row[0]).strip()
         ).update(**{field_name: True})
+
+
+def export_department_to_xml(departament) -> ET.ElementTree:
+    currency_id = 'EUR'
+    root = ET.Element('yml_catalog', date=now().strftime('%d.%m.%Y %H:%M'))
+    shop = ET.SubElement(root, 'shop')
+    ET.SubElement(shop, 'currencies').append(ET.Element('currency', id=currency_id, rate='1'))
+    categories = ET.SubElement(shop, 'categories')
+    for category_property in CategoryProperties.objects.filter(published=True, departament=departament).only(
+            'category_id', 'name'):
+        category_xml = ET.Element('category', id=category_property.category_id)
+        category_xml.text = category_property.name
+        categories.append(category_xml)
+    offers = ET.SubElement(shop, 'offers')
+    for article_property in ArticleProperties.objects.filter(published=True,
+                                                             departament=departament).select_related('article'):
+        offer_xml = ET.Element('offer', id=article_property.article_id, available='true')
+        price = ET.SubElement(offer_xml, 'price')
+        price.text = '{0:.2f}'.format(article_property.retail_price).replace('.', ',')
+        currency = ET.SubElement(offer_xml, 'currencyId')
+        currency.text = currency_id
+        category = ET.SubElement(offer_xml, 'categoryId')
+        category.text = article_property.article.category_id
+        picture = ET.SubElement(offer_xml, 'picture')
+        try:
+            picture.text = article_property.main_image.url
+        except ValueError:
+            pass
+        name = ET.SubElement(offer_xml, 'name')
+        name.text = article_property.name
+        ET.SubElement(offer_xml, 'vendor')
+        ET.SubElement(offer_xml, 'vendorCode')
+        description = ET.SubElement(offer_xml, 'description')
+        description.text = article_property.description
+        barcode = ET.SubElement(offer_xml, 'barcode')
+        barcode.text = article_property.barcode
+        offers.append(offer_xml)
+
+    return ET.ElementTree(root)

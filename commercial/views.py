@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.forms import modelformset_factory
-from django.http import HttpResponseRedirect, FileResponse
+from django.http import HttpResponseRedirect, FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy
 from django.views import View
@@ -16,8 +16,9 @@ from django.views.generic import TemplateView, ListView, DetailView
 from django.views.generic.base import TemplateResponseMixin
 
 from commercial.forms import EditOrderForm, OrderItemForm
+from commercial.functions import export_department_to_xml
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page, UserDebs, \
-    ArticleImage
+    ArticleImage, Departament
 from commercial.tasks import send_order_email
 
 logger = logging.getLogger(__name__)
@@ -330,3 +331,16 @@ class DownloadArticleImages(View):
                 zip_file.writestr(image.image.name.rsplit('/', 1)[-1], image.image.read())
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f'{article_id}.zip')
+
+
+class ExportToXML(View):
+
+    def get(self, request, *args, **kwargs):
+        country = self.kwargs.get('country').upper() if 'country' in self.kwargs else None
+        departament = get_object_or_404(Departament, country=country)
+        buffer = io.BytesIO()
+        tree = export_department_to_xml(departament)
+
+        tree.write(buffer, encoding='utf-8')
+        buffer.seek(0)
+        return HttpResponse(buffer, content_type='text/xml')
