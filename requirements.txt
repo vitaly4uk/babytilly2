@@ -59,7 +59,7 @@ django-js-asset==2.1.0
     # via
     #   django-ckeditor
     #   django-mptt
-django-mptt==0.13.4
+django-mptt==0.15.0
     # via -r requirements.in
 django-ses==3.5.0
     # via -r requirements.in
