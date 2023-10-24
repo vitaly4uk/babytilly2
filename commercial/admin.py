@@ -1,5 +1,12 @@
+import io
+import xml.etree.ElementTree as ET
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404
+from django.urls import path
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
@@ -7,7 +14,7 @@ from sorl.thumbnail.admin import AdminImageMixin
 from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter, ArticleNewFilter, ArticleSaleFilter
 from commercial.forms import ArticleAdminForm
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale, \
-    UserDebs
+    UserDebs, Departament
 
 
 class ProfileAdmin(admin.StackedInline):
@@ -16,6 +23,7 @@ class ProfileAdmin(admin.StackedInline):
     can_delete = False
     min_num = 1
     max_num = 1
+
 
 class DebsAdmin(admin.TabularInline):
     model = UserDebs
@@ -68,10 +76,61 @@ class DepartamentAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
 
+    def get_urls(self):
+        urls = super().get_urls()
+        department_urls = [
+            path('<int:pk>/export_to_xml/', self.export_xml, name='commercial_departament_export_to_xml')
+        ]
+        return department_urls + urls
+
+    def export_xml(self, request, pk: int):
+        departament = get_object_or_404(Departament, pk=pk)
+        currency_id = 'EUR'
+        root = ET.Element('yml_catalog', date=now().strftime('%d.%m.%Y %H:%M'))
+        shop = ET.SubElement(root, 'shop')
+        ET.SubElement(shop, 'currencies').append(ET.Element('currency', id=currency_id, rate='1'))
+        categories = ET.SubElement(shop, 'categories')
+        for category_property in CategoryProperties.objects.filter(published=True, departament=departament).only(
+                'category_id', 'name'):
+            category_xml = ET.Element('category', id=category_property.category_id)
+            category_xml.text = category_property.name
+            categories.append(category_xml)
+        offers = ET.SubElement(shop, 'offers')
+        for article_property in ArticleProperties.objects.filter(published=True,
+                                                                 departament=departament).select_related('article'):
+            offer_xml = ET.Element('offer', id=article_property.article_id, available='true')
+            price = ET.SubElement(offer_xml, 'price')
+            price.text = '{0:.2f}'.format(article_property.price).replace('.', ',')
+            currency = ET.SubElement(offer_xml, 'currencyId')
+            currency.text = currency_id
+            category = ET.SubElement(offer_xml, 'categoryId')
+            category.text = article_property.article.category_id
+            picture = ET.SubElement(offer_xml, 'picture')
+            try:
+                picture.text = article_property.main_image.url
+            except ValueError:
+                pass
+            name = ET.SubElement(offer_xml, 'name')
+            name.text = article_property.name
+            ET.SubElement(offer_xml, 'vendor')
+            ET.SubElement(offer_xml, 'vendorCode')
+            description = ET.SubElement(offer_xml, 'description')
+            description.text = article_property.description
+            barcode = ET.SubElement(offer_xml, 'barcode')
+            barcode.text = article_property.barcode
+            offers.append(offer_xml)
+
+        buffer = io.BytesIO()
+        tree = ET.ElementTree(root)
+        tree.write(buffer, encoding='utf-8')
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=f'department-{departament.country.name}.xml')
+
 
 class DeliveryAdmin(admin.ModelAdmin):
     list_display = ['country', 'price']
     search_fields = ['country']
+
 
 class CategoryAdmin(MPTTModelAdmin):
     inlines = [CategoryPropertyAdmin]
