@@ -102,6 +102,7 @@ class CategoryAdmin(MPTTModelAdmin):
     list_display = ['id', 'category_name']
     search_fields = ['id', 'categoryproperties__name']
     list_filter = [CategoryPublishedFilter]
+    autocomplete_fields = ['parent']
 
     @admin.display(description=gettext_lazy('name'))
     def category_name(self, obj):
@@ -152,6 +153,7 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display = ['id', 'article_name', 'article_order']
     search_fields = ['id', 'articleproperties__name']
     list_filter = [ArticlePublishedFilter, ArticleNewFilter, ArticleSaleFilter]
+    autocomplete_fields = ['category']
     form = ArticleAdminForm
 
     def get_form(self, request, obj=None, **kwargs):
@@ -252,6 +254,7 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ['id']
     list_display = ['id', 'user', 'date', 'is_closed']
     fields = ['user', 'date', 'comment', 'is_closed', 'sum']
+    autocomplete_fields = ['user']
 
     def has_add_permission(self, request):
         return request.user.is_superuser

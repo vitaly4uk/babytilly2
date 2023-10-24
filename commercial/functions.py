@@ -115,6 +115,7 @@ def do_import_price(csv_file: typing.IO, country: str):
             article_id = row_id
             article, created = Article.objects.get_or_create(pk=article_id)
             article.category = parent
+            article.vendor_code = row['vendor_code']
             article.save()
             article_property, created = ArticleProperties.objects.get_or_create(
                 article=article,

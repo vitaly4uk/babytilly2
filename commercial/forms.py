@@ -12,6 +12,7 @@ class ArticleAdminForm(forms.ModelForm):
             "id",
             "category",
             "property",
+            "vendor_code",
         )
 
     images = forms.FileField(
