@@ -129,7 +129,8 @@ class ArticleSearchListView(ActiveRequiredMixin, ListView):
         return queryset
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ArticleSearchListView, self).get_context_data(*args, **kwargs)
+        context = super(ArticleSearchListView,
+                        self).get_context_data(*args, **kwargs)
         params = self.request.GET.copy()
         if 'page' in params:
             del params['page']
@@ -165,7 +166,8 @@ class ArticleNewListView(ActiveRequiredMixin, ListView):
         return queryset
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ArticleNewListView, self).get_context_data(*args, **kwargs)
+        context = super(ArticleNewListView, self).get_context_data(
+            *args, **kwargs)
         params = self.request.GET.copy()
         if 'page' in params:
             del params['page']
@@ -200,7 +202,8 @@ class ArticleSaleListView(ActiveRequiredMixin, ListView):
         return queryset
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ArticleSaleListView, self).get_context_data(*args, **kwargs)
+        context = super(ArticleSaleListView,
+                        self).get_context_data(*args, **kwargs)
         params = self.request.GET.copy()
         if 'page' in params:
             del params['page']
@@ -254,14 +257,16 @@ class AddToCartView(ActiveRequiredMixin, TemplateView):
                 self.request.order = order
             article_property = get_object_or_404(ArticleProperties, article_id=article_id,
                                                  departament_id=user_departament_id)
-            order_item, _ = OrderItem.objects.get_or_create(order=order, article_id=article_id)
+            order_item, _ = OrderItem.objects.get_or_create(
+                order=order, article_id=article_id)
             order_item.count = count
             order_item.name = article_property.name
             order_item.volume = article_property.volume
             order_item.weight = article_property.weight
             order_item.barcode = article_property.barcode
             order_item.company = article_property.company
-            order_item.price = article_property.get_price_for_user(self.request.user)
+            order_item.price = article_property.get_price_for_user(
+                self.request.user)
             order_item.full_price = article_property.price
             if article_property.main_image:
                 order_item.main_image_url = article_property.main_image.url
@@ -276,9 +281,11 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
     template_name = 'commercial/editcart.html'
 
     def get(self, request, *args, **kwargs):
-        OrderItemFormSet = modelformset_factory(OrderItem, form=OrderItemForm, can_delete=True, extra=0)
+        OrderItemFormSet = modelformset_factory(
+            OrderItem, form=OrderItemForm, can_delete=True, extra=0)
         order_form = EditOrderForm(instance=self.request.order)
-        order_items_formset = OrderItemFormSet(queryset=OrderItem.objects.filter(order=self.request.order))
+        order_items_formset = OrderItemFormSet(
+            queryset=OrderItem.objects.filter(order=self.request.order))
         context = {
             'order': request.order,
             'form': order_form,
@@ -288,14 +295,17 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
-        OrderItemFormSet = modelformset_factory(OrderItem, form=OrderItemForm, can_delete=True, extra=0)
+        OrderItemFormSet = modelformset_factory(
+            OrderItem, form=OrderItemForm, can_delete=True, extra=0)
         order_form = EditOrderForm(request.POST, instance=request.order)
-        order_items_formset = OrderItemFormSet(request.POST, queryset=OrderItem.objects.filter(order=request.order))
+        order_items_formset = OrderItemFormSet(
+            request.POST, queryset=OrderItem.objects.filter(order=request.order))
         if order_form.is_valid() and order_items_formset.is_valid():
             order_form.save()
             order_items_formset.save()
             if order_items_formset.deleted_objects:
-                order_items_formset = OrderItemFormSet(queryset=OrderItem.objects.filter(order=request.order))
+                order_items_formset = OrderItemFormSet(
+                    queryset=OrderItem.objects.filter(order=request.order))
             if request.POST.get('send') == 'true':
                 if hasattr(request, 'order'):
                     order = request.order
@@ -313,7 +323,7 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
         return self.render_to_response(context)
 
 
-class DownloadArticleImages(View):
+class DownloadArticleImages(ActiveRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         article_id = self.kwargs.get('id')
@@ -326,17 +336,20 @@ class DownloadArticleImages(View):
         )
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, 'w') as zip_file:
-            zip_file.writestr(article_property.main_image.name.rsplit('/', 1)[-1], article_property.main_image.read())
+            zip_file.writestr(article_property.main_image.name.rsplit(
+                '/', 1)[-1], article_property.main_image.read())
             for image in images:
-                zip_file.writestr(image.image.name.rsplit('/', 1)[-1], image.image.read())
+                zip_file.writestr(image.image.name.rsplit(
+                    '/', 1)[-1], image.image.read())
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f'{article_id}.zip')
 
 
-class ExportToXML(View):
+class ExportToXML(ActiveRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        country = self.kwargs.get('country').upper() if 'country' in self.kwargs else None
+        country = self.kwargs.get('country').upper(
+        ) if 'country' in self.kwargs else None
         departament = get_object_or_404(Departament, country=country)
         buffer = io.BytesIO()
         tree = export_department_to_xml(departament)
