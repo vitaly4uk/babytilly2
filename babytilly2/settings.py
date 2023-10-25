@@ -9,35 +9,42 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import environ
 import os
 from pathlib import Path
 from urllib.parse import urlparse
 
-import dj_database_url
 from kombu.utils.url import safequote
-
-EMAIL_BACKEND = 'django_ses.SESBackend'
-EMAIL_SUBJECT_PREFIX = '[b2b carrello] '
-DEFAULT_FROM_EMAIL = 'order.carrello@gmail.com'
-SERVER_EMAIL = 'order.carrello@gmail.com'
 
 ADMINS = (
     ('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+
+env = environ.Env(
+    DEBUG=(bool, False),
+    AWS_STORAGE_BUCKET_NAME=(str, 'babytilly2'),
+    AWS_DEFAULT_REGION=(str, 'us-east-1')
+)
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
+EMAIL_SUBJECT_PREFIX = '[b2b carrello] '
+DEFAULT_FROM_EMAIL = 'order.carrello@gmail.com'
+SERVER_EMAIL = 'order.carrello@gmail.com'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ae6k1=^jgfg$8b5rb41fbxxyx6k@mejipqu&pfw&&o#p#s2)!4'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = [
     '*'
@@ -80,8 +87,7 @@ ROOT_URLCONF = 'babytilly2.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,7 +108,7 @@ WSGI_APPLICATION = 'babytilly2.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
+    'default': env.db_url(),
 }
 
 
@@ -157,25 +163,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CACHES = {
-     'default': {
-         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-     },
- }
+    'default': env.cache_url(default='locmemcache://'),
+}
 
-MEMCACHED_URL = os.environ.get('MEMCACHED_URL')
-if MEMCACHED_URL:
-     memcached_url = urlparse(MEMCACHED_URL)
-     CACHES['default'] = {
-         'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-         'LOCATION': '{0}:{1}'.format(memcached_url.hostname, memcached_url.port),
-         'TIMEOUT': 60 * 60 * 24,
-         'KEY_PREFIX': 'babytilly2-'
-     }
-
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_REGION_NAME = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'babytilly2')
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_REGION_NAME = env('AWS_DEFAULT_REGION')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
 AWS_PRELOAD_METADATA = True
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_EXPIRE = None
@@ -218,7 +212,7 @@ THUMBNAIL_SIZE = {
 }
 PAGINATOR = [10, 25, 50, 100]
 
-if REDIS_URL := os.environ.get('REDIS_URL'):
+if REDIS_URL := env.cache_url('REDIS_URL', default=None):
     CELERY_BROKER_URL = REDIS_URL
 else:
     # aws_access_key = safequote(AWS_ACCESS_KEY_ID) if isinstance(AWS_ACCESS_KEY_ID, bytes) else AWS_ACCESS_KEY_ID
@@ -252,8 +246,3 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
-
-try:
-    from local_settings import *
-except ImportError:
-    pass

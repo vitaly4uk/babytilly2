@@ -1,6 +1,7 @@
 /venv/
 /.idea/
 /.fleet/
+/.vscode/
 local_settings.py
 db.sqlite3
 /static/
