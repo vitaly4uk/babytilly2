@@ -541,7 +541,9 @@ class Complaint(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE
     )
-    date_of_purchase = models.DateField(gettext_lazy('date of purchase'))
+    date_of_purchase = models.DateField(
+        gettext_lazy('date of purchase'), help_text=gettext_lazy('Format is dd/mm/yyyy')
+    )
     product_name = models.CharField(
         gettext_lazy('product name'), max_length=255)
     invoice = models.CharField(gettext_lazy('invoice No'), max_length=127)
