@@ -1,7 +1,9 @@
 {% load i18n %}
-{% if order %}
-    {% trans 'In the card' %} {{ order.get_order_items|length }} {% trans 'items' %}.
-    <a href="{% url 'commercial_edit_cart' %}" class="text-dark font-weight-bold">{% trans 'Edit' %}</a>
-{% else %}
-    <p class="h4">{% trans 'Card is empty' %}.</p>
-{% endif %}
+{% trans 'Edit cart' %} <span class="badge badge-primary badge-pill">{{ order.get_order_items|length }}</span>
+
+{#{% if order %}#}
+{#    {% trans 'In the card' %} {{ order.get_order_items|length }} {% trans 'items' %}.#}
+{#    <a href="{% url 'commercial_edit_cart' %}" class="text-dark font-weight-bold">{% trans 'Edit' %}</a>#}
+{#{% else %}#}
+{#    <p class="h4">{% trans 'Card is empty' %}.</p>#}
+{#{% endif %}#}

@@ -1,4 +1,5 @@
 import io
+import io
 import logging
 import sys
 import zipfile
@@ -10,15 +11,16 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect, FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils.translation import gettext_lazy
 from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, FormView
 from django.views.generic.base import TemplateResponseMixin
 
-from commercial.forms import EditOrderForm, OrderItemForm
+from commercial.forms import EditOrderForm, OrderItemForm, MessageForm
 from commercial.functions import export_department_to_xml
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page, UserDebs, \
-    ArticleImage, Departament
+    ArticleImage, Departament, Complaint, Message
 from commercial.tasks import send_order_email
 
 logger = logging.getLogger(__name__)
@@ -221,9 +223,10 @@ class OrderListView(ActiveRequiredMixin, ListView):
     template_name = 'commercial/order_list.html'
     context_object_name = 'order_list'
     model = Order
+    paginate_by = 25
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user, is_closed=True)
+        return Order.objects.filter(user=self.request.user, is_closed=True).order_by('-date')
 
 
 class OrderDetailView(ActiveRequiredMixin, DetailView):
@@ -234,6 +237,53 @@ class OrderDetailView(ActiveRequiredMixin, DetailView):
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user, is_closed=True)
 
+
+class ComplaintListView(ActiveRequiredMixin, ListView):
+    template_name = 'commercial/complaint_list.html'
+    context_object_name = 'complaint_list'
+    model = Complaint
+    paginate_by = 25
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(user=self.request.user)
+        return queryset
+
+
+class ComplaintCreateView(ActiveRequiredMixin, CreateView):
+    template_name = 'commercial/complaint_create.html'
+    model = Complaint
+    fields = ['date_of_purchase', 'product_name', 'invoice', 'description', 'image', 'video']
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class ComplaintDetailView(ActiveRequiredMixin, FormView):
+    template_name = 'commercial/complaint_detail.html'
+    form_class = MessageForm
+
+    def get_success_url(self):
+        return reverse('commercial_complaint_list')
+
+    def get_object(self) -> Complaint:
+        return get_object_or_404(Complaint, pk=self.kwargs.get('pk'), user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'complaint': self.get_object(),
+            'message_list': Message.objects.filter(complaint_id=self.kwargs.get('pk')),
+        })
+        return context
+
+    def form_valid(self, form):
+        complaint = self.get_object()
+        form.instance.user = self.request.user
+        form.instance.complaint=complaint
+        form.save()
+        return super().form_valid(form)
 
 class AddToCartView(ActiveRequiredMixin, TemplateView):
     template_name = 'commercial/cart.html'

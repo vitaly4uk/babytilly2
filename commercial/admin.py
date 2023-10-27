@@ -1,3 +1,4 @@
+import datetime
 import io
 
 from django.contrib import admin
@@ -5,6 +6,7 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import path
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
@@ -13,7 +15,8 @@ from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter, 
 from commercial.forms import ArticleAdminForm
 from commercial.functions import export_department_to_xml
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale, \
-    UserDebs, Departament
+    UserDebs, Departament, Message
+from commercial.tasks import send_message_mail
 
 
 class ProfileAdmin(admin.StackedInline):
@@ -41,7 +44,8 @@ class CategoryPropertyAdmin(admin.TabularInline):
     def get_queryset(self, request):
         queryset = super(CategoryPropertyAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(
+                departament_id=request.user.profile.departament_id)
         return queryset
 
     def get_max_num(self, request, obj=None, **kwargs):
@@ -78,7 +82,8 @@ class DepartamentAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         department_urls = [
-            path('<int:pk>/export_to_xml/', self.export_xml, name='commercial_departament_export_to_xml')
+            path('<int:pk>/export_to_xml/', self.export_xml,
+                 name='commercial_departament_export_to_xml')
         ]
         return department_urls + urls
 
@@ -128,7 +133,8 @@ class ArticlePropertyAdmin(AdminImageMixin, admin.StackedInline):
     def get_queryset(self, request):
         queryset = super(ArticlePropertyAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(
+                departament_id=request.user.profile.departament_id)
         return queryset
 
     def get_max_num(self, request, obj=None, **kwargs):
@@ -144,7 +150,8 @@ class ArticleImageInline(AdminImageMixin, admin.StackedInline):
     def get_queryset(self, request):
         queryset = super(ArticleImageInline, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(
+                departament_id=request.user.profile.departament_id)
         return queryset
 
 
@@ -197,7 +204,8 @@ class UserAdmin(DefaultUserAdmin):
     )
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = super(UserAdmin, self).get_readonly_fields(request, obj=obj)
+        readonly_fields = super(
+            UserAdmin, self).get_readonly_fields(request, obj=obj)
         if not request.user.is_superuser:
             readonly_fields += ('is_superuser', 'is_staff')
         return readonly_fields + ('date_joined', 'last_login')
@@ -205,7 +213,8 @@ class UserAdmin(DefaultUserAdmin):
     def get_queryset(self, request):
         queryset = super(UserAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(profile__departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(
+                profile__departament_id=request.user.profile.departament_id)
         return queryset
 
 
@@ -238,7 +247,8 @@ class OrderItemInline(admin.StackedInline):
     extra = 0
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = super(OrderItemInline, self).get_readonly_fields(request, obj)
+        readonly_fields = super(
+            OrderItemInline, self).get_readonly_fields(request, obj)
         if obj and not request.user.is_superuser:
             return readonly_fields + ['count', 'price']
         return readonly_fields
@@ -266,7 +276,8 @@ class OrderAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = super(OrderAdmin, self).get_readonly_fields(request, obj)
+        readonly_fields = super(
+            OrderAdmin, self).get_readonly_fields(request, obj)
         if obj and not request.user.is_superuser:
             return readonly_fields + ['user', 'date', 'comment', 'is_closed']
         return readonly_fields
@@ -274,7 +285,8 @@ class OrderAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super(OrderAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(user__profile__departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(
+                user__profile__departament_id=request.user.profile.departament_id)
         return queryset
 
 
@@ -290,5 +302,41 @@ class PageAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super(PageAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(
+                departament_id=request.user.profile.departament_id)
         return queryset
+
+
+class MessageInlineAdmin(admin.TabularInline):
+    model = Message
+    extra = 1
+    readonly_fields = ['user']
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+class ComplaintAdmin(admin.ModelAdmin):
+    list_filter = ['status', 'user']
+    inlines = [MessageInlineAdmin]
+    autocomplete_fields = ['user']
+    readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice', 'description', 'image', 'video']
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_formset(self, request, form, formset, change):
+        complaint = form.instance
+        messages = formset.save(commit=False)
+        for message in messages:
+            message.user = request.user
+            message.save()
+            if True or now() - complaint.user.last_login > datetime.timedelta(seconds=1):
+                send_message_mail.delay(complaint.user_id, message.id)
+        formset.save()

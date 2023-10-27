@@ -20,7 +20,8 @@ from django.views.generic import TemplateView
 
 from commercial.views import (
     ArticleListView, AddToCartView, OrderListView, OrderDetailView,
-    ArticleNewListView, ArticleSaleListView, EditCartView, DownloadArticleImages, ExportToXML,
+    ArticleNewListView, ArticleSaleListView, EditCartView, DownloadArticleImages, ExportToXML, ComplaintListView,
+    ComplaintCreateView, ComplaintDetailView,
 )
 
 urlpatterns = [
@@ -36,6 +37,12 @@ urlpatterns = [
          name='commercial_order_list'),
     path('dashboard/order/<int:pk>/', OrderDetailView.as_view(),
          name='commercial_order_detail'),
+    path('dashboard/complaint/', ComplaintListView.as_view(),
+         name='commercial_complaint_list'),
+    path('dashboard/complaint/add/', ComplaintCreateView.as_view(),
+         name='commercial_complaint_add'),
+    path('dashboard/complaint/<int:pk>/', ComplaintDetailView.as_view(),
+         name='commercial_complaint_detail'),
     path('category/<str:id>/', ArticleListView.as_view(),
          name='category_detail_url'),
     path('new/', ArticleNewListView.as_view(), name='new_list_url'),

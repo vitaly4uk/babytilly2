@@ -1,8 +1,10 @@
 import io
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from babytilly2.celery import app
 
@@ -83,8 +85,8 @@ def send_order_email(order_id: int):
         'order': order,
         'profile': order.user,
     }
-    html_body = str(render_to_string('commercial/mail.html', context))
-    text_body = str(render_to_string('commercial/mail_text.html', context))
+    html_body = str(render_to_string('commercial/order_mail.html', context))
+    text_body = str(render_to_string('commercial/order_mail_text.html', context))
     stuff_email = Departament.objects.get(id=order.user.profile.departament_id).email
     to_emails = [settings.DEFAULT_FROM_EMAIL, stuff_email]
     if order.user.email:
@@ -92,7 +94,6 @@ def send_order_email(order_id: int):
     additional_emails = filter(bool, [e.strip() for e in order.user.profile.additional_emails.split(',')])
     if additional_emails:
         to_emails += additional_emails
-    print(f'Sending order #{order_id} to: {to_emails}')
     msg = EmailMultiAlternatives(
         subject='Order {} {}'.format(order, order.user),
         body=text_body,
@@ -102,4 +103,31 @@ def send_order_email(order_id: int):
     msg.attach_alternative(html_body, 'text/html')
     for company, csv_file in export_to_csv(order):
         msg.attach(f'order{order.pk} {company}.csv', csv_file, 'text/csv')
+    msg.send()
+
+@app.task()
+def send_message_mail(user_id:int, message_id: int):
+    from commercial.models import Message
+    user = get_user_model().objects.select_related('profile').get(pk=user_id)
+    message = Message.objects.select_related('complaint').get(pk=message_id)
+
+    context = {
+        'user': user,
+        'message': message,
+    }
+
+    html_body = str(render_to_string('commercial/complaint_mail.html', context))
+    to_emails = []
+    if user.email:
+        to_emails.append(user.email)
+    additional_emails = filter(bool, [e.strip() for e in user.profile.additional_emails.split(',')])
+    if additional_emails:
+        to_emails += additional_emails
+    msg = EmailMultiAlternatives(
+        subject=f'Complaint {message.complaint}',
+        body=str(strip_tags(html_body)),
+        to=to_emails,
+        reply_to=['no-reply@b2bcarrello.com']
+    )
+    msg.attach_alternative(html_body, 'text/html')
     msg.send()

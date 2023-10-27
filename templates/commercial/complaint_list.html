@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+{% block content %}
+    <h1>{% translate 'Complains' %}</h1>
+    <a href="{% url 'commercial_complaint_add' %}" class="btn btn-primary">{% translate 'New' %}</a>
+    <table class="table table-striped py-3">
+    <tr>
+        <th scope="col">{% trans 'Complaint number' %}</th>
+        <th scope="col">{% trans 'Date of purchase' %}</th>
+        <th scope="col">{% trans 'Product name' %}</th>
+        <th scope="col">{% trans 'Invoice' %}</th>
+        <th scope="col">{% trans 'Status' %}</th>
+    </tr>
+    {% for complaint in complaint_list %}
+        <tr>
+            <td><a href="{{ complaint.get_absolute_url }}">{{ complaint.id }}</a></td>
+            <td>{{ complaint.date_of_purchase }}</td>
+            <td>{{ complaint.product_name }}</td>
+            <td>{{ complaint.invoice }}</td>
+            <td>{{ complaint.get_status_display }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    {% include 'commercial/paginator.html' %}
+{% endblock %}

@@ -4,6 +4,7 @@
 {% block title %}{% trans 'card'|capfirst %} :: {{ block.super }}{% endblock %}
 
 {% block content %}
+    <h1>{% translate 'Edit cart' %}</h1>
     <form name="cartform" method="POST" id="cartform" novalidate>
         {% csrf_token %}
         {{ order_items_formset.management_form }}

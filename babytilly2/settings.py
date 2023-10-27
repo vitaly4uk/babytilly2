@@ -9,11 +9,11 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-import environ
 import os
 from pathlib import Path
 from urllib.parse import urlparse
 
+import environ
 from kombu.utils.url import safequote
 
 ADMINS = (
@@ -209,6 +209,7 @@ MPTT_ADMIN_LEVEL_INDENT = 30
 THUMBNAIL_SIZE = {
     'small': '450',
     'cart_small': '90',
+    'complaint': '200',
 }
 PAGINATOR = [10, 25, 50, 100]
 
@@ -246,3 +247,9 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
+
+try:
+    from local_settings import *
+except ImportError:
+    pass

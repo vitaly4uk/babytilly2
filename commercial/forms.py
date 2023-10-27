@@ -2,7 +2,7 @@ from django import forms
 from django.core.validators import validate_image_file_extension
 from django.utils.translation import gettext
 
-from .models import Article, ArticleImage, Order, OrderItem
+from .models import Article, ArticleImage, Order, OrderItem, Message
 
 
 class ArticleAdminForm(forms.ModelForm):
@@ -58,3 +58,7 @@ class OrderItemForm(forms.ModelForm):
         }
 
 
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['text']
