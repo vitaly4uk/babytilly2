@@ -93,7 +93,7 @@
                                     {% endif %}
                             </div>
                             <br>
-                            <a href="{% url 'commercial_download_images_url' item.article_id %}" class="btn btn-primary btn-sm ml-2">Download images</a>
+                            <a href="{% url 'commercial_download_images_url' item.article_id %}" class="btn btn-primary btn-sm ml-2"><i class="fa-solid fa-download"></i> Download images</a>
                         </div>
                         <div class="col-md-10">
                             <div class="card-header">
@@ -156,7 +156,7 @@
                                         <a id="{{ item.article.id }}"
                                            href="{% url 'commercial_addto_cart_one' item.article.id %}/"
                                            class="btn btn-primary btn-sm ml-2"
-                                           onclick="addToCart('{{ item.article.id }}');return false;">{% trans 'yes'|capfirst %}</a>
+                                           onclick="addToCart('{{ item.article.id }}');return false;"><i class="fa-solid fa-cart-plus"></i> {% trans 'yes'|capfirst %}</a>
                                     </form>
                                 </div>
                             </div>

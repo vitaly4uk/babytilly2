@@ -75,8 +75,12 @@
         {% if not order.is_closed %}
         <div class="col-12 text-right">
             <input type="hidden" name="send" value="false" id="send-input">
-            <input type="submit" value="{% trans 'Recalculate' %}" class="btn btn-secondary">
-            <input type="submit" value="{% trans 'Send' %}" class="btn btn-primary" onclick="document.getElementById('send-input').value='true'">
+            <button type="submit" class="btn btn-secondary">
+                <i class="fa-solid fa-calculator"></i> {% translate 'Recalculate' %}
+            </button>
+            <button type="submit" class="btn btn-primary" onclick="document.getElementById('send-input').value='true'">
+                <i class="fa-solid fa-rocket"></i> {% translate 'Send' %}
+            </button>
         </div>
         {% endif %}
     </div>

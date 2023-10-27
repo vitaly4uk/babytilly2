@@ -1,5 +1,6 @@
 {% load i18n %}
-{% trans 'Edit cart' %} <span class="badge badge-primary badge-pill">{{ order.get_order_items|length }}</span>
+<i class="fa-solid fa-cart-shopping"></i>
+{% trans 'Edit cart' %} &nbsp;&nbsp;<span class="badge badge-primary badge-pill">{{ order.get_order_items|length }}</span>
 
 {#{% if order %}#}
 {#    {% trans 'In the card' %} {{ order.get_order_items|length }} {% trans 'items' %}.#}

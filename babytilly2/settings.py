@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'sorl.thumbnail',
+    'bootstrap4',
+    'fontawesomefree',
     'commercial',
     'celery',
 ]

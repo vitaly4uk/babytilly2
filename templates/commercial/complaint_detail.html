@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static i18n thumbnail commercial_tags %}
+{% load static i18n thumbnail commercial_tags bootstrap4 %}
 {% block content %}
     <div class="container">
         <h1>{% translate 'Complaint' %}: {{ complaint }}</h1>
@@ -32,25 +32,12 @@
             {% endfor %}
             </tbody>
         </table>
-        <form method="post" novalidate>
+        <form method="post" class="pb-5" novalidate>
             {% csrf_token %}
-            {{ form.non_field_errors }}
-            <div class="form-group row">
-                <label for="{{ form.text.id_for_label }}"
-                       class="col-sm-3 col-form-label">{% translate 'Message:' %}</label>
-                <div class="col-sm-9">
-                    <textarea class="form-control{% if form.text.errors %} is-invalid{% endif %}"
-                              id="{{ form.text.id_for_label }}" name="{{ form.text.html_name }}" rows="5"
-                              value="{{ form.text.value }}" required></textarea>
-                    {% for error in form.text.errors %}
-                        <div id="{{ form.text.id_for_label }}_error_{{ forloop.counter }}"
-                             class="invalid-feedback">{{ error|escape }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="form-group row">
-                <button type="submit" class="btn btn-primary">{% translate 'Send' %}</button>
-            </div>
+            {% bootstrap_form form %}
+            {% buttons %}
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-rocket"></i> {% translate 'Send' %}</button>
+            {% endbuttons %}
         </form>
     </div>
 {% endblock %}

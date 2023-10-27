@@ -337,6 +337,6 @@ class ComplaintAdmin(admin.ModelAdmin):
         for message in messages:
             message.user = request.user
             message.save()
-            if True or now() - complaint.user.last_login > datetime.timedelta(seconds=1):
+            if True or now() - complaint.user.last_login > datetime.timedelta(hours=1):
                 send_message_mail.delay(complaint.user_id, message.id)
         formset.save()
