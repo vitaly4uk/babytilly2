@@ -562,6 +562,7 @@ class Complaint(models.Model):
 
     def get_absolute_url(self):
         return reverse('commercial_complaint_detail', kwargs={'pk': self.pk})
+
     class Meta:
         verbose_name = gettext_lazy('complaint')
         verbose_name_plural = gettext_lazy('complaints')
