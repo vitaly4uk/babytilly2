@@ -2,7 +2,7 @@
 {% load static i18n bootstrap4 %}
 {% block content %}
     <h1>{% translate 'Create new complaint' %}</h1>
-    <form enctype="multipart/form-data" method="post" class="pb-5" novalidate>
+    <form enctype="multipart/form-data" method="post" class="form pb-5" novalidate>
         {% csrf_token %}
         {% bootstrap_form form %}
         {% buttons %}
@@ -69,5 +69,4 @@
         </div>
         {% endcomment %}
     </form>
-{#    {{ form }}#}
 {% endblock %}

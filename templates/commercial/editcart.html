@@ -5,7 +5,7 @@
 
 {% block content %}
     <h1>{% translate 'Edit cart' %}</h1>
-    <form name="cartform" method="POST" id="cartform" novalidate>
+    <form name="cartform" method="POST" id="cartform" class="form" novalidate>
         {% csrf_token %}
         {{ order_items_formset.management_form }}
         <table class="table table-striped">

@@ -110,7 +110,7 @@
 
             </nav>
         {% else %}
-            <form class="p-3" action="{% url 'login' %}" method="post">
+            <form class="form p-3" action="{% url 'login' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="id_username">{% trans "Login" %}</label>
