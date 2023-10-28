@@ -1,7 +1,6 @@
 ---
 name: 'deploy'
 
-# yamllint disable-line rule:truthy
 on:
   push:
     branches:
@@ -11,13 +10,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.4.0
-        with:
-          access_token: ${{ github.token }}
-
       - name: Cloning repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
