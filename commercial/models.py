@@ -542,7 +542,7 @@ class Complaint(models.Model):
         settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE
     )
     date_of_purchase = models.DateField(
-        gettext_lazy('date of purchase'), help_text=gettext_lazy('Format is dd/mm/yyyy')
+        gettext_lazy('date of purchase'), help_text=gettext_lazy('Please, fill date in format %s') % formats.get_format('SHORT_DATE_FORMAT')
     )
     product_name = models.CharField(
         gettext_lazy('product name'), max_length=255)
