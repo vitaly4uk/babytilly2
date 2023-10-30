@@ -41,7 +41,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-django==3.2.22
+django==4.2.6
     # via
     #   -r requirements.in
     #   django-bootstrap4
@@ -106,9 +106,7 @@ python-dateutil==2.8.2
     #   botocore
     #   celery
 pytz==2023.3.post1
-    # via
-    #   django
-    #   django-ses
+    # via django-ses
 pyuca==1.2
     # via -r requirements.in
 s3transfer==0.7.0
