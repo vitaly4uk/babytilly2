@@ -17,7 +17,10 @@ class MultipleFileField(forms.FileField):
     def clean(self, data, initial=None):
         single_file_clean = super().clean
         if isinstance(data, (list, tuple)):
-            result = [single_file_clean(d, initial) for d in data]
+            if data:
+                result = [single_file_clean(d, initial) for d in data]
+            else:
+                result = single_file_clean(None, initial)
         else:
             result = single_file_clean(data, initial)
         return result
@@ -79,7 +82,7 @@ class OrderItemForm(forms.ModelForm):
 class ComplaintForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea, label=gettext_lazy('Description'))
     attachments = MultipleFileField(
-        label=gettext_lazy('Attachments'), help_text=gettext_lazy('Only video and photos are allowed.')
+        label=gettext_lazy('Attachments'), help_text=gettext_lazy('Only video and photos are allowed.'), required=True
     )
     class Meta:
         model = Complaint
