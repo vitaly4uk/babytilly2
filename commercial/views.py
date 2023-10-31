@@ -17,10 +17,10 @@ from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, FormView
 from django.views.generic.base import TemplateResponseMixin
 
-from commercial.forms import EditOrderForm, OrderItemForm, MessageForm
+from commercial.forms import EditOrderForm, OrderItemForm, MessageForm, ComplaintForm
 from commercial.functions import export_department_to_xml
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page, UserDebs, \
-    ArticleImage, Departament, Complaint, Message
+    ArticleImage, Departament, Complaint, Message, MessageAttachment
 from commercial.tasks import send_order_email
 
 logger = logging.getLogger(__name__)
@@ -253,11 +253,24 @@ class ComplaintListView(ActiveRequiredMixin, ListView):
 class ComplaintCreateView(ActiveRequiredMixin, CreateView):
     template_name = 'commercial/complaint_create.html'
     model = Complaint
-    fields = ['date_of_purchase', 'product_name', 'invoice', 'description', 'image', 'video']
+    form_class = ComplaintForm
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        msg = Message.objects.create(
+            complaint=self.object,
+            user=self.request.user,
+            text=form.cleaned_data['description']
+        )
+        attachments = form.cleaned_data['attachments']
+        for attach in attachments:
+            MessageAttachment.objects.create(
+                message=msg,
+                file=attach,
+            )
+        return response
+
 
 
 class ComplaintDetailView(ActiveRequiredMixin, FormView):
@@ -282,7 +295,13 @@ class ComplaintDetailView(ActiveRequiredMixin, FormView):
         complaint = self.get_object()
         form.instance.user = self.request.user
         form.instance.complaint=complaint
-        form.save()
+        msg = form.save()
+        attachments = form.cleaned_data['attachments']
+        for attach in attachments:
+            MessageAttachment.objects.create(
+                message=msg,
+                file=attach,
+            )
         return super().form_valid(form)
 
 class AddToCartView(ActiveRequiredMixin, TemplateView):

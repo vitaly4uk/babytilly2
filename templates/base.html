@@ -67,7 +67,7 @@
             <div class="container justify-content-center p-2">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">{% trans "Wellcome" %},&nbsp;{{ user.username|truncatechars:9 }}</li>
-                    {% if user.is_staff %}
+                    {% if not user.is_staff %}
                         <a href="{% url 'admin:index' %}" class="list-group-item list-group-item-action">
                             <i class="fa-solid fa-user-tie"></i> {% trans "Admin" %}
                         </a>

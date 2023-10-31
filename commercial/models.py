@@ -542,22 +542,22 @@ class Complaint(models.Model):
         settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE
     )
     date_of_purchase = models.DateField(
-        gettext_lazy('date of purchase'), help_text=gettext_lazy('Please, fill date in format %s') % formats.get_format('SHORT_DATE_FORMAT')
+        gettext_lazy('date of purchase'),
+        help_text=gettext_lazy('Please, fill date in format %s') % formats.get_format('SHORT_DATE_FORMAT')
     )
     product_name = models.CharField(
         gettext_lazy('product name'), max_length=255)
     invoice = models.CharField(gettext_lazy('invoice No'), max_length=127)
-    description = models.TextField(gettext_lazy('description'))
-    image = ImageField(gettext_lazy('photo'))
-    video = models.FileField(
-        gettext_lazy('video'), blank=True, null=True,
-        validators=[
-            FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm', 'mkv'])
-        ]
-    )
     status = models.IntegerField(
         gettext_lazy('status'), choices=ComplaintStatus.choices, default=ComplaintStatus.OPENED
     )
+
+    def image(self):
+        msg: Message = self.message_set.first()
+        if msg:
+            attach: MessageAttachment = msg.messageattachment_set.first()
+            if attach:
+                return attach.file
 
     def __str__(self):
         return f"{self.user} {self.product_name} {self.get_status_display()}"
@@ -587,3 +587,27 @@ class Message(models.Model):
         verbose_name = gettext_lazy('message')
         verbose_name_plural = gettext_lazy('messages')
         ordering = ['created_date']
+
+
+class MessageAttachment(models.Model):
+    message = models.ForeignKey(
+        Message, verbose_name=gettext_lazy('message'), on_delete=models.CASCADE
+    )
+    file = models.FileField(
+        gettext_lazy('file'), blank=True, null=True, upload_to='attachment/%Y/%m/%d/%H/%m/',
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=['mov', 'avi', 'mp4', 'webm', 'mkv', 'jpg', 'jpeg', 'png']
+            )
+        ]
+    )
+
+    def file_name(self):
+        return self.file.name.rsplit('/')[-1]
+
+    def __str__(self):
+        return self.file.name
+
+    class Meta:
+        verbose_name = gettext_lazy('attachment')
+        verbose_name_plural = gettext_lazy('attachments')

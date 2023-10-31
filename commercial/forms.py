@@ -1,8 +1,26 @@
 from django import forms
 from django.core.validators import validate_image_file_extension
-from django.utils.translation import gettext
+from django.utils.translation import gettext, gettext_lazy
 
-from .models import Article, ArticleImage, Order, OrderItem, Message
+from .models import Article, ArticleImage, Order, OrderItem, Message, Complaint
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = single_file_clean(data, initial)
+        return result
 
 
 class ArticleAdminForm(forms.ModelForm):
@@ -58,7 +76,21 @@ class OrderItemForm(forms.ModelForm):
         }
 
 
+class ComplaintForm(forms.ModelForm):
+    description = forms.CharField(widget=forms.Textarea, label=gettext_lazy('Description'))
+    attachments = MultipleFileField(
+        label=gettext_lazy('Attachments'), help_text=gettext_lazy('Only video and photos are allowed.')
+    )
+    class Meta:
+        model = Complaint
+        exclude = ['user', 'status']
+
+
 class MessageForm(forms.ModelForm):
+    attachments = MultipleFileField(
+        label=gettext_lazy('Attachments'), help_text=gettext_lazy('Only video and photos are allowed.'), required=False
+    )
+
     class Meta:
         model = Message
         fields = ['text']

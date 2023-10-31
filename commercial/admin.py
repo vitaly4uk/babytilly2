@@ -6,16 +6,17 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import path
+from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
 from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter, ArticleNewFilter, ArticleSaleFilter
-from commercial.forms import ArticleAdminForm
+from commercial.forms import ArticleAdminForm, MessageForm
 from commercial.functions import export_department_to_xml
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale, \
-    UserDebs, Departament, Message
+    UserDebs, Departament, Message, MessageAttachment
 from commercial.tasks import send_message_mail
 
 
@@ -307,10 +308,12 @@ class PageAdmin(admin.ModelAdmin):
         return queryset
 
 
-class MessageInlineAdmin(admin.TabularInline):
+class MessageInlineAdmin(admin.StackedInline):
+    fields = ['user', 'text', 'attachments', 'attachments_list']
     model = Message
     extra = 1
-    readonly_fields = ['user']
+    readonly_fields = ['user', 'attachments_list']
+    form = MessageForm
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -318,12 +321,20 @@ class MessageInlineAdmin(admin.TabularInline):
     def has_change_permission(self, request, obj=None):
         return False
 
+    @admin.display(description=gettext_lazy('attachments'))
+    def attachments_list(self, obj: Message):
+        html_list = []
+        for attach in obj.messageattachment_set.all():
+            html_list.append(f'<li><a href="{attach.file.url}">{attach.file_name()}</a></li>')
+        html_str = ''.join(html_list)
+        return mark_safe(f'<ul>{html_str}</ul>')
+
 
 class ComplaintAdmin(admin.ModelAdmin):
     list_filter = ['status', 'user']
     inlines = [MessageInlineAdmin]
     autocomplete_fields = ['user']
-    readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice', 'description', 'image', 'video']
+    readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice']
 
     def has_add_permission(self, request):
         return request.user.is_superuser
@@ -337,6 +348,13 @@ class ComplaintAdmin(admin.ModelAdmin):
         for message in messages:
             message.user = request.user
             message.save()
+            attachments = formset.cleaned_data[-1]['attachments']
+            if attachments:
+                for attach in attachments:
+                    MessageAttachment.objects.create(
+                        message=message,
+                        file=attach,
+                    )
             if True or now() - complaint.user.last_login > datetime.timedelta(hours=1):
                 send_message_mail.delay(complaint.user_id, message.id)
-        formset.save()
+        super().save_formset(request, form, formset, change)

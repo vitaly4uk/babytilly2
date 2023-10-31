@@ -22,17 +22,25 @@
             <thead>
             <th>{% translate 'user' %}</th>
             <th>{% translate 'message' %}</th>
+            <th>{% translate 'attachments' %}</th>
             </thead>
             <tbody>
             {% for msg in message_list %}
                 <tr>
                     <td>{{ msg.user }}</td>
                     <td>{{ msg.text }}</td>
+                    <td>
+                        <ul>
+                            {% for attach in msg.messageattachment_set.all %}
+                                <li><a href="{{ attach.file.url }}">{{ attach.file_name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-        <form method="post" class="form pb-5" novalidate>
+        <form enctype="multipart/form-data" method="post" class="form pb-5" novalidate>
             {% csrf_token %}
             {% bootstrap_form form %}
             {% buttons %}
