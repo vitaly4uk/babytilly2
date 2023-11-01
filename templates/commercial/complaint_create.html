@@ -76,5 +76,9 @@
 {% block extra_body %}
     <script>
         $('#id_date_of_purchase').datepicker();
+        $('#id_product_name').autocomplete({
+            source: "{% url 'article_autocomplete_url' %}"
+            }
+        )
     </script>
 {% endblock %}

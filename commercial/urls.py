@@ -21,7 +21,7 @@ from django.views.generic import TemplateView
 from commercial.views import (
     ArticleListView, AddToCartView, OrderListView, OrderDetailView,
     ArticleNewListView, ArticleSaleListView, EditCartView, DownloadArticleImages, ExportToXML, ComplaintListView,
-    ComplaintCreateView, ComplaintDetailView,
+    ComplaintCreateView, ComplaintDetailView, ArticleNameAutocompleteView,
 )
 
 urlpatterns = [
@@ -45,6 +45,7 @@ urlpatterns = [
          name='commercial_complaint_detail'),
     path('category/<str:id>/', ArticleListView.as_view(),
          name='category_detail_url'),
+    path('autocomplite/', ArticleNameAutocompleteView.as_view(), name='article_autocomplete_url'),
     path('new/', ArticleNewListView.as_view(), name='new_list_url'),
     path('sale/', ArticleSaleListView.as_view(), name='sale_list_url'),
     path('<str:country>/xml/', ExportToXML.as_view()),
