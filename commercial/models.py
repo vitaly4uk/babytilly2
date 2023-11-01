@@ -5,6 +5,7 @@ from decimal import Decimal
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
 from django.db import models
 from django.urls import reverse
@@ -225,7 +226,9 @@ class ArticleProperties(models.Model):
         verbose_name_plural = gettext_lazy('article properties')
         constraints = [
             models.UniqueConstraint(
-                fields=['departament', 'article'], name='unique_article_property')
+                fields=['departament', 'article'], name='unique_article_property'
+            ),
+            GistIndex(name='gist_trgm_idx', fields=['name'], opclasses=['gist_trgm_ops'])
         ]
         ordering = ['order', 'name']
 

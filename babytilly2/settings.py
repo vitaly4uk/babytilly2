@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'debug_toolbar',
     'mptt',
     'ckeditor',
@@ -67,6 +68,7 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'bootstrap4',
     'fontawesomefree',
+    'jquery_ui',
     'commercial',
     'celery',
 ]

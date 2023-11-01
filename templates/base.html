@@ -67,7 +67,7 @@
             <div class="container justify-content-center p-2">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">{% trans "Wellcome" %},&nbsp;{{ user.username|truncatechars:9 }}</li>
-                    {% if user.is_staff %}
+                    {% if not user.is_staff %}
                         <a href="{% url 'admin:index' %}" class="list-group-item list-group-item-action">
                             <i class="fa-solid fa-user-tie"></i> {% trans "Admin" %}
                         </a>
@@ -167,8 +167,10 @@
     <i class="fa-solid fa-caret-up"></i>
 </button>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+{#<script src="https://code.jquery.com/jquery-3.6.0.min.js"#}
+{#        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>#}
+<script type='text/javascript' src="{% static 'jquery-ui/external/jquery/jquery.js' %}"></script>
+<script type='text/javascript' src='{% static 'jquery-ui/jquery-ui.min.js' %}'></script>
 {% bootstrap_javascript %}
 <script type="application/javascript">
     $(document).ready(function () {
