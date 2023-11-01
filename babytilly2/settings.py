@@ -68,7 +68,6 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'bootstrap4',
     'fontawesomefree',
-    'jquery_ui',
     'commercial',
     'celery',
 ]
