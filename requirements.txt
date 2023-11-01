@@ -20,7 +20,7 @@ boto3==1.28.73
     #   celery
     #   django-ses
     #   kombu
-botocore==1.31.73
+botocore==1.31.75
     # via
     #   boto3
     #   s3transfer
@@ -41,7 +41,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-django==3.2.22
+django==3.2.23
     # via
     #   -r requirements.in
     #   django-bootstrap4
@@ -75,7 +75,7 @@ gunicorn==21.2.0
     # via -r requirements.in
 importlib-metadata==6.8.0
     # via build
-jmespath==0.10.0
+jmespath==1.0.1
     # via
     #   boto3
     #   botocore
@@ -93,7 +93,7 @@ prompt-toolkit==3.0.39
     # via click-repl
 psycopg2-binary==2.9.9
     # via -r requirements.in
-pycurl==7.44.1
+pycurl==7.45.2
     # via
     #   celery
     #   kombu
@@ -145,9 +145,9 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.2.8
+wcwidth==0.2.9
     # via prompt-toolkit
-wheel==0.41.2
+wheel==0.41.3
     # via pip-tools
 whitenoise==6.6.0
     # via -r requirements.in
