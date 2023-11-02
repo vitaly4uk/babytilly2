@@ -434,7 +434,7 @@ class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         queryset = ArticleProperties.objects.annotate(
             similarity=TrigramSimilarity('name', request.GET.get('term'))
-        ).filter(similarity__gt=0.2, departament=request.user.profile.departament).only('name').order_by('-similarity')
+        ).filter(similarity__gt=0.15, departament=request.user.profile.departament).only('name').order_by('-similarity')
         return JsonResponse(
             [{'label': i.name, 'value': i.name} for i in queryset],
             safe=False,
