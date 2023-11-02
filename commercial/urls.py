@@ -48,6 +48,6 @@ urlpatterns = [
     path('autocomplite/', ArticleNameAutocompleteView.as_view(), name='article_autocomplete_url'),
     path('new/', ArticleNewListView.as_view(), name='new_list_url'),
     path('sale/', ArticleSaleListView.as_view(), name='sale_list_url'),
-    path('<str:country>/xml/', ExportToXML.as_view()),
+    path('<str:country>_offer.xml', ExportToXML.as_view()),
     path('', login_required(TemplateView.as_view(template_name='index.html'))),
 ] + staticfiles_urlpatterns()
