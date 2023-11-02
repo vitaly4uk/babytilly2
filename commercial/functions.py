@@ -12,7 +12,7 @@ from django.core.files.storage import default_storage
 from django.utils.timezone import now
 
 from commercial.models import Departament, Category, CategoryProperties, Article, ArticleProperties, Order, Profile, \
-    UserDebs
+    UserDebs, ArticleImage
 
 logger = logging.getLogger(__name__)
 
@@ -194,18 +194,24 @@ def export_department_to_xml(departament) -> ET.ElementTree:
     offers = ET.SubElement(shop, 'offers')
     for article_property in ArticleProperties.objects.filter(published=True,
                                                              departament=departament).select_related('article'):
-        offer_xml = ET.Element('offer', id=article_property.article_id, available='true')
+        offer_xml = ET.Element('offer')
+        offer_id = ET.SubElement(offer_xml, 'id')
+        offer_id.text = article_property.article_id
+        available = ET.SubElement(offer_xml, 'available')
+        available.text = 'true'
         price = ET.SubElement(offer_xml, 'price')
         price.text = '{0:.2f}'.format(article_property.retail_price).replace('.', ',')
         currency = ET.SubElement(offer_xml, 'currencyId')
         currency.text = currency_id
         category = ET.SubElement(offer_xml, 'categoryId')
         category.text = article_property.article.category_id
-        picture = ET.SubElement(offer_xml, 'picture')
-        try:
-            picture.text = article_property.main_image.url
-        except ValueError:
-            pass
+        pictures = ET.SubElement(offer_xml, 'pictures')
+        if article_property.main_image:
+            main_image = ET.SubElement(pictures, 'picture')
+            main_image.text = article_property.main_image.url
+        for pic in ArticleImage.objects.filter(article=article_property.article):
+            picture = ET.SubElement(pictures, 'picture')
+            picture.text = pic.image.url
         name = ET.SubElement(offer_xml, 'name')
         name.text = article_property.name
         ET.SubElement(offer_xml, 'vendor')

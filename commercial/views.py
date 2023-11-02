@@ -415,7 +415,7 @@ class DownloadArticleImages(ActiveRequiredMixin, View):
         return FileResponse(buffer, as_attachment=True, filename=f'{article_id}.zip')
 
 
-class ExportToXML(ActiveRequiredMixin, View):
+class ExportToXML(View):
 
     def get(self, request, *args, **kwargs):
         country = self.kwargs.get('country').upper(
@@ -434,7 +434,7 @@ class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         queryset = ArticleProperties.objects.annotate(
             similarity=TrigramSimilarity('name', request.GET.get('term'))
-        ).filter(similarity__gt=0.25, departament=request.user.profile.departament).only('name').order_by('-similarity')
+        ).filter(similarity__gt=0.2, departament=request.user.profile.departament).only('name').order_by('-similarity')
         return JsonResponse(
             [{'label': i.name, 'value': i.name} for i in queryset],
             safe=False,
