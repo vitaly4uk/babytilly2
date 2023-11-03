@@ -173,7 +173,7 @@ class ArticleAdmin(admin.ModelAdmin):
         super().save_related(request, form, formsets, change)
         form.save_images(form.instance)
 
-    @admin.display(description=gettext_lazy('name'))
+    @admin.display(description=gettext_lazy('name'), ordering='articleproperties__name')
     def article_name(self, obj):
         property = obj.articleproperties_set.filter(
             departament_id=self.request.user.profile.departament_id
@@ -181,7 +181,7 @@ class ArticleAdmin(admin.ModelAdmin):
         if property:
             return property.name
 
-    @admin.display(description=gettext_lazy('order'))
+    @admin.display(description=gettext_lazy('order'), ordering='articleproperties__order')
     def article_order(self, obj):
         property = obj.articleproperties_set.filter(
             departament_id=self.request.user.profile.departament_id

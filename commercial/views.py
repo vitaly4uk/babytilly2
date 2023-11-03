@@ -8,7 +8,6 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.postgres.search import TrigramSimilarity
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect, FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
@@ -432,9 +431,12 @@ class ExportToXML(View):
 class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        queryset = ArticleProperties.objects.annotate(
-            similarity=TrigramSimilarity('name', request.GET.get('term'))
-        ).filter(similarity__gt=0.15, departament=request.user.profile.departament).only('name').order_by('-similarity')
+        # queryset = ArticleProperties.objects.annotate(
+        #     similarity=TrigramSimilarity('name', request.GET.get('term'))
+        # ).filter(similarity__gt=0.1, departament=request.user.profile.departament).only('name').order_by('-similarity')
+        queryset = ArticleProperties.objects.filter(
+            name__search=request.GET.get('term')
+        ).only('name').distinct()
         return JsonResponse(
             [{'label': i.name, 'value': i.name} for i in queryset],
             safe=False,
