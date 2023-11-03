@@ -435,7 +435,7 @@ class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
         #     similarity=TrigramSimilarity('name', request.GET.get('term'))
         # ).filter(similarity__gt=0.1, departament=request.user.profile.departament).only('name').order_by('-similarity')
         queryset = ArticleProperties.objects.filter(
-            name__search=request.GET.get('term')
+            name__search=request.GET.get('term'), departament=request.user.profile.departament
         ).only('name').distinct()
         return JsonResponse(
             [{'label': i.name, 'value': i.name} for i in queryset],
