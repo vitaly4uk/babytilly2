@@ -551,6 +551,7 @@ class Complaint(models.Model):
     )
     article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), on_delete=models.CASCADE, null=True)
     invoice = models.CharField(gettext_lazy('invoice No'), max_length=127)
+    receipt = ImageField(gettext_lazy('receipt'), null=True, upload_to='attachment/%Y/%m/%d/%H/%m/')
     status = models.IntegerField(
         gettext_lazy('status'), choices=ComplaintStatus.choices, default=ComplaintStatus.OPENED
     )

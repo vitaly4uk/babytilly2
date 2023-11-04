@@ -335,7 +335,7 @@ class ComplaintAdmin(admin.ModelAdmin):
     list_filter = ['status', 'user']
     inlines = [MessageInlineAdmin]
     autocomplete_fields = ['user']
-    readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice', 'has_answer']
+    readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice', 'has_answer', 'receipt']
     exclude = ['article']
 
     def has_add_permission(self, request):

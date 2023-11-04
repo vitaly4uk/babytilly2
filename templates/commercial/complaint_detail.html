@@ -4,7 +4,7 @@
     <div class="container">
         <h1>{% translate 'Complaint' %}: {{ complaint }}</h1>
         <div class="media">
-            {% thumbnail complaint.image "complaint"|get_thumb_size crop="center" as im %}
+            {% thumbnail complaint.receipt "complaint"|get_thumb_size crop="center" as im %}
                 <img src="{{ im.url }}" class="align-self-start mr-3" alt="{{ complaint.product_name }}"
                      height="{{ im.height }}" width="{{ im.width }}">
             {% endthumbnail %}
