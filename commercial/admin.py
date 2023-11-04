@@ -16,7 +16,7 @@ from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter, 
 from commercial.forms import ArticleAdminForm, MessageForm
 from commercial.functions import export_department_to_xml
 from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale, \
-    UserDebs, Departament, Message, MessageAttachment
+    UserDebs, Departament, Message, MessageAttachment, Complaint
 from commercial.tasks import send_message_mail
 
 
@@ -331,16 +331,30 @@ class MessageInlineAdmin(admin.StackedInline):
 
 
 class ComplaintAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product_name', 'has_answer']
     list_filter = ['status', 'user']
     inlines = [MessageInlineAdmin]
     autocomplete_fields = ['user']
-    readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice']
+    readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice', 'has_answer']
+    exclude = ['article']
 
     def has_add_permission(self, request):
         return request.user.is_superuser
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    @admin.display(description=gettext_lazy('has answer'), boolean=True)
+    def has_answer(self, obj):
+        msg = Message.objects.filter(complaint=obj).only('user').order_by('created_date').first()
+        if msg:
+            return msg.user.is_staff
+        return False
+
+    def save_model(self, request, obj: Complaint, form, change):
+        if obj.status == Complaint.ComplaintStatus.OPENED:
+            obj.status = Complaint.ComplaintStatus.INPROGRESS
+        super().save_model(request, obj, form, change)
 
     def save_formset(self, request, form, formset, change):
         complaint = form.instance

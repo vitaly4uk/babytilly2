@@ -87,6 +87,15 @@ class ComplaintForm(forms.ModelForm):
     class Meta:
         model = Complaint
         exclude = ['user', 'status']
+        labels = {
+            'article': gettext_lazy('Product name')
+        }
+        help_texts = {
+            'article': gettext_lazy('Please, start enter product name like Bravo, Alfa, etc and select one from list.')
+        }
+        widgets = {
+            'article': forms.TextInput(attrs={'placeholder': gettext_lazy('')})
+        }
 
 
 class MessageForm(forms.ModelForm):

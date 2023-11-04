@@ -436,8 +436,8 @@ class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
         # ).filter(similarity__gt=0.1, departament=request.user.profile.departament).only('name').order_by('-similarity')
         queryset = ArticleProperties.objects.filter(
             name__search=request.GET.get('term'), departament=request.user.profile.departament
-        ).only('name').distinct()
+        ).only('name', 'article_id').distinct()
         return JsonResponse(
-            [{'label': i.name, 'value': i.name} for i in queryset],
+            [{'label': i.name, 'value': i.article_id} for i in queryset],
             safe=False,
         )

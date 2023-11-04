@@ -540,6 +540,7 @@ class Complaint(models.Model):
     class ComplaintStatus(models.IntegerChoices):
         OPENED = 0, gettext_lazy('opened')
         CLOSED = 1, gettext_lazy('closed')
+        INPROGRESS = 2, gettext_lazy('in progress')
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE
@@ -548,8 +549,7 @@ class Complaint(models.Model):
         gettext_lazy('date of purchase'),
         help_text=gettext_lazy('Please, fill date in format %s') % formats.get_format('SHORT_DATE_FORMAT')
     )
-    product_name = models.CharField(
-        gettext_lazy('product name'), max_length=255)
+    article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), on_delete=models.CASCADE, null=True)
     invoice = models.CharField(gettext_lazy('invoice No'), max_length=127)
     status = models.IntegerField(
         gettext_lazy('status'), choices=ComplaintStatus.choices, default=ComplaintStatus.OPENED
@@ -562,8 +562,16 @@ class Complaint(models.Model):
             if attach:
                 return attach.file
 
+    def product_name(self):
+        article_property = ArticleProperties.objects.filter(
+            departament=self.user.profile.departament,
+            article=self.article
+        ).only('name').first()
+        if article_property:
+            return article_property.name
+
     def __str__(self):
-        return f"{self.user} {self.product_name} {self.get_status_display()}"
+        return f"{self.user} {self.product_name()}"
 
     def get_absolute_url(self):
         return reverse('commercial_complaint_detail', kwargs={'pk': self.pk})
