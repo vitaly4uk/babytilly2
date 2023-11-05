@@ -332,7 +332,7 @@ class MessageInlineAdmin(admin.StackedInline):
 
 class ComplaintAdmin(admin.ModelAdmin):
     list_display = ['user', 'product_name', 'has_answer']
-    list_filter = ['status', 'user']
+    list_filter = ['status', 'user__profile__departament', 'user']
     inlines = [MessageInlineAdmin]
     autocomplete_fields = ['user']
     readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice', 'has_answer', 'receipt']
@@ -350,6 +350,12 @@ class ComplaintAdmin(admin.ModelAdmin):
         if msg:
             return msg.user.is_staff
         return False
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(user__profile__departament=request.user.profile.departament)
+        return queryset
 
     def save_model(self, request, obj: Complaint, form, change):
         if obj.status == Complaint.ComplaintStatus.OPENED:
