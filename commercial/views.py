@@ -438,6 +438,6 @@ class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
             name__search=request.GET.get('term'), departament=request.user.profile.departament
         ).only('name', 'article_id').distinct()
         return JsonResponse(
-            [{'label': i.name, 'value': i.article_id} for i in queryset],
+            [{'label': i.name, 'value': i.name} for i in queryset],
             safe=False,
         )

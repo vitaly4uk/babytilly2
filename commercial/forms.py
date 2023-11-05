@@ -1,29 +1,11 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.core.validators import validate_image_file_extension
+from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy
 
+from .fields import MultipleFileField
 from .models import Article, ArticleImage, Order, OrderItem, Message, Complaint
-
-
-class MultipleFileInput(forms.ClearableFileInput):
-    allow_multiple_selected = True
-
-
-class MultipleFileField(forms.FileField):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("widget", MultipleFileInput())
-        super().__init__(*args, **kwargs)
-
-    def clean(self, data, initial=None):
-        single_file_clean = super().clean
-        if isinstance(data, (list, tuple)):
-            if data:
-                result = [single_file_clean(d, initial) for d in data]
-            else:
-                result = single_file_clean(None, initial)
-        else:
-            result = single_file_clean(data, initial)
-        return result
 
 
 class ArticleAdminForm(forms.ModelForm):
@@ -84,18 +66,21 @@ class ComplaintForm(forms.ModelForm):
     attachments = MultipleFileField(
         label=gettext_lazy('Attachments'), help_text=gettext_lazy('Only video and photos are allowed.'), required=True
     )
+    article = forms.ModelChoiceField(
+        Article.objects.all(), label=gettext_lazy('Product name'), to_field_name='articleproperties__name',
+        help_text=gettext_lazy('Please, start enter product name like Bravo, Alfa, etc and select one from list.'),
+        widget=forms.TextInput()
+    )
+
+    def clean_date_of_purchase(self):
+        date_of_purchase = self.cleaned_data['date_of_purchase']
+        if date_of_purchase > now().date():
+            raise ValidationError(gettext_lazy('The date must be less or equal to today\'s'))
+        return date_of_purchase
+
     class Meta:
         model = Complaint
         exclude = ['user', 'status']
-        labels = {
-            'article': gettext_lazy('Product name')
-        }
-        help_texts = {
-            'article': gettext_lazy('Please, start enter product name like Bravo, Alfa, etc and select one from list.')
-        }
-        widgets = {
-            'article': forms.TextInput(attrs={'placeholder': gettext_lazy('')})
-        }
 
 
 class MessageForm(forms.ModelForm):

@@ -346,7 +346,7 @@ class ComplaintAdmin(admin.ModelAdmin):
 
     @admin.display(description=gettext_lazy('has answer'), boolean=True)
     def has_answer(self, obj):
-        msg = Message.objects.filter(complaint=obj).only('user').order_by('created_date').first()
+        msg = Message.objects.filter(complaint=obj).only('user').order_by('-created_date').first()
         if msg:
             return msg.user.is_staff
         return False

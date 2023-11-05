@@ -580,6 +580,7 @@ class Complaint(models.Model):
     class Meta:
         verbose_name = gettext_lazy('complaint')
         verbose_name_plural = gettext_lazy('complaints')
+        ordering = ['-id']
 
 
 class Message(models.Model):
