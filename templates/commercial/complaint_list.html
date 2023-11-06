@@ -23,3 +23,13 @@
     </table>
     {% include 'commercial/paginator.html' %}
 {% endblock %}
+
+{% block extra_body %}
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $("td").on("dblclick", function (event) {
+                window.location = $(event.currentTarget).parent().find('td:first-child > a').attr('href');
+            })
+        })
+    </script>
+{% endblock %}

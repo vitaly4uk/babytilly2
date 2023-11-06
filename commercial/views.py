@@ -264,11 +264,12 @@ class ComplaintCreateView(ActiveRequiredMixin, CreateView):
             text=form.cleaned_data['description']
         )
         attachments = form.cleaned_data['attachments']
-        for attach in attachments:
-            MessageAttachment.objects.create(
-                message=msg,
-                file=attach,
-            )
+        if attachments:
+            for attach in attachments:
+                MessageAttachment.objects.create(
+                    message=msg,
+                    file=attach,
+                )
         return response
 
 
@@ -297,11 +298,12 @@ class ComplaintDetailView(ActiveRequiredMixin, FormView):
         form.instance.complaint=complaint
         msg = form.save()
         attachments = form.cleaned_data['attachments']
-        for attach in attachments:
-            MessageAttachment.objects.create(
-                message=msg,
-                file=attach,
-            )
+        if attachments:
+            for attach in attachments:
+                MessageAttachment.objects.create(
+                    message=msg,
+                    file=attach,
+                )
         return super().form_valid(form)
 
 class AddToCartView(ActiveRequiredMixin, TemplateView):

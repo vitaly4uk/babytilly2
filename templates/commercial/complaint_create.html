@@ -75,10 +75,12 @@
 {% endblock %}
 {% block extra_body %}
     <script>
+    $(function () {
         $('#id_date_of_purchase').datepicker();
         $('#id_article').autocomplete({
             source: "{% url 'article_autocomplete_url' %}"
             }
         )
+    })
     </script>
 {% endblock %}

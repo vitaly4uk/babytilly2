@@ -64,7 +64,9 @@ class OrderItemForm(forms.ModelForm):
 class ComplaintForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea, label=gettext_lazy('Description'))
     attachments = MultipleFileField(
-        label=gettext_lazy('Attachments'), help_text=gettext_lazy('Only video and photos are allowed.'), required=True
+        label=gettext_lazy('Attachments'),
+        help_text=gettext_lazy('Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video.'),
+        required=True,
     )
     article = forms.ModelChoiceField(
         Article.objects.all(), label=gettext_lazy('Product name'), to_field_name='articleproperties__name',
@@ -85,7 +87,9 @@ class ComplaintForm(forms.ModelForm):
 
 class MessageForm(forms.ModelForm):
     attachments = MultipleFileField(
-        label=gettext_lazy('Attachments'), help_text=gettext_lazy('Only video and photos are allowed.'), required=False
+        label=gettext_lazy('Attachments'),
+        help_text=gettext_lazy('Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video.'),
+        required=False,
     )
 
     class Meta:
