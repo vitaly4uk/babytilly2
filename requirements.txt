@@ -10,17 +10,21 @@ asgiref==3.7.2
     # via
     #   django
     #   django-countries
+astroid==3.0.1
+    # via pylint
 beautifulsoup4==4.12.2
     # via django-bootstrap4
 billiard==4.1.0
     # via celery
+black==23.10.1
+    # via -r requirements.in
 boto3==1.28.73
     # via
     #   -r requirements.in
     #   celery
     #   django-ses
     #   kombu
-botocore==1.31.77
+botocore==1.31.78
     # via
     #   boto3
     #   s3transfer
@@ -30,6 +34,7 @@ celery[sqs]==5.3.4
     # via -r requirements.in
 click==8.1.7
     # via
+    #   black
     #   celery
     #   click-didyoumean
     #   click-plugins
@@ -41,6 +46,8 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
+dill==0.3.7
+    # via pylint
 django==3.2.23
     # via
     #   -r requirements.in
@@ -49,6 +56,8 @@ django==3.2.23
     #   django-js-asset
     #   django-ses
     #   django-storages
+    #   django-stubs
+    #   django-stubs-ext
 django-bootstrap4==23.2
     # via -r requirements.in
 django-ckeditor==6.2.0
@@ -69,26 +78,47 @@ django-ses==3.5.0
     # via -r requirements.in
 django-storages==1.14.2
     # via -r requirements.in
+django-stubs==4.2.6
+    # via -r requirements.in
+django-stubs-ext==4.2.5
+    # via django-stubs
 fontawesomefree==6.4.2
     # via -r requirements.in
 gunicorn==21.2.0
     # via -r requirements.in
 importlib-metadata==6.8.0
     # via build
+isort==5.12.0
+    # via pylint
 jmespath==1.0.1
     # via
     #   boto3
     #   botocore
 kombu[sqs]==5.3.2
     # via celery
+mccabe==0.7.0
+    # via pylint
+mypy==1.6.1
+    # via -r requirements.in
+mypy-extensions==1.0.0
+    # via
+    #   black
+    #   mypy
 packaging==23.2
     # via
+    #   black
     #   build
     #   gunicorn
+pathspec==0.11.2
+    # via black
 pillow==10.1.0
     # via -r requirements.in
 pip-tools==7.3.0
     # via -r requirements.in
+platformdirs==3.11.0
+    # via
+    #   black
+    #   pylint
 prompt-toolkit==3.0.39
     # via click-repl
 psycopg2-binary==2.9.9
@@ -97,6 +127,15 @@ pycurl==7.45.2
     # via
     #   celery
     #   kombu
+pylint==3.0.2
+    # via
+    #   -r requirements.in
+    #   pylint-django
+    #   pylint-plugin-utils
+pylint-django==2.5.5
+    # via -r requirements.in
+pylint-plugin-utils==0.8.2
+    # via pylint-django
 pymemcache==4.0.0
     # via -r requirements.in
 pyproject-hooks==1.0.0
@@ -125,14 +164,30 @@ sqlparse==0.4.4
     #   django-debug-toolbar
 tomli==2.0.1
     # via
+    #   black
     #   build
+    #   django-stubs
+    #   mypy
     #   pip-tools
+    #   pylint
     #   pyproject-hooks
+tomlkit==0.12.2
+    # via pylint
+types-pytz==2023.3.1.1
+    # via django-stubs
+types-pyyaml==6.0.12.12
+    # via django-stubs
 typing-extensions==4.8.0
     # via
     #   asgiref
+    #   astroid
+    #   black
     #   django-countries
+    #   django-stubs
+    #   django-stubs-ext
     #   kombu
+    #   mypy
+    #   pylint
 tzdata==2023.3
     # via celery
 urllib3==1.26.18
@@ -140,7 +195,7 @@ urllib3==1.26.18
     #   botocore
     #   celery
     #   kombu
-vine==5.0.0
+vine==5.1.0
     # via
     #   amqp
     #   celery

@@ -56,7 +56,7 @@ class CategoryPropertyAdmin(admin.TabularInline):
 
 
 class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
-    list_display = ['pk', 'image', 'order']
+    list_display = ['id', 'image', 'order']
 
 
 class DepartamentAdmin(admin.ModelAdmin):
@@ -110,10 +110,10 @@ class CategoryAdmin(MPTTModelAdmin):
     list_filter = [CategoryPublishedFilter]
     autocomplete_fields = ['parent']
 
-    @admin.display(description=gettext_lazy('name'))
+    @admin.display(description=gettext_lazy('name'), ordering='categoryproperties__name')
     def category_name(self, obj):
         property = obj.categoryproperties_set.filter(
-            departament_id=self.request.user.profile.departament_id
+            departament=self.request.user.profile.departament
         ).only('name').first()
         if property:
             return property.name
@@ -350,6 +350,10 @@ class ComplaintAdmin(admin.ModelAdmin):
         if msg:
             return msg.user.is_staff
         return False
+
+    @admin.display(description=gettext_lazy('product name'), ordering='article__articleproperties__name')
+    def product_name(self, obj):
+        return obj.product_name()
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)

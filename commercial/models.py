@@ -10,7 +10,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, FileExt
 from django.db import models
 from django.urls import reverse
 from django.utils import formats
-from django.utils.translation import gettext_lazy
+from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from mptt.models import MPTTModel, TreeForeignKey
 from sorl.thumbnail import ImageField
@@ -19,15 +19,15 @@ logger = logging.getLogger(__name__)
 
 
 class Departament(models.Model):
-    country = CountryField(gettext_lazy('country'))
-    email = models.EmailField(gettext_lazy('email'))
+    country = CountryField(_('country'))
+    email = models.EmailField(_('email'))
 
     def __str__(self):
         return str(self.country)
 
     class Meta:
-        verbose_name = gettext_lazy('departament')
-        verbose_name_plural = gettext_lazy('departaments')
+        verbose_name = _('departament')
+        verbose_name_plural = _('departaments')
         constraints = [
             models.UniqueConstraint(
                 fields=['country', 'email'], name='unique_departament')
@@ -35,16 +35,12 @@ class Departament(models.Model):
 
 
 class DepartamentSale(models.Model):
-    departament = models.ForeignKey(
-        Departament, verbose_name=gettext_lazy('departament'), on_delete=models.CASCADE
-    )
+    departament = models.ForeignKey(Departament, verbose_name=_('departament'), on_delete=models.CASCADE)
     order_sum = models.DecimalField(
-        gettext_lazy('order sum'), max_digits=10, decimal_places=2,
-        validators=[MinValueValidator(0)]
+        _('order sum'), max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
     )
     sale = models.DecimalField(
-        gettext_lazy('sale in %'), max_digits=5, decimal_places=2, default=0,
-        validators=[MinValueValidator(0), MaxValueValidator(100)]
+        _('sale in %'), max_digits=5, decimal_places=2, default=0, validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
 
     @classmethod
@@ -60,8 +56,8 @@ class DepartamentSale(models.Model):
         return f"{self.order_sum} - {self.sale}%"
 
     class Meta:
-        verbose_name = gettext_lazy('departament sale')
-        verbose_name_plural = gettext_lazy('departament sales')
+        verbose_name = _('departament sale')
+        verbose_name_plural = _('departament sales')
         ordering = ['-order_sum']
         constraints = [
             models.UniqueConstraint(fields=['departament', 'order_sum', 'sale'],
@@ -70,16 +66,16 @@ class DepartamentSale(models.Model):
 
 
 class Delivery(models.Model):
-    country = CountryField(gettext_lazy('country'))
-    price = models.DecimalField(gettext_lazy(
+    country = CountryField(_('country'))
+    price = models.DecimalField(_(
         'delivery price'), max_digits=10, decimal_places=3, default=0)
 
     def __str__(self):
         return self.country.name
 
     class Meta:
-        verbose_name = gettext_lazy('delivery price')
-        verbose_name_plural = gettext_lazy('delivery prices')
+        verbose_name = _('delivery price')
+        verbose_name_plural = _('delivery prices')
         constraints = [
             models.UniqueConstraint(
                 fields=['country', 'price'], name='unique_delivery_price')
@@ -87,16 +83,15 @@ class Delivery(models.Model):
 
 
 class StartPageImage(models.Model):
-    image = ImageField(gettext_lazy('image'),
-                       upload_to='start_page/%Y/%m/%d/%H/%m/')
-    order = models.PositiveIntegerField(gettext_lazy('order'), default=100)
+    image = ImageField(_('image'), upload_to='start_page/%Y/%m/%d/%H/%m/')
+    order = models.PositiveIntegerField(_('order'), default=100)
 
     def __str__(self):
         return self.image.name
 
     class Meta:
-        verbose_name = gettext_lazy('start page image')
-        verbose_name_plural = gettext_lazy('start page images')
+        verbose_name = _('start page image')
+        verbose_name_plural = _('start page images')
         ordering = ['order']
         indexes = [
             models.Index(fields=['order'], name='order')
@@ -106,11 +101,10 @@ class StartPageImage(models.Model):
 class Category(MPTTModel):
     id = models.CharField(max_length=25, primary_key=True)
     parent = TreeForeignKey(
-        'self', verbose_name=gettext_lazy('parent'), null=True, blank=True, related_name='children',
+        'self', verbose_name=_('parent'), null=True, blank=True, related_name='children',
         on_delete=models.CASCADE
     )
-    property = models.ManyToManyField(
-        Departament, through='CategoryProperties', verbose_name=gettext_lazy('property'))
+    property = models.ManyToManyField(Departament, through='CategoryProperties', verbose_name=_('property'))
 
     def __str__(self):
         return self.id
@@ -127,22 +121,22 @@ class Category(MPTTModel):
         return list(query)
 
     class Meta:
-        verbose_name = gettext_lazy('category')
-        verbose_name_plural = gettext_lazy('categories')
+        verbose_name = _('category')
+        verbose_name_plural = _('categories')
 
 
 class CategoryProperties(models.Model):
     departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    name = models.CharField(gettext_lazy('name'), max_length=255)
-    published = models.BooleanField(gettext_lazy('published'), default=True)
+    name = models.CharField(_('name'), max_length=255)
+    published = models.BooleanField(_('published'), default=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = gettext_lazy('category property')
-        verbose_name_plural = gettext_lazy('category properties')
+        verbose_name = _('category property')
+        verbose_name_plural = _('category properties')
         constraints = [
             models.UniqueConstraint(
                 fields=['departament', 'category'], name='unique_category_property')
@@ -152,16 +146,14 @@ class CategoryProperties(models.Model):
 class Article(models.Model):
     id = models.CharField(max_length=25, primary_key=True)
     category = TreeForeignKey(
-        Category, verbose_name=gettext_lazy('category'), null=True, blank=True, on_delete=models.CASCADE
+        Category, verbose_name=_('category'), null=True, blank=True, on_delete=models.CASCADE
     )
-    vendor_code = models.CharField(gettext_lazy(
-        'vendor code'), max_length=255, null=True)
-    property = models.ManyToManyField(
-        Departament, through='ArticleProperties', verbose_name=gettext_lazy('property'))
+    vendor_code = models.CharField(_('vendor code'), max_length=255, null=True)
+    property = models.ManyToManyField(Departament, through='ArticleProperties', verbose_name=_('property'))
 
     class Meta:
-        verbose_name = gettext_lazy('article')
-        verbose_name_plural = gettext_lazy('articles')
+        verbose_name = _('article')
+        verbose_name_plural = _('articles')
         indexes = [
             models.Index(fields=['vendor_code'], name='vendor_code')
         ]
@@ -170,46 +162,43 @@ class Article(models.Model):
 class ArticleProperties(models.Model):
     departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    name = models.CharField(gettext_lazy('name'), max_length=255)
-    description = models.TextField(gettext_lazy('description'), null=True)
-    published = models.BooleanField(gettext_lazy('published'), default=True)
-    price = models.DecimalField(gettext_lazy(
-        'trade price'), max_digits=10, decimal_places=3, default=0)
-    retail_price = models.DecimalField(gettext_lazy(
-        'retail price'), max_digits=10, decimal_places=3, default=0)
-    is_new = models.BooleanField(gettext_lazy('is new'), default=False)
-    is_special = models.BooleanField(gettext_lazy('is special'), default=False)
-    main_image = ImageField(gettext_lazy('main image'),
-                            upload_to='photos/%Y/%m/%d/%H/%m/', null=True)
-    presence = models.CharField(gettext_lazy(
+    name = models.CharField(_('name'), max_length=255)
+    description = models.TextField(_('description'), null=True)
+    published = models.BooleanField(_('published'), default=True)
+    price = models.DecimalField(_('trade price'), max_digits=10, decimal_places=3, default=0)
+    retail_price = models.DecimalField(_('retail price'), max_digits=10, decimal_places=3, default=0)
+    is_new = models.BooleanField(_('is new'), default=False)
+    is_special = models.BooleanField(_('is special'), default=False)
+    main_image = ImageField(_('main image'), upload_to='photos/%Y/%m/%d/%H/%m/', null=True)
+    presence = models.CharField(_(
         'presence'), max_length=127, null=True, blank=True)
 
-    length = models.DecimalField(gettext_lazy(
+    length = models.DecimalField(_(
         'length'), null=True, blank=True, decimal_places=2, max_digits=10)
-    width = models.DecimalField(gettext_lazy(
+    width = models.DecimalField(_(
         'width'), null=True, blank=True, decimal_places=2, max_digits=10)
-    height = models.DecimalField(gettext_lazy(
+    height = models.DecimalField(_(
         'height'), null=True, blank=True, decimal_places=2, max_digits=10)
 
-    volume = models.DecimalField(gettext_lazy(
+    volume = models.DecimalField(_(
         'volume'), default=0, blank=True, decimal_places=2, max_digits=10)
-    weight = models.DecimalField(gettext_lazy(
+    weight = models.DecimalField(_(
         'weight'), default=0, blank=True, decimal_places=2, max_digits=10)
 
-    barcode = models.CharField(gettext_lazy(
+    barcode = models.CharField(_(
         'barcode'), max_length=255, null=True, blank=True)
 
-    image_link = models.URLField(gettext_lazy(
+    image_link = models.URLField(_(
         'image link'), null=True, blank=True)
-    video_link = models.URLField(gettext_lazy(
+    video_link = models.URLField(_(
         'video link'), null=True, blank=True)
-    site_link = models.URLField(gettext_lazy(
+    site_link = models.URLField(_(
         'site link'), null=True, blank=True)
 
-    company = models.CharField(gettext_lazy(
+    company = models.CharField(_(
         'company'), max_length=255, null=True, blank=True)
     order = models.PositiveSmallIntegerField(
-        gettext_lazy('article order'), default=1000)
+        _('article order'), default=1000)
 
     @property
     def is_less_then_five(self):
@@ -222,8 +211,8 @@ class ArticleProperties(models.Model):
         return price
 
     class Meta:
-        verbose_name = gettext_lazy('article property')
-        verbose_name_plural = gettext_lazy('article properties')
+        verbose_name = _('article property')
+        verbose_name_plural = _('article properties')
         constraints = [
             models.UniqueConstraint(
                 fields=['departament', 'article'], name='unique_article_property'
@@ -234,29 +223,29 @@ class ArticleProperties(models.Model):
 
 
 class ArticleImage(models.Model):
-    article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), related_name='images',
+    article = models.ForeignKey(Article, verbose_name=_('article'), related_name='images',
                                 on_delete=models.CASCADE)
     departament = models.ForeignKey(
         Departament, on_delete=models.CASCADE, null=True)
-    image = ImageField(gettext_lazy('image'),
+    image = ImageField(_('image'),
                        upload_to='photos/%Y/%m/%d/%H/%m/')
 
     def __str__(self):
         return str(self.image)
 
     class Meta:
-        verbose_name = gettext_lazy('image')
-        verbose_name_plural = gettext_lazy('images')
+        verbose_name = _('image')
+        verbose_name_plural = _('images')
 
 
 class Order(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy(
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
         'user'), on_delete=models.CASCADE)
-    date = models.DateTimeField(gettext_lazy('date'), auto_now_add=True)
-    delivery = models.ForeignKey(Delivery, verbose_name=gettext_lazy(
+    date = models.DateTimeField(_('date'), auto_now_add=True)
+    delivery = models.ForeignKey(Delivery, verbose_name=_(
         'delivery'), on_delete=models.SET_NULL, null=True)
     comment = models.TextField(default='', blank=True)
-    is_closed = models.BooleanField(gettext_lazy('closed'), default=False)
+    is_closed = models.BooleanField(_('closed'), default=False)
 
     def __str__(self):
         return str(self.pk)
@@ -283,7 +272,7 @@ class Order(models.Model):
             order_sum -= order_sum * sale / 100 if sale else 0
         return order_sum
 
-    sum.short_description = gettext_lazy('Sum')
+    sum.short_description = _('Sum')
 
     def discount(self):
         if self.full_sum():
@@ -323,8 +312,8 @@ class Order(models.Model):
         return reverse('commercial_order_detail', kwargs={'pk': self.pk})
 
     class Meta:
-        verbose_name = gettext_lazy('order')
-        verbose_name_plural = gettext_lazy('orders')
+        verbose_name = _('order')
+        verbose_name_plural = _('orders')
         constraints = [
             models.UniqueConstraint(fields=['user'], condition=models.Q(
                 is_closed=False), name='unique_open_order')
@@ -332,25 +321,25 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, verbose_name=gettext_lazy(
+    order = models.ForeignKey(Order, verbose_name=_(
         'order'), related_name='items', on_delete=models.CASCADE)
-    article = models.ForeignKey(Article, verbose_name=gettext_lazy(
+    article = models.ForeignKey(Article, verbose_name=_(
         'article'), on_delete=models.CASCADE)
-    name = models.CharField(gettext_lazy('name'), max_length=255, null=True)
-    count = models.PositiveIntegerField(gettext_lazy('count'), default=0)
-    volume = models.DecimalField(gettext_lazy(
+    name = models.CharField(_('name'), max_length=255, null=True)
+    count = models.PositiveIntegerField(_('count'), default=0)
+    volume = models.DecimalField(_(
         'volume'), default=0, blank=True, decimal_places=2, max_digits=10)
-    weight = models.DecimalField(gettext_lazy(
+    weight = models.DecimalField(_(
         'weight'), default=0, blank=True, decimal_places=2, max_digits=10)
-    price = models.DecimalField(gettext_lazy(
+    price = models.DecimalField(_(
         'price'), max_digits=10, decimal_places=3, default=0)
-    full_price = models.DecimalField(gettext_lazy('full price'), max_digits=10, decimal_places=3, default=0,
+    full_price = models.DecimalField(_('full price'), max_digits=10, decimal_places=3, default=0,
                                      editable=False)
-    barcode = models.CharField(gettext_lazy(
+    barcode = models.CharField(_(
         'barcode'), max_length=255, null=True, blank=True)
-    company = models.CharField(gettext_lazy(
+    company = models.CharField(_(
         'company'), max_length=255, null=True, blank=True)
-    main_image_url = models.URLField(gettext_lazy(
+    main_image_url = models.URLField(_(
         'main image url'), null=True, blank=True, editable=False)
 
     def __str__(self):
@@ -363,8 +352,8 @@ class OrderItem(models.Model):
         return self.count * self.full_price
 
     class Meta:
-        verbose_name = gettext_lazy('order item')
-        verbose_name_plural = gettext_lazy('order items')
+        verbose_name = _('order item')
+        verbose_name_plural = _('order items')
         constraints = [
             models.UniqueConstraint(
                 fields=['order', 'article'], name='unique_order_item')
@@ -372,43 +361,43 @@ class OrderItem(models.Model):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy(
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_(
         'user'), on_delete=models.CASCADE)
-    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy(
+    departament = models.ForeignKey(Departament, verbose_name=_(
         'departament'), on_delete=models.CASCADE)
     sale = models.DecimalField(
-        gettext_lazy('sale in %'), max_digits=5, decimal_places=2, default=0,
+        _('sale in %'), max_digits=5, decimal_places=2, default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
-    additional_emails = models.CharField(gettext_lazy('additional email addresses'), max_length=128, default='',
-                                         help_text=gettext_lazy(
+    additional_emails = models.CharField(_('additional email addresses'), max_length=128, default='',
+                                         help_text=_(
                                              'Enter multiple mailboxes separated by commas'),
                                          blank=True)
-    inn = models.CharField(gettext_lazy(
+    inn = models.CharField(_(
         'inn'), max_length=127, null=True, blank=True)
 
     def __str__(self):
         return f"Profile for {self.user}"
 
     class Meta:
-        verbose_name = gettext_lazy('profile')
-        verbose_name_plural = gettext_lazy('profiles')
+        verbose_name = _('profile')
+        verbose_name_plural = _('profiles')
 
 
 class UserDebs(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=gettext_lazy(
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
         'user'), on_delete=models.CASCADE)
-    document = models.CharField(gettext_lazy('document'), max_length=127)
-    date_of_sale = models.DateField(gettext_lazy('date of sale'))
-    amount = models.DecimalField(gettext_lazy(
+    document = models.CharField(_('document'), max_length=127)
+    date_of_sale = models.DateField(_('date of sale'))
+    amount = models.DecimalField(_(
         'amount'), max_digits=10, decimal_places=3, default=0)
 
     def __str__(self):
         return f"{self.user} {self.document}"
 
     class Meta:
-        verbose_name = gettext_lazy('debt')
-        verbose_name_plural = gettext_lazy('debts')
+        verbose_name = _('debt')
+        verbose_name_plural = _('debts')
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'document'], name='unique_user_document')
@@ -416,16 +405,16 @@ class UserDebs(models.Model):
 
 
 class ImportPrice(models.Model):
-    file = models.FileField(gettext_lazy(
+    file = models.FileField(_(
         'file'), upload_to='import_price/%Y/%m/%d/%H/%m/')
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE,
+        settings.AUTH_USER_MODEL, verbose_name=_('user'), on_delete=models.CASCADE,
         limit_choices_to={'is_staff': True}
     )
-    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy(
+    departament = models.ForeignKey(Departament, verbose_name=_(
         'departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(
-        gettext_lazy('imported at'), auto_now_add=True)
+        _('imported at'), auto_now_add=True)
 
     def __str__(self):
         return f'ImportPrice by {self.user} at {self.imported_at.strftime("%Y-%m-%d %H:%M:%S")}'
@@ -436,21 +425,21 @@ class ImportPrice(models.Model):
         import_price.delay(self.id)
 
     class Meta:
-        verbose_name = gettext_lazy('import price')
-        verbose_name_plural = gettext_lazy('import prices')
+        verbose_name = _('import price')
+        verbose_name_plural = _('import prices')
 
 
 class ImportNew(models.Model):
-    file = models.FileField(gettext_lazy(
+    file = models.FileField(_(
         'file'), upload_to='import_new/%Y/%m/%d/%H/%m/')
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE,
+        settings.AUTH_USER_MODEL, verbose_name=_('user'), on_delete=models.CASCADE,
         limit_choices_to={'is_staff': True}
     )
-    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy(
+    departament = models.ForeignKey(Departament, verbose_name=_(
         'departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(
-        gettext_lazy('imported at'), auto_now_add=True)
+        _('imported at'), auto_now_add=True)
 
     def __str__(self):
         return f'ImportNew by {self.user} at {self.imported_at.strftime("%Y-%m-%d %H:%M:%S")}'
@@ -461,21 +450,21 @@ class ImportNew(models.Model):
         import_novelty.delay(self.id)
 
     class Meta:
-        verbose_name = gettext_lazy('import new')
-        verbose_name_plural = gettext_lazy('import news')
+        verbose_name = _('import new')
+        verbose_name_plural = _('import news')
 
 
 class ImportSpecial(models.Model):
-    file = models.FileField(gettext_lazy(
+    file = models.FileField(_(
         'file'), upload_to='import_special/%Y/%m/%d/%H/%m/')
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE,
+        settings.AUTH_USER_MODEL, verbose_name=_('user'), on_delete=models.CASCADE,
         limit_choices_to={'is_staff': True}
     )
-    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy(
+    departament = models.ForeignKey(Departament, verbose_name=_(
         'departament'), on_delete=models.CASCADE)
     imported_at = models.DateTimeField(
-        gettext_lazy('imported at'), auto_now_add=True)
+        _('imported at'), auto_now_add=True)
 
     def __str__(self):
         return f'ImportSpecial by {self.user} at {self.imported_at.strftime("%Y-%m-%d %H:%M:%S")}'
@@ -486,19 +475,19 @@ class ImportSpecial(models.Model):
         import_special.delay(self.id)
 
     class Meta:
-        verbose_name = gettext_lazy('import special')
-        verbose_name_plural = gettext_lazy('import specials')
+        verbose_name = _('import special')
+        verbose_name_plural = _('import specials')
 
 
 class ImportDebs(models.Model):
-    file = models.FileField(gettext_lazy(
+    file = models.FileField(_(
         'file'), upload_to='import_debs/%Y/%m/%d/%H/%m/')
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE,
+        settings.AUTH_USER_MODEL, verbose_name=_('user'), on_delete=models.CASCADE,
         limit_choices_to={'is_staff': True}
     )
     imported_at = models.DateTimeField(
-        gettext_lazy('imported at'), auto_now_add=True)
+        _('imported at'), auto_now_add=True)
 
     def __str__(self):
         return f'ImportSpecial by {self.user} at {self.imported_at.strftime("%Y-%m-%d %H:%M:%S")}'
@@ -509,21 +498,21 @@ class ImportDebs(models.Model):
         import_debs.delay(self.id)
 
     class Meta:
-        verbose_name = gettext_lazy('import debt')
-        verbose_name_plural = gettext_lazy('import debts')
+        verbose_name = _('import debt')
+        verbose_name_plural = _('import debts')
 
 
 class Page(models.Model):
     ABOUT = 'about'
     CONTACTS = 'contacts'
     TYPE = (
-        (ABOUT, gettext_lazy('about')),
-        (CONTACTS, gettext_lazy('contacts')),
+        (ABOUT, _('about')),
+        (CONTACTS, _('contacts')),
     )
-    slug = models.SlugField(gettext_lazy('slug'), choices=TYPE, null=True)
-    departament = models.ForeignKey(Departament, verbose_name=gettext_lazy(
+    slug = models.SlugField(_('slug'), choices=TYPE, null=True)
+    departament = models.ForeignKey(Departament, verbose_name=_(
         'departament'), on_delete=models.CASCADE)
-    text = RichTextUploadingField(gettext_lazy('text'))
+    text = RichTextUploadingField(_('text'))
 
     def __str__(self):
         return f'{self.slug}'
@@ -532,28 +521,28 @@ class Page(models.Model):
         return reverse('page_detail_url', kwargs={'slug': self.slug})
 
     class Meta:
-        verbose_name = gettext_lazy('page')
-        verbose_name_plural = gettext_lazy('pages')
+        verbose_name = _('page')
+        verbose_name_plural = _('pages')
 
 
 class Complaint(models.Model):
     class ComplaintStatus(models.IntegerChoices):
-        OPENED = 0, gettext_lazy('opened')
-        CLOSED = 1, gettext_lazy('closed')
-        INPROGRESS = 2, gettext_lazy('in progress')
+        OPENED = 0, _('opened')
+        CLOSED = 1, _('closed')
+        INPROGRESS = 2, _('in progress')
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, verbose_name=_('user'), on_delete=models.CASCADE
     )
     date_of_purchase = models.DateField(
-        gettext_lazy('date of purchase'),
-        help_text=gettext_lazy('Please, fill date in format %s') % formats.get_format('SHORT_DATE_FORMAT')
+        _('date of purchase'),
+        help_text=_('Please, fill date in format %s') % formats.get_format('SHORT_DATE_FORMAT')
     )
-    article = models.ForeignKey(Article, verbose_name=gettext_lazy('article'), on_delete=models.CASCADE, null=True)
-    invoice = models.CharField(gettext_lazy('invoice No'), max_length=127)
-    receipt = ImageField(gettext_lazy('receipt'), null=True, upload_to='attachment/%Y/%m/%d/%H/%m/')
+    article = models.ForeignKey(Article, verbose_name=_('article'), on_delete=models.CASCADE, null=True)
+    invoice = models.CharField(_('invoice No'), max_length=127)
+    receipt = ImageField(_('receipt'), null=True, upload_to='attachment/%Y/%m/%d/%H/%m/')
     status = models.IntegerField(
-        gettext_lazy('status'), choices=ComplaintStatus.choices, default=ComplaintStatus.OPENED
+        _('status'), choices=ComplaintStatus.choices, default=ComplaintStatus.OPENED
     )
 
     def image(self):
@@ -578,36 +567,36 @@ class Complaint(models.Model):
         return reverse('commercial_complaint_detail', kwargs={'pk': self.pk})
 
     class Meta:
-        verbose_name = gettext_lazy('complaint')
-        verbose_name_plural = gettext_lazy('complaints')
+        verbose_name = _('complaint')
+        verbose_name_plural = _('complaints')
         ordering = ['-id']
 
 
 class Message(models.Model):
     complaint = models.ForeignKey(
-        Complaint, verbose_name=gettext_lazy('complaint'), on_delete=models.CASCADE
+        Complaint, verbose_name=_('complaint'), on_delete=models.CASCADE
     )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=gettext_lazy('user'), on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, verbose_name=_('user'), on_delete=models.CASCADE
     )
-    text = models.TextField(gettext_lazy('text'))
-    created_date = models.DateTimeField(gettext_lazy('created date'), auto_now_add=True)
+    text = models.TextField(_('text'))
+    created_date = models.DateTimeField(_('created date'), auto_now_add=True)
 
     def __str__(self):
         return f"{formats.date_format(self.created_date)} {formats.time_format(self.created_date)}"
 
     class Meta:
-        verbose_name = gettext_lazy('message')
-        verbose_name_plural = gettext_lazy('messages')
+        verbose_name = _('message')
+        verbose_name_plural = _('messages')
         ordering = ['created_date']
 
 
 class MessageAttachment(models.Model):
     message = models.ForeignKey(
-        Message, verbose_name=gettext_lazy('message'), on_delete=models.CASCADE
+        Message, verbose_name=_('message'), on_delete=models.CASCADE
     )
     file = models.FileField(
-        gettext_lazy('file'), blank=True, null=True, upload_to='attachment/%Y/%m/%d/%H/%m/',
+        _('file'), blank=True, null=True, upload_to='attachment/%Y/%m/%d/%H/%m/',
         validators=[
             FileExtensionValidator(
                 allowed_extensions=['mov', 'avi', 'mp4', 'webm', 'mkv', 'jpg', 'jpeg', 'png']
@@ -622,5 +611,5 @@ class MessageAttachment(models.Model):
         return self.file.name
 
     class Meta:
-        verbose_name = gettext_lazy('attachment')
-        verbose_name_plural = gettext_lazy('attachments')
+        verbose_name = _('attachment')
+        verbose_name_plural = _('attachments')
