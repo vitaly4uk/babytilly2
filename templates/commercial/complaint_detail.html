@@ -12,7 +12,7 @@
                 <h4 class="mt-0">{{ complaint.product_name }}</h4>
                 <h5>{{ complaint.invoice }}</h5>
                 <p>{{ complaint.description }}</p>
-                <a href="{{ complaint.image.url }}">{% translate 'Original image' %}</a>
+                <a href="{{ complaint.receipt.url }}">{% translate 'Original image' %}</a>
                 {% if complaint.video %}
                     <a href="{{ complaint.video.url }}">{% translate 'Original video' %}</a>{% endif %}
                 <p>{{ complaint.date_of_purchase|date }}</p>
