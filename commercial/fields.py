@@ -31,6 +31,8 @@ class MultipleFileField(forms.FileField):
                     if r.size > 52428800:
                         raise ValidationError(
                             gettext_lazy('Please keep filesize under 5Mb for images and 50Mb for videos.'))
+                else:
+                    raise ValidationError(gettext_lazy('Only video and photos are allowed.'))
         return result
 
 

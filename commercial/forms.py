@@ -80,9 +80,20 @@ class ComplaintForm(forms.ModelForm):
             raise ValidationError(gettext_lazy('The date must be less or equal to today\'s'))
         return date_of_purchase
 
+    def clean_receipt(self):
+        r = self.cleaned_data['receipt']
+        content_type = r.content_type.split('/')[0]
+        if content_type == 'image':
+            if r.size > 5242880:
+                raise ValidationError(gettext_lazy('Please keep filesize under 5Mb.'))
+        return r
+
     class Meta:
         model = Complaint
         exclude = ['user', 'status']
+        help_texts = {
+            'receipt': gettext_lazy('Only photos are allowed. Max allowed size is 5Mb.')
+        }
 
 
 class MessageForm(forms.ModelForm):
