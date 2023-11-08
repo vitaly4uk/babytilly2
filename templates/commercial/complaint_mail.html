@@ -1,4 +1,7 @@
-<p>You have created the new complaint <a href="{{ request.host }}{{ complaint.get_absolute_url }}">{{ complaint }}</a> </p>
+<p>You left</p>
+<p><a href="{{ request.host }}{{ complaint.get_absolute_url }}">Complaint {{ complaint.id }}</a></p>
 
-<p>Description:</p>
+<p>Product name: {{ complaint.product_name }}</p>
+<p>Invoice No: {{ complaint.invoice }}</p>
 <p>{{ message.description }}</p>
+<p>NOTE: This message has been generated automatically. Please do not reply with the Reply function</p>

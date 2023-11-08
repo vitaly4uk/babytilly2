@@ -128,7 +128,7 @@ def send_message_mail(user_id: int, message_id: int):
         subject=f'Complaint {message.complaint.id}',
         body=str(strip_tags(html_body)),
         to=to_emails,
-        reply_to=['no-reply@b2bcarello.com']
+        reply_to=['complaints.carrello@gmail.com']
     )
     msg.attach_alternative(html_body, 'text/html')
     msg.send()
@@ -154,10 +154,10 @@ def send_complaint_mail(complaint_id: int):
     if additional_emails:
         to_emails += additional_emails
     msg = EmailMultiAlternatives(
-        subject=f'Complaint {complaint.id} {complaint}',
+        subject=f'Complaint {complaint.id} Product name: {complaint.product_name()}',
         body=str(strip_tags(html_body)),
         to=to_emails,
-        reply_to=['no-reply@b2bcarello.com']
+        reply_to=['complaints.carrello@gmail.com']
     )
     msg.attach_alternative(html_body, 'text/html')
     msg.send()
