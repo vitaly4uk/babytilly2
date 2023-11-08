@@ -36,6 +36,7 @@ EMAIL_BACKEND = 'django_ses.SESBackend'
 EMAIL_SUBJECT_PREFIX = '[b2b carrello] '
 DEFAULT_FROM_EMAIL = 'order.carrello@gmail.com'
 SERVER_EMAIL = 'order.carrello@gmail.com'
+COMPLAINTS_EMAIL = 'complaints.carrello@gmail.com'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/

@@ -331,12 +331,13 @@ class MessageInlineAdmin(admin.StackedInline):
 
 
 class ComplaintAdmin(admin.ModelAdmin):
-    list_display = ['user', 'product_name', 'has_answer', 'status']
+    list_display = ['date_of_purchase', 'user', 'product_name', 'has_answer', 'status']
     list_filter = ['status', 'user__profile__departament', 'user']
     inlines = [MessageInlineAdmin]
     autocomplete_fields = ['user']
     readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice', 'has_answer', 'receipt']
     exclude = ['article']
+    date_hierarchy = 'date_of_purchase'
 
     def has_add_permission(self, request):
         return request.user.is_superuser

@@ -105,8 +105,9 @@ def send_order_email(order_id: int):
         msg.attach(f'order{order.pk} {company}.csv', csv_file, 'text/csv')
     msg.send()
 
+
 @app.task()
-def send_message_mail(user_id:int, message_id: int):
+def send_message_mail(user_id: int, message_id: int):
     from commercial.models import Message
     user = get_user_model().objects.select_related('profile').get(pk=user_id)
     message = Message.objects.select_related('complaint').get(pk=message_id)
@@ -127,7 +128,7 @@ def send_message_mail(user_id:int, message_id: int):
         subject=f'Complaint {message.complaint}',
         body=str(strip_tags(html_body)),
         to=to_emails,
-        reply_to=['no-reply@b2bcarrello.com']
+        reply_to=['complaints.carrello@gmail.com']
     )
     msg.attach_alternative(html_body, 'text/html')
     msg.send()

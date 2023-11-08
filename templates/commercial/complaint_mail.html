@@ -1,4 +1,4 @@
-<p>You have new message in complaint <a href="https://b2bcarrello.com{{ message.complaint.get_absolute_url }}">{{ message.complaint }}</a> </p>
+<p>You have new message in complaint <a href="{{ request.host }}{{ message.complaint.get_absolute_url }}">{{ message.complaint }}</a> </p>
 <p>
     {{ message.text }}
 </p>
