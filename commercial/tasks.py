@@ -117,6 +117,35 @@ def send_message_mail(user_id: int, message_id: int):
         'message': message,
     }
 
+    html_body = str(render_to_string('commercial/message_mail.html', context))
+    to_emails = []
+    if user.email:
+        to_emails.append(user.email)
+    additional_emails = filter(bool, [e.strip() for e in user.profile.additional_emails.split(',')])
+    if additional_emails:
+        to_emails += additional_emails
+    msg = EmailMultiAlternatives(
+        subject=f'Complaint {message.complaint.id}',
+        body=str(strip_tags(html_body)),
+        to=to_emails,
+        reply_to=['no-reply@b2bcarello.com']
+    )
+    msg.attach_alternative(html_body, 'text/html')
+    msg.send()
+
+
+@app.task()
+def send_complaint_mail(complaint_id: int):
+    from commercial.models import Complaint, Message
+    complaint = Complaint.objects.get(pk=complaint_id)
+    message = Message.objects.filter(complaint_id=complaint_id).first()
+    user = complaint.user
+
+    context = {
+        'complaint': complaint,
+        'message': message,
+    }
+
     html_body = str(render_to_string('commercial/complaint_mail.html', context))
     to_emails = []
     if user.email:
@@ -125,10 +154,10 @@ def send_message_mail(user_id: int, message_id: int):
     if additional_emails:
         to_emails += additional_emails
     msg = EmailMultiAlternatives(
-        subject=f'Complaint {message.complaint} {message.complaint.user} {message.complaint.product_name()}',
+        subject=f'Complaint {complaint.id} {complaint}',
         body=str(strip_tags(html_body)),
         to=to_emails,
-        reply_to=['complaints.carrello@gmail.com']
+        reply_to=['no-reply@b2bcarello.com']
     )
     msg.attach_alternative(html_body, 'text/html')
     msg.send()

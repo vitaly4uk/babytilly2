@@ -1,4 +1,4 @@
-<p>You have new message in complaint <a href="{{ request.host }}{{ message.complaint.get_absolute_url }}">{{ message.complaint }}</a> </p>
-<p>
-    {{ message.text }}
-</p>
+<p>You have created the new complaint <a href="{{ request.host }}{{ complaint.get_absolute_url }}">{{ complaint }}</a> </p>
+
+<p>Description:</p>
+<p>{{ message.description }}</p>

@@ -21,7 +21,7 @@ from commercial.forms import EditOrderForm, OrderItemForm, MessageForm, Complain
 from commercial.functions import export_department_to_xml
 from commercial.models import StartPageImage, Category, ArticleProperties, Order, OrderItem, Page, UserDebs, \
     ArticleImage, Departament, Complaint, Message, MessageAttachment
-from commercial.tasks import send_order_email
+from commercial.tasks import send_order_email, send_complaint_mail
 
 logger = logging.getLogger(__name__)
 
@@ -270,6 +270,7 @@ class ComplaintCreateView(ActiveRequiredMixin, CreateView):
                     message=msg,
                     file=attach,
                 )
+        send_complaint_mail.delay(self.object.id)
         return response
 
 

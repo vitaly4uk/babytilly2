@@ -1,4 +1,3 @@
-import datetime
 import io
 
 from django.contrib import admin
@@ -7,7 +6,6 @@ from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import path
 from django.utils.safestring import mark_safe
-from django.utils.timezone import now
 from django.utils.translation import gettext_lazy
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
@@ -380,6 +378,5 @@ class ComplaintAdmin(admin.ModelAdmin):
                         message=message,
                         file=attach,
                     )
-            if True or now() - complaint.user.last_login > datetime.timedelta(hours=1):
-                send_message_mail.delay(complaint.user_id, message.id)
+            send_message_mail.delay(complaint.user_id, message.id)
         super().save_formset(request, form, formset, change)
