@@ -546,6 +546,7 @@ class Complaint(models.Model):
     status = models.IntegerField(
         _('status'), choices=ComplaintStatus.choices, default=ComplaintStatus.OPENED
     )
+    created_date = models.DateField(_('date of create'), auto_now_add=True)
 
     def image(self):
         msg: Message = self.message_set.first()
