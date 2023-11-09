@@ -378,5 +378,5 @@ class ComplaintAdmin(admin.ModelAdmin):
                         message=message,
                         file=attach,
                     )
-            send_message_mail.delay(complaint.user_id, message.id)
         super().save_formset(request, form, formset, change)
+        send_message_mail.delay(complaint.user_id, message.id)
