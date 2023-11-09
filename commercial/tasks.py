@@ -1,7 +1,6 @@
 import io
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -107,14 +106,14 @@ def send_order_email(order_id: int):
 
 
 @app.task()
-def send_message_mail(user_id: int, message_id: int):
-    from commercial.models import Message
-    user = get_user_model().objects.select_related('profile').get(pk=user_id)
-    message = Message.objects.select_related('complaint').get(pk=message_id)
+def send_message_mail(complaint_id: int):
+    from commercial.models import Complaint
+    complaint = Complaint.objects.get(pk=complaint_id)
+    user = complaint.user
 
     context = {
         'user': user,
-        'message': message,
+        'complaint': complaint,
     }
 
     html_body = str(render_to_string('commercial/message_mail.html', context))
@@ -126,7 +125,7 @@ def send_message_mail(user_id: int, message_id: int):
         to_emails += additional_emails
     msg = EmailMultiAlternatives(
         from_email=settings.COMPLAINTS_EMAIL,
-        subject=f'Complaint {message.complaint.id}',
+        subject=f'Complaint {complaint.id}',
         body=str(strip_tags(html_body)),
         to=to_emails,
         reply_to=['complaints.carrello@gmail.com']
