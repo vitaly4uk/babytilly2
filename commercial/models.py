@@ -202,7 +202,9 @@ class ArticleProperties(models.Model):
 
     @property
     def is_less_then_five(self):
-        return self.presence.lower() == '1'
+        if self.presence:
+            return self.presence.lower() == '1'
+        return False
 
     def get_price_for_user(self, user):
         price = self.price
