@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-amqp==5.1.1
+amqp==5.2.0
     # via kombu
 asgiref==3.7.2
     # via
@@ -14,17 +14,15 @@ astroid==3.0.1
     # via pylint
 beautifulsoup4==4.12.2
     # via django-bootstrap4
-billiard==4.1.0
+billiard==4.2.0
     # via celery
-black==23.10.1
-    # via -r requirements.in
 boto3==1.28.73
     # via
     #   -r requirements.in
     #   celery
     #   django-ses
     #   kombu
-botocore==1.31.78
+botocore==1.31.83
     # via
     #   boto3
     #   s3transfer
@@ -34,7 +32,6 @@ celery[sqs]==5.3.4
     # via -r requirements.in
 click==8.1.7
     # via
-    #   black
     #   celery
     #   click-didyoumean
     #   click-plugins
@@ -94,31 +91,20 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-kombu[sqs]==5.3.2
+kombu[sqs]==5.3.3
     # via celery
 mccabe==0.7.0
     # via pylint
-mypy==1.6.1
-    # via -r requirements.in
-mypy-extensions==1.0.0
-    # via
-    #   black
-    #   mypy
 packaging==23.2
     # via
-    #   black
     #   build
     #   gunicorn
-pathspec==0.11.2
-    # via black
 pillow==10.1.0
     # via -r requirements.in
 pip-tools==7.3.0
     # via -r requirements.in
 platformdirs==3.11.0
-    # via
-    #   black
-    #   pylint
+    # via pylint
 prompt-toolkit==3.0.39
     # via click-repl
 psycopg2-binary==2.9.9
@@ -164,10 +150,8 @@ sqlparse==0.4.4
     #   django-debug-toolbar
 tomli==2.0.1
     # via
-    #   black
     #   build
     #   django-stubs
-    #   mypy
     #   pip-tools
     #   pylint
     #   pyproject-hooks
@@ -181,12 +165,10 @@ typing-extensions==4.8.0
     # via
     #   asgiref
     #   astroid
-    #   black
     #   django-countries
     #   django-stubs
     #   django-stubs-ext
     #   kombu
-    #   mypy
     #   pylint
 tzdata==2023.3
     # via celery

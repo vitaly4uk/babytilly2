@@ -32,7 +32,11 @@ class ArticleAdminForm(forms.ModelForm):
     def save_images(self, article):
         """Process each uploaded image."""
         for upload in self.files.getlist("images"):
-            image = ArticleImage(article=article, image=upload, departament_id=self.request.user.profile.departament_id)
+            image = ArticleImage(
+                article=article,
+                image=upload,
+                departament_id=self.request.user.profile.departament_id,
+            )
             image.save()
 
 
@@ -47,7 +51,7 @@ class EditOrderForm(forms.ModelForm):
                     'class': 'custom-select custom-select-sm d-inline-block',
                     'onchange': 'document.getElementById("cartform").submit()',
                 }
-            )
+            ),
         }
 
 
@@ -62,22 +66,32 @@ class OrderItemForm(forms.ModelForm):
 
 
 class ComplaintForm(forms.ModelForm):
-    description = forms.CharField(widget=forms.Textarea, label=gettext_lazy('Description'))
+    description = forms.CharField(
+        widget=forms.Textarea, label=gettext_lazy('Description')
+    )
     attachments = MultipleFileField(
         label=gettext_lazy('Attachments'),
-        help_text=gettext_lazy('Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video.'),
+        help_text=gettext_lazy(
+            'Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video.'
+        ),
         required=True,
     )
     article = forms.ModelChoiceField(
-        Article.objects.all(), label=gettext_lazy('Product name'), to_field_name='articleproperties__name',
-        help_text=gettext_lazy('Please, start enter product name like Bravo, Alfa, etc and select one from list.'),
-        widget=forms.TextInput()
+        Article.objects.all(),
+        label=gettext_lazy('Product name'),
+        to_field_name='articleproperties__name',
+        help_text=gettext_lazy(
+            'Please, start enter product name like Bravo, Alfa, etc and select one from list.'
+        ),
+        widget=forms.TextInput(),
     )
 
     def clean_date_of_purchase(self):
         date_of_purchase = self.cleaned_data['date_of_purchase']
         if date_of_purchase > now().date():
-            raise ValidationError(gettext_lazy('The date must be less or equal to today\'s'))
+            raise ValidationError(
+                gettext_lazy('The date must be less or equal to today\'s')
+            )
         return date_of_purchase
 
     def clean_receipt(self):
@@ -99,7 +113,9 @@ class ComplaintForm(forms.ModelForm):
 class MessageForm(forms.ModelForm):
     attachments = MultipleFileField(
         label=gettext_lazy('Attachments'),
-        help_text=gettext_lazy('Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video.'),
+        help_text=gettext_lazy(
+            'Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video.'
+        ),
         required=False,
     )
 
