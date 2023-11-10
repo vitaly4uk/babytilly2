@@ -13,4 +13,3 @@ COPY requirements.txt /app/
 RUN pip install -U pip
 RUN pip install -r requirements.txt
 COPY . /app/
-#RUN python /opt/manage.py check
