@@ -16,9 +16,7 @@ from urllib.parse import urlparse
 import environ
 from kombu.utils.url import safequote
 
-ADMINS = (
-    ('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),
-)
+ADMINS = (('Vitaly Omelchuk', 'vitaly.omelchuk@gmail.com'),)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +27,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 env = environ.Env(
     DEBUG=(bool, False),
     AWS_STORAGE_BUCKET_NAME=(str, 'babytilly2'),
-    AWS_DEFAULT_REGION=(str, 'us-east-1')
+    AWS_DEFAULT_REGION=(str, 'us-east-1'),
 )
 
 EMAIL_BACKEND = 'django_ses.SESBackend'
@@ -47,9 +45,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = [
-    '*'
-]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -100,7 +96,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'commercial.context_processors.root_sections'
+                'commercial.context_processors.root_sections',
             ],
         },
     },
@@ -223,14 +219,16 @@ if REDIS_URL := env.cache_url('REDIS_URL', default=None):
 else:
     # aws_access_key = safequote(AWS_ACCESS_KEY_ID) if isinstance(AWS_ACCESS_KEY_ID, bytes) else AWS_ACCESS_KEY_ID
     # aws_secret_key = safequote(AWS_SECRET_ACCESS_KEY) if isinstance(AWS_SECRET_ACCESS_KEY, bytes) else AWS_SECRET_ACCESS_KEY
-    CELERY_BROKER_URL = f'sqs://{safequote(AWS_ACCESS_KEY_ID)}:{safequote(AWS_SECRET_ACCESS_KEY)}@'
+    CELERY_BROKER_URL = (
+        f'sqs://{safequote(AWS_ACCESS_KEY_ID)}:{safequote(AWS_SECRET_ACCESS_KEY)}@'
+    )
     CELERY_BROKER_TRANSPORT_OPTIONS = {
         'queue_name_prefix': 'babytilly2-',
         'region': AWS_REGION_NAME,
         'polling_interval': 60,
-        'wait_time_seconds': 10
-
+        'wait_time_seconds': 10,
     }
+    CELERY_TASK_ALWAYS_EAGER = True
 
 CKEDITOR_UPLOAD_PATH = 'ckeditor_upload/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
@@ -244,12 +242,14 @@ CKEDITOR_CONFIGS = {
             ['Link', 'Unlink'],
             ['Format', 'FontSize'],
             ['Blockquote'],
-            ['Source', '-', 'Image']
+            ['Source', '-', 'Image'],
         ],
         'allowedContent': True,
-        'extraPlugins': ','.join([
-            'uploadimage',
-        ]),
+        'extraPlugins': ','.join(
+            [
+                'uploadimage',
+            ]
+        ),
     }
 }
 
