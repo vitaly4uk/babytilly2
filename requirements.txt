@@ -16,7 +16,7 @@ beautifulsoup4==4.12.2
     # via django-bootstrap4
 billiard==4.2.0
     # via celery
-boto3==1.28.73
+boto3==1.28.83
     # via
     #   -r requirements.in
     #   celery
@@ -29,7 +29,9 @@ botocore==1.31.83
 build==1.0.3
     # via pip-tools
 celery[sqs]==5.3.4
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   celery
 click==8.1.7
     # via
     #   celery
