@@ -5,15 +5,15 @@
 #    pip-compile
 #
 amqp==5.2.0
-    # via
-    #   kombu
-    #   librabbitmq
+    # via kombu
 asgiref==3.7.2
     # via
     #   django
     #   django-countries
 astroid==3.0.1
     # via pylint
+async-timeout==4.0.3
+    # via redis
 beautifulsoup4==4.12.2
     # via django-bootstrap4
 billiard==3.6.4.0
@@ -29,7 +29,7 @@ botocore==1.31.84
     #   s3transfer
 build==1.0.3
     # via pip-tools
-celery[librabbitmq,sqs]==5.2.7
+celery[redis,sqs]==5.2.7
     # via -r requirements.in
 click==8.1.7
     # via
@@ -94,8 +94,6 @@ jmespath==1.0.1
     #   botocore
 kombu[sqs]==5.3.3
     # via celery
-librabbitmq==2.0.0
-    # via celery
 mccabe==0.7.0
     # via pylint
 packaging==23.2
@@ -136,12 +134,12 @@ pytz==2023.3.post1
     #   django-ses
 pyuca==1.2
     # via -r requirements.in
+redis==5.0.1
+    # via celery
 s3transfer==0.7.0
     # via boto3
 six==1.16.0
-    # via
-    #   librabbitmq
-    #   python-dateutil
+    # via python-dateutil
 sorl-thumbnail==12.10.0
     # via -r requirements.in
 soupsieve==2.5
