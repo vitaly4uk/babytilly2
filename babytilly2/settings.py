@@ -28,6 +28,7 @@ env = environ.Env(
     DEBUG=(bool, False),
     AWS_STORAGE_BUCKET_NAME=(str, "babytilly2"),
     AWS_DEFAULT_REGION=(str, "us-east-1"),
+    REDIS_URL=(str, None),
 )
 
 EMAIL_BACKEND = "django_ses.SESBackend"
@@ -214,8 +215,8 @@ THUMBNAIL_SIZE = {
 }
 PAGINATOR = [10, 25, 50, 100]
 
-if REDIS_URL := env.url("REDIS_URL", default=None):
-    CELERY_BROKER_URL = REDIS_URL
+if BROKER_URL := env("REDIS_URL"):
+    CELERY_BROKER_URL = BROKER_URL
 else:
     # aws_access_key = safequote(AWS_ACCESS_KEY_ID) if isinstance(AWS_ACCESS_KEY_ID, bytes) else AWS_ACCESS_KEY_ID
     # aws_secret_key = safequote(AWS_SECRET_ACCESS_KEY) if isinstance(AWS_SECRET_ACCESS_KEY, bytes) else AWS_SECRET_ACCESS_KEY
