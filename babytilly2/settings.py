@@ -228,7 +228,7 @@ else:
         'polling_interval': 60,
         'wait_time_seconds': 10,
     }
-    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_ALWAYS_EAGER = False
 
 CKEDITOR_UPLOAD_PATH = 'ckeditor_upload/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
