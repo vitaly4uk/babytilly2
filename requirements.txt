@@ -21,7 +21,7 @@ boto3==1.28.83
     #   -r requirements.in
     #   django-ses
     #   kombu
-botocore==1.31.83
+botocore==1.31.84
     # via
     #   boto3
     #   s3transfer
@@ -102,9 +102,9 @@ pillow==10.1.0
     # via -r requirements.in
 pip-tools==7.3.0
     # via -r requirements.in
-platformdirs==3.11.0
+platformdirs==4.0.0
     # via pylint
-prompt-toolkit==3.0.39
+prompt-toolkit==3.0.40
     # via click-repl
 psycopg2-binary==2.9.9
     # via -r requirements.in

@@ -231,7 +231,7 @@ else:
         "wait_time_seconds": 10,
         "broker_connection_retry_on_startup": True,
     }
-    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_ALWAYS_EAGER = False
 
 CKEDITOR_UPLOAD_PATH = "ckeditor_upload/"
 CKEDITOR_IMAGE_BACKEND = "pillow"
