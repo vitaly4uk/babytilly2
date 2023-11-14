@@ -56,26 +56,26 @@ def get_digits(string):
         if not string[pos].isdigit():
             return string[:pos]
         pos += 1
-    return string if string else '0'
+    return string if string else "0"
 
 
 class HomePage(TemplateView):
-    template_name = 'index.html'
+    template_name = "index.html"
 
     def get_context_data(self, **kwargs):
         context = super(HomePage, self).get_context_data()
-        queryset = StartPageImage.objects.only('image')
+        queryset = StartPageImage.objects.only("image")
         context.update(
             {
-                'file_list': [sp.image.url for sp in queryset],
+                "file_list": [sp.image.url for sp in queryset],
             }
         )
         return context
 
 
 class PageDetailView(ActiveRequiredMixin, DetailView):
-    template_name = 'flatpages/default.html'
-    context_object_name = 'page'
+    template_name = "flatpages/default.html"
+    context_object_name = "page"
 
     def get_queryset(self):
         user_departament_id = self.request.user.profile.departament_id
@@ -84,61 +84,61 @@ class PageDetailView(ActiveRequiredMixin, DetailView):
 
 
 class ArticleListView(ActiveRequiredMixin, ListView):
-    template_name = 'commercial/articleprice_list.html'
-    context_object_name = 'object_list'
+    template_name = "commercial/articleprice_list.html"
+    context_object_name = "object_list"
 
     def get_paginate_by(self, queryset):
-        return int(self.request.GET.get('per_page', settings.PAGINATOR[2]))
+        return int(self.request.GET.get("per_page", settings.PAGINATOR[2]))
 
     def get_queryset(self):
-        sort = self.request.GET.get('sort', None)
+        sort = self.request.GET.get("sort", None)
         user_departament_id = self.request.user.profile.departament_id
         queryset = ArticleProperties.objects.filter(
             published=True,
             departament_id=user_departament_id,
-            article__category__id=self.kwargs['id'],
-        ).select_related('article')
+            article__category__id=self.kwargs["id"],
+        ).select_related("article")
 
-        if sort == 'price':
-            queryset = queryset.order_by('price')
-        if sort == '-price':
-            queryset = queryset.order_by('-price')
+        if sort == "price":
+            queryset = queryset.order_by("price")
+        if sort == "-price":
+            queryset = queryset.order_by("-price")
 
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super(ArticleListView, self).get_context_data(**kwargs)
         params = self.request.GET.copy()
-        if 'page' in params:
-            del params['page']
-        category = get_object_or_404(Category, id=self.kwargs['id'])
+        if "page" in params:
+            del params["page"]
+        category = get_object_or_404(Category, id=self.kwargs["id"])
         property = category.categoryproperties_set.filter(
             departament_id=self.request.user.profile.departament_id
         ).first()
-        page_title = property.name if property else ''
+        page_title = property.name if property else ""
         context.update(
             {
-                'category': category,
-                'sort': self.request.GET.get('sort', None),
-                'per_page': self.get_paginate_by(None),
-                'paginator_list': settings.PAGINATOR,
-                'link': urlencode(params),
-                'page_title': page_title,
+                "category": category,
+                "sort": self.request.GET.get("sort", None),
+                "per_page": self.get_paginate_by(None),
+                "paginator_list": settings.PAGINATOR,
+                "link": urlencode(params),
+                "page_title": page_title,
             }
         )
         return context
 
 
 class ArticleSearchListView(ActiveRequiredMixin, ListView):
-    template_name = 'commercial/articleprice_list.html'
-    context_object_name = 'object_list'
+    template_name = "commercial/articleprice_list.html"
+    context_object_name = "object_list"
 
     def get_paginate_by(self, queryset):
-        return int(self.request.GET.get('per_page', settings.PAGINATOR[2]))
+        return int(self.request.GET.get("per_page", settings.PAGINATOR[2]))
 
     def get_queryset(self):
-        sort = self.request.GET.get('sort', None)
-        search_str = self.request.GET.get('query', '').strip()
+        sort = self.request.GET.get("sort", None)
+        search_str = self.request.GET.get("query", "").strip()
         user_departament_id = self.request.user.profile.departament_id
         if search_str:
             queryset = ArticleProperties.objects.filter(
@@ -149,121 +149,121 @@ class ArticleSearchListView(ActiveRequiredMixin, ListView):
         else:
             queryset = ArticleProperties.objects.none()
 
-        if sort == 'price':
-            queryset = queryset.order_by('price')
-        if sort == '-price':
-            queryset = queryset.order_by('-price')
+        if sort == "price":
+            queryset = queryset.order_by("price")
+        if sort == "-price":
+            queryset = queryset.order_by("-price")
 
         return queryset
 
     def get_context_data(self, *args, **kwargs):
         context = super(ArticleSearchListView, self).get_context_data(*args, **kwargs)
         params = self.request.GET.copy()
-        if 'page' in params:
-            del params['page']
+        if "page" in params:
+            del params["page"]
         context.update(
             {
-                'page_title': self.request.GET.get('query', '').strip(),
-                'sort': self.request.GET.get('sort', None),
-                'per_page': self.get_paginate_by(None),
-                'paginator_list': settings.PAGINATOR,
-                'link': urlencode(params),
+                "page_title": self.request.GET.get("query", "").strip(),
+                "sort": self.request.GET.get("sort", None),
+                "per_page": self.get_paginate_by(None),
+                "paginator_list": settings.PAGINATOR,
+                "link": urlencode(params),
             }
         )
         return context
 
 
 class ArticleNewListView(ActiveRequiredMixin, ListView):
-    template_name = 'commercial/articleprice_list.html'
-    context_object_name = 'object_list'
+    template_name = "commercial/articleprice_list.html"
+    context_object_name = "object_list"
 
     def get_paginate_by(self, queryset):
-        return int(self.request.GET.get('per_page', settings.PAGINATOR[2]))
+        return int(self.request.GET.get("per_page", settings.PAGINATOR[2]))
 
     def get_queryset(self):
-        sort = self.request.GET.get('sort', None)
+        sort = self.request.GET.get("sort", None)
         user_departament_id = self.request.user.profile.departament_id
         queryset = ArticleProperties.objects.filter(
             published=True, departament_id=user_departament_id, is_new=True
-        ).select_related('article')
+        ).select_related("article")
 
-        if sort == 'price':
-            queryset = queryset.order_by('price')
-        if sort == '-price':
-            queryset = queryset.order_by('-price')
+        if sort == "price":
+            queryset = queryset.order_by("price")
+        if sort == "-price":
+            queryset = queryset.order_by("-price")
 
         return queryset
 
     def get_context_data(self, *args, **kwargs):
         context = super(ArticleNewListView, self).get_context_data(*args, **kwargs)
         params = self.request.GET.copy()
-        if 'page' in params:
-            del params['page']
+        if "page" in params:
+            del params["page"]
         context.update(
             {
-                'page_title': gettext_lazy('New'),
-                'sort': self.request.GET.get('sort', None),
-                'per_page': self.get_paginate_by(None),
-                'paginator_list': settings.PAGINATOR,
-                'link': urlencode(params),
+                "page_title": gettext_lazy("New"),
+                "sort": self.request.GET.get("sort", None),
+                "per_page": self.get_paginate_by(None),
+                "paginator_list": settings.PAGINATOR,
+                "link": urlencode(params),
             }
         )
         return context
 
 
 class ArticleSaleListView(ActiveRequiredMixin, ListView):
-    template_name = 'commercial/articleprice_list.html'
-    context_object_name = 'object_list'
+    template_name = "commercial/articleprice_list.html"
+    context_object_name = "object_list"
 
     def get_paginate_by(self, queryset):
-        return int(self.request.GET.get('per_page', settings.PAGINATOR[2]))
+        return int(self.request.GET.get("per_page", settings.PAGINATOR[2]))
 
     def get_queryset(self):
-        sort = self.request.GET.get('sort', None)
+        sort = self.request.GET.get("sort", None)
         user_departament_id = self.request.user.profile.departament_id
         queryset = ArticleProperties.objects.filter(
             published=True, departament_id=user_departament_id, is_special=True
         )
 
-        if sort == 'price':
-            queryset = queryset.order_by('price')
-        if sort == '-price':
-            queryset = queryset.order_by('-price')
+        if sort == "price":
+            queryset = queryset.order_by("price")
+        if sort == "-price":
+            queryset = queryset.order_by("-price")
 
         return queryset
 
     def get_context_data(self, *args, **kwargs):
         context = super(ArticleSaleListView, self).get_context_data(*args, **kwargs)
         params = self.request.GET.copy()
-        if 'page' in params:
-            del params['page']
+        if "page" in params:
+            del params["page"]
         context.update(
             {
-                'page_title': gettext_lazy('Sale'),
-                'sort': self.request.GET.get('sort', None),
-                'per_page': self.get_paginate_by(None),
-                'paginator_list': settings.PAGINATOR,
-                'link': urlencode(params),
+                "page_title": gettext_lazy("Sale"),
+                "sort": self.request.GET.get("sort", None),
+                "per_page": self.get_paginate_by(None),
+                "paginator_list": settings.PAGINATOR,
+                "link": urlencode(params),
             }
         )
         return context
 
 
 class OrderListView(ActiveRequiredMixin, ListView):
-    template_name = 'commercial/order_list.html'
-    context_object_name = 'order_list'
+    template_name = "commercial/order_list.html"
+    context_object_name = "order_list"
     model = Order
     paginate_by = 25
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user, is_closed=True).order_by(
-            '-date'
+            "-date"
         )
 
 
 class OrderDetailView(ActiveRequiredMixin, DetailView):
-    template_name = 'commercial/editcart.html'
-    context_object_name = 'order'
+    template_name = "commercial/editcart.html"
+    context_object_name = "order"
     model = Order
 
     def get_queryset(self):
@@ -271,8 +271,8 @@ class OrderDetailView(ActiveRequiredMixin, DetailView):
 
 
 class ComplaintListView(ActiveRequiredMixin, ListView):
-    template_name = 'commercial/complaint_list.html'
-    context_object_name = 'complaint_list'
+    template_name = "commercial/complaint_list.html"
+    context_object_name = "complaint_list"
     model = Complaint
     paginate_by = 25
 
@@ -283,7 +283,7 @@ class ComplaintListView(ActiveRequiredMixin, ListView):
 
 
 class ComplaintCreateView(ActiveRequiredMixin, CreateView):
-    template_name = 'commercial/complaint_create.html'
+    template_name = "commercial/complaint_create.html"
     model = Complaint
     form_class = ComplaintForm
 
@@ -293,9 +293,9 @@ class ComplaintCreateView(ActiveRequiredMixin, CreateView):
         msg = Message.objects.create(
             complaint=self.object,
             user=self.request.user,
-            text=form.cleaned_data['description'],
+            text=form.cleaned_data["description"],
         )
-        attachments = form.cleaned_data['attachments']
+        attachments = form.cleaned_data["attachments"]
         if attachments:
             for attach in attachments:
                 MessageAttachment.objects.create(
@@ -307,24 +307,24 @@ class ComplaintCreateView(ActiveRequiredMixin, CreateView):
 
 
 class ComplaintDetailView(ActiveRequiredMixin, FormView):
-    template_name = 'commercial/complaint_detail.html'
+    template_name = "commercial/complaint_detail.html"
     form_class = MessageForm
 
     def get_success_url(self):
-        return reverse('commercial_complaint_list')
+        return reverse("commercial_complaint_list")
 
     def get_object(self) -> Complaint:
         return get_object_or_404(
-            Complaint, pk=self.kwargs.get('pk'), user=self.request.user
+            Complaint, pk=self.kwargs.get("pk"), user=self.request.user
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
             {
-                'complaint': self.get_object(),
-                'message_list': Message.objects.filter(
-                    complaint_id=self.kwargs.get('pk')
+                "complaint": self.get_object(),
+                "message_list": Message.objects.filter(
+                    complaint_id=self.kwargs.get("pk")
                 ),
             }
         )
@@ -335,7 +335,7 @@ class ComplaintDetailView(ActiveRequiredMixin, FormView):
         form.instance.user = self.request.user
         form.instance.complaint = complaint
         msg = form.save()
-        attachments = form.cleaned_data['attachments']
+        attachments = form.cleaned_data["attachments"]
         if attachments:
             for attach in attachments:
                 MessageAttachment.objects.create(
@@ -346,24 +346,24 @@ class ComplaintDetailView(ActiveRequiredMixin, FormView):
 
 
 class AddToCartView(ActiveRequiredMixin, TemplateView):
-    template_name = 'commercial/cart.html'
+    template_name = "commercial/cart.html"
 
     def get_context_data(self, **kwargs):
         context = super(AddToCartView, self).get_context_data(**kwargs)
         user_departament_id = self.request.user.profile.departament_id
-        order = getattr(self.request, 'order', None)
-        article_id = self.kwargs.get('id', None)
+        order = getattr(self.request, "order", None)
+        article_id = self.kwargs.get("id", None)
         try:
-            count = int(self.kwargs.get('count', '1'))
+            count = int(self.kwargs.get("count", "1"))
         except ValueError:
             count = 1
         count = max(min(count, sys.maxsize), 1)
-        logger.debug('add to cart: %s', order)
+        logger.debug("add to cart: %s", order)
         if article_id:
             if not order:
                 order = Order(user=self.request.user)
                 order.save()
-                self.request.session['order_id'] = order.pk
+                self.request.session["order_id"] = order.pk
                 self.request.order = order
             article_property = get_object_or_404(
                 ArticleProperties,
@@ -384,12 +384,12 @@ class AddToCartView(ActiveRequiredMixin, TemplateView):
             if article_property.main_image:
                 order_item.main_image_url = article_property.main_image.url
             order_item.save()
-        context.update({'order': self.request.order})
+        context.update({"order": self.request.order})
         return context
 
 
 class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
-    template_name = 'commercial/editcart.html'
+    template_name = "commercial/editcart.html"
 
     def get(self, request, *args, **kwargs):
         OrderItemFormSet = modelformset_factory(
@@ -400,10 +400,10 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
             queryset=OrderItem.objects.filter(order=self.request.order)
         )
         context = {
-            'order': request.order,
-            'form': order_form,
-            'order_items_formset': order_items_formset,
-            'debts': UserDebs.objects.filter(user=request.user),
+            "order": request.order,
+            "form": order_form,
+            "order_items_formset": order_items_formset,
+            "debts": UserDebs.objects.filter(user=request.user),
         }
         return self.render_to_response(context)
 
@@ -422,8 +422,8 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
                 order_items_formset = OrderItemFormSet(
                     queryset=OrderItem.objects.filter(order=request.order)
                 )
-            if request.POST.get('send') == 'true':
-                if hasattr(request, 'order'):
+            if request.POST.get("send") == "true":
+                if hasattr(request, "order"):
                     order = request.order
                     order.is_closed = True
                     order.save()
@@ -431,17 +431,17 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
                 logout(request)
                 return HttpResponseRedirect("/")
         context = {
-            'order': request.order,
-            'form': order_form,
-            'order_items_formset': order_items_formset,
-            'debts': UserDebs.objects.filter(user=request.user),
+            "order": request.order,
+            "form": order_form,
+            "order_items_formset": order_items_formset,
+            "debts": UserDebs.objects.filter(user=request.user),
         }
         return self.render_to_response(context)
 
 
 class DownloadArticleImages(ActiveRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        article_id = self.kwargs.get('id')
+        article_id = self.kwargs.get("id")
         user_departament_id = self.request.user.profile.departament
         article_property = get_object_or_404(
             ArticleProperties, article_id=article_id, departament_id=user_departament_id
@@ -451,31 +451,31 @@ class DownloadArticleImages(ActiveRequiredMixin, View):
             article_id=article_id,
         )
         buffer = io.BytesIO()
-        with zipfile.ZipFile(buffer, 'w') as zip_file:
+        with zipfile.ZipFile(buffer, "w") as zip_file:
             zip_file.writestr(
-                article_property.main_image.name.rsplit('/', 1)[-1],
+                article_property.main_image.name.rsplit("/", 1)[-1],
                 article_property.main_image.read(),
             )
             for image in images:
                 zip_file.writestr(
-                    image.image.name.rsplit('/', 1)[-1], image.image.read()
+                    image.image.name.rsplit("/", 1)[-1], image.image.read()
                 )
         buffer.seek(0)
-        return FileResponse(buffer, as_attachment=True, filename=f'{article_id}.zip')
+        return FileResponse(buffer, as_attachment=True, filename=f"{article_id}.zip")
 
 
 class ExportToXML(View):
     def get(self, request, *args, **kwargs):
         country = (
-            self.kwargs.get('country').upper() if 'country' in self.kwargs else None
+            self.kwargs.get("country").upper() if "country" in self.kwargs else None
         )
         departament = get_object_or_404(Departament, country=country)
         buffer = io.BytesIO()
         tree = export_department_to_xml(departament)
 
-        tree.write(buffer, encoding='utf-8')
+        tree.write(buffer, encoding="utf-8")
         buffer.seek(0)
-        return HttpResponse(buffer, content_type='text/xml')
+        return HttpResponse(buffer, content_type="text/xml")
 
 
 class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
@@ -485,42 +485,42 @@ class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
         # ).filter(similarity__gt=0.1, departament=request.user.profile.departament).only('name').order_by('-similarity')
         queryset = (
             ArticleProperties.objects.filter(
-                name__search=request.GET.get('term'),
+                name__search=request.GET.get("term"),
                 departament=request.user.profile.departament,
             )
-            .only('name', 'article_id')
+            .only("name", "article_id")
             .distinct()
         )
         return JsonResponse(
-            [{'label': i.name, 'value': i.name} for i in queryset],
+            [{"label": i.name, "value": i.name} for i in queryset],
             safe=False,
         )
 
 
 class LatestComplaintsJSONView(ListView):
     queryset = Complaint.objects.all()
-    ordering = ['-id']
+    ordering = ["-id"]
 
     def get_queryset(self):
-        queryset = super().get_queryset().select_related('user__profile')
+        queryset = super().get_queryset().select_related("user__profile")
         return queryset[:10]
 
     def get(self, request, *args, **kwargs):
         data = []
         for complaint in self.get_queryset():  # type: Complaint
             msg = (
-                complaint.message_set.all().order_by('created_date').first()
+                complaint.message_set.all().order_by("created_date").first()
             )  # type: Message
             data.append(
                 {
-                    'id': complaint.id,
-                    'inn': complaint.user.profile.inn,
-                    'date_of_purchase': complaint.date_of_purchase,
-                    'product': complaint.article_id,
-                    'invoice': complaint.invoice,
-                    'receipt': complaint.receipt.url if complaint.receipt else '',
-                    'text': msg.text if msg else '',
-                    'attachments': [i.file.url for i in msg.messageattachment_set.all()]
+                    "id": complaint.id,
+                    "inn": complaint.user.profile.inn,
+                    "date_of_purchase": complaint.date_of_purchase,
+                    "product": complaint.article_id,
+                    "invoice": complaint.invoice,
+                    "receipt": complaint.receipt.url if complaint.receipt else "",
+                    "text": msg.text if msg else "",
+                    "attachments": [i.file.url for i in msg.messageattachment_set.all()]
                     if msg
                     else [],
                 }

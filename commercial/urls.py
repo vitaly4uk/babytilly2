@@ -36,51 +36,51 @@ from commercial.views import (
 )
 
 urlpatterns = [
-    path('cart/', EditCartView.as_view(), name='commercial_edit_cart'),
-    path('showcart/', AddToCartView.as_view(), name='commercial_show_cart'),
+    path("cart/", EditCartView.as_view(), name="commercial_edit_cart"),
+    path("showcart/", AddToCartView.as_view(), name="commercial_show_cart"),
     path(
-        'getimages/<str:id>/',
+        "getimages/<str:id>/",
         DownloadArticleImages.as_view(),
-        name='commercial_download_images_url',
+        name="commercial_download_images_url",
     ),
     path(
-        'addtocart/<str:id>/', AddToCartView.as_view(), name='commercial_addto_cart_one'
+        "addtocart/<str:id>/", AddToCartView.as_view(), name="commercial_addto_cart_one"
     ),
     path(
-        'addtocart/<str:id>/<int:count>/',
+        "addtocart/<str:id>/<int:count>/",
         AddToCartView.as_view(),
-        name='commercial_addto_cart',
+        name="commercial_addto_cart",
     ),
-    path('dashboard/order/', OrderListView.as_view(), name='commercial_order_list'),
+    path("dashboard/order/", OrderListView.as_view(), name="commercial_order_list"),
     path(
-        'dashboard/order/<int:pk>/',
+        "dashboard/order/<int:pk>/",
         OrderDetailView.as_view(),
-        name='commercial_order_detail',
+        name="commercial_order_detail",
     ),
     path(
-        'dashboard/complaint/',
+        "dashboard/complaint/",
         ComplaintListView.as_view(),
-        name='commercial_complaint_list',
+        name="commercial_complaint_list",
     ),
     path(
-        'dashboard/complaint/add/',
+        "dashboard/complaint/add/",
         ComplaintCreateView.as_view(),
-        name='commercial_complaint_add',
+        name="commercial_complaint_add",
     ),
     path(
-        'dashboard/complaint/<int:pk>/',
+        "dashboard/complaint/<int:pk>/",
         ComplaintDetailView.as_view(),
-        name='commercial_complaint_detail',
+        name="commercial_complaint_detail",
     ),
-    path('category/<str:id>/', ArticleListView.as_view(), name='category_detail_url'),
+    path("category/<str:id>/", ArticleListView.as_view(), name="category_detail_url"),
     path(
-        'autocomplite/',
+        "autocomplite/",
         ArticleNameAutocompleteView.as_view(),
-        name='article_autocomplete_url',
+        name="article_autocomplete_url",
     ),
-    path('new/', ArticleNewListView.as_view(), name='new_list_url'),
-    path('sale/', ArticleSaleListView.as_view(), name='sale_list_url'),
-    path('<str:country>_offer.xml', ExportToXML.as_view()),
-    path('complaints.json', LatestComplaintsJSONView.as_view()),
-    path('', login_required(TemplateView.as_view(template_name='index.html'))),
+    path("new/", ArticleNewListView.as_view(), name="new_list_url"),
+    path("sale/", ArticleSaleListView.as_view(), name="sale_list_url"),
+    path("<str:country>_offer.xml", ExportToXML.as_view()),
+    path("complaints.json", LatestComplaintsJSONView.as_view()),
+    path("", login_required(TemplateView.as_view(template_name="index.html"))),
 ] + staticfiles_urlpatterns()
