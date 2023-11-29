@@ -17,7 +17,7 @@ django-debug-toolbar==4.2.0
 pip-tools==7.3.0
 django-environ==0.11.2
 django-bootstrap4==23.2
-fontawesomefree==6.4.2
+fontawesomefree==6.5.0
 pylint==3.0.2
 pylint-django==2.5.5
 django-stubs==4.2.6
