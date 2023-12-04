@@ -30,16 +30,16 @@ billiard==3.6.4.0 \
     --hash=sha256:299de5a8da28a783d51b197d496bef4f1595dd023a93a4f59dde1886ae905547 \
     --hash=sha256:87103ea78fa6ab4d5c751c4909bcff74617d985de7fa8b672cf8618afd5a875b
     # via celery
-boto3==1.33.4 \
-    --hash=sha256:7668aef805fe53e487e3742cad0ffffe5fb62c3752514dd28ef81bad5ff0cb38 \
-    --hash=sha256:f26391fce6fec478fa1ab92f1ea80e4d057dd6240cc6fbe4e38fb3fce4cc8026
+boto3==1.33.6 \
+    --hash=sha256:4f62fc1c7f3ea2d22917aa0aa07b86f119abd90bed3d815e4b52fb3d84773e15 \
+    --hash=sha256:b88f0f305186c5fd41f168e006baa45b7002a33029aec8e5bef373237a172fca
     # via
     #   -r requirements.in
     #   django-ses
     #   kombu
-botocore==1.33.4 \
-    --hash=sha256:872decbc760c3b2942477cda905d4443bd8a97511dcee3e9ca09eeb9299ad5e2 \
-    --hash=sha256:bbd96c211b670d17191d617423f3c4c277964eeb586a33b3759691c33904629d
+botocore==1.33.6 \
+    --hash=sha256:14282cd432c0683770eee932c43c12bb9ad5730e23755204ad102897c996693a \
+    --hash=sha256:938056bab831829f90e09ecd70dd6b295afd52b1482f5582ee7a11d8243d9661
     # via
     #   boto3
     #   s3transfer
