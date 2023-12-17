@@ -69,19 +69,23 @@
                     <li class="list-group-item">{% trans "Wellcome" %},&nbsp;{{ user.username|truncatechars:9 }}</li>
                     {% if user.is_staff %}
                         <a href="{% url 'admin:index' %}" class="list-group-item list-group-item-action">
-                            <i class="fa-solid fa-user-tie"></i> {% trans "Admin" %}
+                            <i class="fa-solid fa-user-tie fa-fw"></i> {% trans "Admin" %}
                         </a>
                     {% else %}
                         <a href="{% url 'commercial_order_list' %}" class="list-group-item list-group-item-action">
-                            <i class="fa-solid fa-receipt"></i> {% trans "Orders" %}
+                            <i class="fa-solid fa-receipt fa-fw"></i> {% trans "Orders" %}
                         </a>
                         <a href="{% url 'commercial_complaint_list' %}" class="list-group-item list-group-item-action">
-                            <i class="fa-solid fa-hand"></i> {% trans "Complaints" %}
+                            <i class="fa-solid fa-hand fa-fw"></i> {% trans "Complaints" %}
+                            {% has_new_messages request.user as exclamation_mark %}
+                            {% if exclamation_mark %}
+                                &nbsp;&nbsp;<span class="badge badge-primary badge-pill">!</span>
+                            {% endif %}
                         </a>
                     {% endif %}
                     <a href="{% url 'commercial_edit_cart' %}" id="cart" class="list-group-item list-group-item-action"></a>
                     <a href="{% url 'logout' %}?next=/" class="list-group-item list-group-item-action">
-                        <i class="fa-solid fa-right-to-bracket"></i> {% trans "Logout" %}
+                        <i class="fa-solid fa-right-to-bracket fa-fw"></i> {% trans "Logout" %}
                     </a>
                 </ul>
             </div>

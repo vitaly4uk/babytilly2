@@ -19,17 +19,14 @@ from django.urls import path, include
 
 from commercial.views import HomePage, ArticleSearchListView, PageDetailView
 
-# from django_ses.views import SESEventWebhookView
-# from django.views.decorators.csrf import csrf_exempt
-
 urlpatterns = [
     # path('ses/event-webhook/', csrf_exempt(SESEventWebhookView.as_view()), name='handle-event-webhook'),
-    path('admin/', admin.site.urls),
-    path('ckeditor/', include('ckeditor_uploader.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('search/', ArticleSearchListView.as_view(), name='search'),
-    path('commerce/', include('commercial.urls')),
-    path('<slug:slug>/', PageDetailView.as_view(), name='page_detail_url'),
-    path('', HomePage.as_view(), name='home_page'),
-    path('__debug__/', include('debug_toolbar.urls')),
+    path("admin/", admin.site.urls),
+    path("ckeditor/", include("ckeditor_uploader.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("search/", ArticleSearchListView.as_view(), name="search"),
+    path("commerce/", include("commercial.urls")),
+    path("<slug:slug>/", PageDetailView.as_view(), name="page_detail_url"),
+    path("", HomePage.as_view(), name="home_page"),
+    path("__debug__/", include("debug_toolbar.urls")),
 ] + staticfiles_urlpatterns()

@@ -12,62 +12,57 @@ from babytilly2.celery import app
 def import_price(import_id: int) -> None:
     from commercial.models import ImportPrice
     from commercial.functions import do_import_price
+
     import_price: ImportPrice = ImportPrice.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
-    with import_price.file.open(mode='rb') as import_file:
-        in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
+    with import_price.file.open(mode="rb") as import_file:
+        in_memory_file.writelines([l.decode("utf-8-sig") for l in import_file.readlines()])
         in_memory_file.seek(0)
 
-    do_import_price(
-        csv_file=in_memory_file,
-        country=import_price.departament.country
-    )
+    do_import_price(csv_file=in_memory_file, country=import_price.departament.country)
 
 
 @app.task()
 def import_novelty(import_id: int) -> None:
     from commercial.models import ImportNew
     from commercial.functions import do_import_novelty
+
     import_price: ImportNew = ImportNew.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
-    with import_price.file.open(mode='rb') as import_file:
-        in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
+    with import_price.file.open(mode="rb") as import_file:
+        in_memory_file.writelines([l.decode("utf-8-sig") for l in import_file.readlines()])
         in_memory_file.seek(0)
 
-    do_import_novelty(
-        csv_file=in_memory_file,
-        departament_id=import_price.departament_id
-    )
+    do_import_novelty(csv_file=in_memory_file, departament_id=import_price.departament_id)
 
 
 @app.task()
 def import_special(import_id: int):
     from commercial.models import ImportSpecial
     from commercial.functions import do_import_special
+
     import_special = ImportSpecial.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
-    with import_special.file.open(mode='rb') as import_file:
-        in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
+    with import_special.file.open(mode="rb") as import_file:
+        in_memory_file.writelines([l.decode("utf-8-sig") for l in import_file.readlines()])
         in_memory_file.seek(0)
 
-    do_import_special(
-        csv_file=in_memory_file,
-        departament_id=import_special.departament_id
-    )
+    do_import_special(csv_file=in_memory_file, departament_id=import_special.departament_id)
 
 
 @app.task()
 def import_debs(import_id: int):
     from commercial.models import ImportDebs
     from commercial.functions import do_import_debs
+
     import_debs = ImportDebs.objects.get(id=import_id)
 
     in_memory_file = io.StringIO()
-    with import_debs.file.open(mode='rb') as import_file:
-        in_memory_file.writelines([l.decode('utf-8-sig') for l in import_file.readlines()])
+    with import_debs.file.open(mode="rb") as import_file:
+        in_memory_file.writelines([l.decode("utf-8-sig") for l in import_file.readlines()])
         in_memory_file.seek(0)
 
     do_import_debs(csv_file=in_memory_file)
@@ -77,88 +72,91 @@ def import_debs(import_id: int):
 def send_order_email(order_id: int):
     from commercial.models import Order, Departament
     from commercial.functions import export_to_csv
+
     order = Order.objects.get(pk=order_id)
 
     context = {
-        'cart': order.items.all(),
-        'order': order,
-        'profile': order.user,
+        "cart": order.items.all(),
+        "order": order,
+        "profile": order.user,
     }
-    html_body = str(render_to_string('commercial/order_mail.html', context))
-    text_body = str(render_to_string('commercial/order_mail_text.html', context))
+    html_body = str(render_to_string("commercial/order_mail.html", context))
+    text_body = str(render_to_string("commercial/order_mail_text.html", context))
     stuff_email = Departament.objects.get(id=order.user.profile.departament_id).email
     to_emails = [settings.DEFAULT_FROM_EMAIL, stuff_email]
     if order.user.email:
         to_emails.append(order.user.email)
-    additional_emails = filter(bool, [e.strip() for e in order.user.profile.additional_emails.split(',')])
+    additional_emails = filter(bool, [e.strip() for e in order.user.profile.additional_emails.split(",")])
     if additional_emails:
         to_emails += additional_emails
     msg = EmailMultiAlternatives(
-        subject='Order {} {}'.format(order, order.user),
+        subject="Order {} {}".format(order, order.user),
         body=text_body,
         to=to_emails,
-        reply_to=['order.carrello@gmail.com']
+        reply_to=["order.carrello@gmail.com"],
     )
-    msg.attach_alternative(html_body, 'text/html')
+    msg.attach_alternative(html_body, "text/html")
     for company, csv_file in export_to_csv(order):
-        msg.attach(f'order{order.pk} {company}.csv', csv_file, 'text/csv')
+        msg.attach(f"order{order.pk} {company}.csv", csv_file, "text/csv")
     msg.send()
 
 
 @app.task()
 def send_message_mail(complaint_id: int):
     from commercial.models import Complaint
+
     complaint = Complaint.objects.get(pk=complaint_id)
     user = complaint.user
 
     context = {
-        'user': user,
-        'complaint': complaint,
+        "user": user,
+        "complaint": complaint,
     }
 
-    html_body = str(render_to_string('commercial/message_mail.html', context))
+    html_body = str(render_to_string("commercial/message_mail.html", context))
     to_emails = []
     if user.email:
         to_emails.append(user.email)
-    additional_emails = filter(bool, [e.strip() for e in user.profile.additional_emails.split(',')])
+    additional_emails = filter(bool, [e.strip() for e in user.profile.additional_emails.split(",")])
     if additional_emails:
         to_emails += additional_emails
     msg = EmailMultiAlternatives(
         from_email=settings.COMPLAINTS_EMAIL,
-        subject=f'Complaint {complaint.id}',
+        subject=f"Complaint {complaint.id}",
         body=str(strip_tags(html_body)),
         to=to_emails,
-        reply_to=['complaints.carrello@gmail.com']
+        reply_to=["complaints.carrello@gmail.com"],
     )
-    msg.attach_alternative(html_body, 'text/html')
-    msg.send()
+    msg.attach_alternative(html_body, "text/html")
+    msg.send(fail_silently=True)
 
 
 @app.task()
 def send_complaint_mail(complaint_id: int):
     from commercial.models import Complaint, Message
+
     complaint = Complaint.objects.get(pk=complaint_id)
     message = Message.objects.filter(complaint_id=complaint_id).first()
     user = complaint.user
 
     context = {
-        'complaint': complaint,
-        'message': message,
+        "complaint": complaint,
+        "message": message,
     }
 
-    html_body = str(render_to_string('commercial/complaint_mail.html', context))
+    html_body = str(render_to_string("commercial/complaint_mail.html", context))
     to_emails = []
     if user.email:
         to_emails.append(user.email)
-    additional_emails = filter(bool, [e.strip() for e in user.profile.additional_emails.split(',')])
+    additional_emails = filter(bool, [e.strip() for e in user.profile.additional_emails.split(",")])
     if additional_emails:
         to_emails += additional_emails
     msg = EmailMultiAlternatives(
         from_email=settings.COMPLAINTS_EMAIL,
-        subject=f'Complaint {complaint.id} {complaint.product_name()}',
+        subject=f"Complaint {complaint.id} {complaint.product_name()}",
         body=str(strip_tags(html_body)),
         to=to_emails,
-        reply_to=['complaints.carrello@gmail.com']
+        reply_to=["complaints.carrello@gmail.com"],
     )
-    msg.attach_alternative(html_body, 'text/html')
+    msg.attach_alternative(html_body, "text/html")
     msg.send()

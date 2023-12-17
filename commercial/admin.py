@@ -13,14 +13,25 @@ from sorl.thumbnail.admin import AdminImageMixin
 from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter, ArticleNewFilter, ArticleSaleFilter
 from commercial.forms import ArticleAdminForm, MessageForm
 from commercial.functions import export_department_to_xml
-from commercial.models import Profile, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, DepartamentSale, \
-    UserDebs, Departament, Message, MessageAttachment, Complaint
+from commercial.models import (
+    Profile,
+    CategoryProperties,
+    ArticleProperties,
+    ArticleImage,
+    OrderItem,
+    DepartamentSale,
+    UserDebs,
+    Departament,
+    Message,
+    MessageAttachment,
+    Complaint,
+)
 from commercial.tasks import send_message_mail
 
 
 class ProfileAdmin(admin.StackedInline):
     model = Profile
-    autocomplete_fields = ['departament']
+    autocomplete_fields = ["departament"]
     can_delete = False
     min_num = 1
     max_num = 1
@@ -38,13 +49,12 @@ class DepartamentSaleAdmin(admin.TabularInline):
 class CategoryPropertyAdmin(admin.TabularInline):
     model = CategoryProperties
     min_num = 1
-    autocomplete_fields = ['departament']
+    autocomplete_fields = ["departament"]
 
     def get_queryset(self, request):
         queryset = super(CategoryPropertyAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(
-                departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
         return queryset
 
     def get_max_num(self, request, obj=None, **kwargs):
@@ -54,13 +64,13 @@ class CategoryPropertyAdmin(admin.TabularInline):
 
 
 class StartPageImageAdmin(AdminImageMixin, admin.ModelAdmin):
-    list_display = ['id', 'image', 'order']
+    list_display = ["id", "image", "order"]
 
 
 class DepartamentAdmin(admin.ModelAdmin):
     inlines = [DepartamentSaleAdmin]
-    list_display = ['country', 'email']
-    search_fields = ['country']
+    list_display = ["country", "email"]
+    search_fields = ["country"]
     actions = None
 
     def get_queryset(self, request):
@@ -81,8 +91,7 @@ class DepartamentAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         department_urls = [
-            path('<int:pk>/export_to_xml/', self.export_xml,
-                 name='commercial_departament_export_to_xml')
+            path("<int:pk>/export_to_xml/", self.export_xml, name="commercial_departament_export_to_xml")
         ]
         return department_urls + urls
 
@@ -91,28 +100,28 @@ class DepartamentAdmin(admin.ModelAdmin):
         buffer = io.BytesIO()
         tree = export_department_to_xml(departament)
 
-        tree.write(buffer, encoding='utf-8')
+        tree.write(buffer, encoding="utf-8")
         buffer.seek(0)
-        return FileResponse(buffer, as_attachment=True, filename=f'department-{departament.country.name}.xml')
+        return FileResponse(buffer, as_attachment=True, filename=f"department-{departament.country.name}.xml")
 
 
 class DeliveryAdmin(admin.ModelAdmin):
-    list_display = ['country', 'price']
-    search_fields = ['country']
+    list_display = ["country", "price"]
+    search_fields = ["country"]
 
 
 class CategoryAdmin(MPTTModelAdmin):
     inlines = [CategoryPropertyAdmin]
-    list_display = ['id', 'category_name']
-    search_fields = ['id', 'categoryproperties__name']
+    list_display = ["id", "category_name"]
+    search_fields = ["id", "categoryproperties__name"]
     list_filter = [CategoryPublishedFilter]
-    autocomplete_fields = ['parent']
+    autocomplete_fields = ["parent"]
 
-    @admin.display(description=gettext_lazy('name'), ordering='categoryproperties__name')
+    @admin.display(description=gettext_lazy("name"), ordering="categoryproperties__name")
     def category_name(self, obj):
-        property = obj.categoryproperties_set.filter(
-            departament=self.request.user.profile.departament
-        ).only('name').first()
+        property = (
+            obj.categoryproperties_set.filter(departament=self.request.user.profile.departament).only("name").first()
+        )
         if property:
             return property.name
 
@@ -120,20 +129,19 @@ class CategoryAdmin(MPTTModelAdmin):
         self.request = request
         queryset = super(CategoryAdmin, self).get_queryset(request)
         # queryset = queryset.select_related('categoryproperties').filter(categoryproperties__departament_id=request.user.profile.departament_id)
-        return queryset.order_by('categoryproperties__name')
+        return queryset.order_by("categoryproperties__name")
 
 
 class ArticlePropertyAdmin(AdminImageMixin, admin.StackedInline):
     model = ArticleProperties
     min_num = 1
-    autocomplete_fields = ['departament']
+    autocomplete_fields = ["departament"]
     extra = 0
 
     def get_queryset(self, request):
         queryset = super(ArticlePropertyAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(
-                departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
         return queryset
 
     def get_max_num(self, request, obj=None, **kwargs):
@@ -149,17 +157,16 @@ class ArticleImageInline(AdminImageMixin, admin.StackedInline):
     def get_queryset(self, request):
         queryset = super(ArticleImageInline, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(
-                departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
         return queryset
 
 
 class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
-    list_display = ['id', 'article_name', 'article_order']
-    search_fields = ['id', 'articleproperties__name']
+    list_display = ["id", "article_name", "article_order"]
+    search_fields = ["id", "articleproperties__name"]
     list_filter = [ArticlePublishedFilter, ArticleNewFilter, ArticleSaleFilter]
-    autocomplete_fields = ['category']
+    autocomplete_fields = ["category"]
     form = ArticleAdminForm
 
     def get_form(self, request, obj=None, **kwargs):
@@ -171,19 +178,23 @@ class ArticleAdmin(admin.ModelAdmin):
         super().save_related(request, form, formsets, change)
         form.save_images(form.instance)
 
-    @admin.display(description=gettext_lazy('name'), ordering='articleproperties__name')
+    @admin.display(description=gettext_lazy("name"), ordering="articleproperties__name")
     def article_name(self, obj):
-        property = obj.articleproperties_set.filter(
-            departament_id=self.request.user.profile.departament_id
-        ).only('name').first()
+        property = (
+            obj.articleproperties_set.filter(departament_id=self.request.user.profile.departament_id)
+            .only("name")
+            .first()
+        )
         if property:
             return property.name
 
-    @admin.display(description=gettext_lazy('order'), ordering='articleproperties__order')
+    @admin.display(description=gettext_lazy("order"), ordering="articleproperties__order")
     def article_order(self, obj):
-        property = obj.articleproperties_set.filter(
-            departament_id=self.request.user.profile.departament_id
-        ).only('order').first()
+        property = (
+            obj.articleproperties_set.filter(departament_id=self.request.user.profile.departament_id)
+            .only("order")
+            .first()
+        )
         if property:
             return property.order
 
@@ -196,33 +207,34 @@ class ArticleAdmin(admin.ModelAdmin):
 class UserAdmin(DefaultUserAdmin):
     inlines = [ProfileAdmin, DebsAdmin]
     add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'password1', 'password2', 'is_staff'),
-        }),
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("username", "password1", "password2", "is_staff"),
+            },
+        ),
     )
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = super(
-            UserAdmin, self).get_readonly_fields(request, obj=obj)
+        readonly_fields = super(UserAdmin, self).get_readonly_fields(request, obj=obj)
         if not request.user.is_superuser:
-            readonly_fields += ('is_superuser', 'is_staff')
-        return readonly_fields + ('date_joined', 'last_login')
+            readonly_fields += ("is_superuser", "is_staff")
+        return readonly_fields + ("date_joined", "last_login")
 
     def get_queryset(self, request):
         queryset = super(UserAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(
-                profile__departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(profile__departament_id=request.user.profile.departament_id)
         return queryset
 
 
 class ImportPriceAdmin(admin.ModelAdmin):
-    readonly_fields = ['imported_at', 'user']
-    list_display = ['imported_at', 'user', 'departament']
-    list_filter = ['user', 'departament']
-    autocomplete_fields = ['departament', 'user']
-    ordering = ['-imported_at']
+    readonly_fields = ["imported_at", "user"]
+    list_display = ["imported_at", "user", "departament"]
+    list_filter = ["user", "departament"]
+    autocomplete_fields = ["departament", "user"]
+    ordering = ["-imported_at"]
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
@@ -230,10 +242,10 @@ class ImportPriceAdmin(admin.ModelAdmin):
 
 
 class ImportDebtsAdmin(admin.ModelAdmin):
-    readonly_fields = ['imported_at', 'user']
-    list_display = ['imported_at', 'user']
-    list_filter = ['user']
-    ordering = ['-imported_at']
+    readonly_fields = ["imported_at", "user"]
+    list_display = ["imported_at", "user"]
+    list_filter = ["user"]
+    ordering = ["-imported_at"]
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
@@ -242,28 +254,27 @@ class ImportDebtsAdmin(admin.ModelAdmin):
 
 class OrderItemInline(admin.StackedInline):
     model = OrderItem
-    readonly_fields = ['article']
+    readonly_fields = ["article"]
     extra = 0
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = super(
-            OrderItemInline, self).get_readonly_fields(request, obj)
+        readonly_fields = super(OrderItemInline, self).get_readonly_fields(request, obj)
         if obj and not request.user.is_superuser:
-            return readonly_fields + ['count', 'price']
+            return readonly_fields + ["count", "price"]
         return readonly_fields
 
 
 class OrderAdmin(admin.ModelAdmin):
-    date_hierarchy = 'date'
+    date_hierarchy = "date"
     inlines = [OrderItemInline]
-    readonly_fields = ['date', 'sum']
-    ordering = ['-date']
-    list_filter = ['is_closed', ('user', admin.RelatedOnlyFieldListFilter)]
+    readonly_fields = ["date", "sum"]
+    ordering = ["-date"]
+    list_filter = ["is_closed", ("user", admin.RelatedOnlyFieldListFilter)]
     actions = None
-    search_fields = ['id']
-    list_display = ['id', 'user', 'date', 'is_closed']
-    fields = ['user', 'date', 'comment', 'is_closed', 'sum']
-    autocomplete_fields = ['user']
+    search_fields = ["id"]
+    list_display = ["id", "user", "date", "is_closed"]
+    fields = ["user", "date", "comment", "is_closed", "sum"]
+    autocomplete_fields = ["user"]
 
     def has_add_permission(self, request):
         return request.user.is_superuser
@@ -275,42 +286,39 @@ class OrderAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = super(
-            OrderAdmin, self).get_readonly_fields(request, obj)
+        readonly_fields = super(OrderAdmin, self).get_readonly_fields(request, obj)
         if obj and not request.user.is_superuser:
-            return readonly_fields + ['user', 'date', 'comment', 'is_closed']
+            return readonly_fields + ["user", "date", "comment", "is_closed"]
         return readonly_fields
 
     def get_queryset(self, request):
         queryset = super(OrderAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(
-                user__profile__departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(user__profile__departament_id=request.user.profile.departament_id)
         return queryset
 
 
 class PageAdmin(admin.ModelAdmin):
-    list_display = ['slug']
+    list_display = ["slug"]
 
     def get_list_display(self, request):
         list_display = super(PageAdmin, self).get_list_display(request)
         if request.user.is_superuser:
-            return list_display + ['departament']
+            return list_display + ["departament"]
         return list_display
 
     def get_queryset(self, request):
         queryset = super(PageAdmin, self).get_queryset(request)
         if not request.user.is_superuser:
-            queryset = queryset.filter(
-                departament_id=request.user.profile.departament_id)
+            queryset = queryset.filter(departament_id=request.user.profile.departament_id)
         return queryset
 
 
 class MessageInlineAdmin(admin.StackedInline):
-    fields = ['user', 'text', 'attachments', 'attachments_list']
+    fields = ["user", "text", "attachments", "attachments_list"]
     model = Message
     extra = 1
-    readonly_fields = ['user', 'attachments_list']
+    readonly_fields = ["user", "attachments_list"]
     form = MessageForm
 
     def has_delete_permission(self, request, obj=None):
@@ -319,23 +327,23 @@ class MessageInlineAdmin(admin.StackedInline):
     def has_change_permission(self, request, obj=None):
         return False
 
-    @admin.display(description=gettext_lazy('attachments'))
+    @admin.display(description=gettext_lazy("attachments"))
     def attachments_list(self, obj: Message):
         html_list = []
         for attach in obj.messageattachment_set.all():
             html_list.append(f'<li><a href="{attach.file.url}">{attach.file_name()}</a></li>')
-        html_str = ''.join(html_list)
-        return mark_safe(f'<ul>{html_str}</ul>')
+        html_str = "".join(html_list)
+        return mark_safe(f"<ul>{html_str}</ul>")
 
 
 class ComplaintAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created_date', 'user', 'product_name', 'has_answer', 'status']
-    list_filter = ['status', 'user__profile__departament', 'user']
+    list_display = ["id", "created_date", "user", "product_name", "has_answer", "status"]
+    list_filter = ["status", "user__profile__departament", "user"]
     inlines = [MessageInlineAdmin]
-    autocomplete_fields = ['user']
-    readonly_fields = ['user', 'date_of_purchase', 'product_name', 'invoice', 'has_answer', 'receipt']
-    exclude = ['article']
-    date_hierarchy = 'created_date'
+    autocomplete_fields = ["user"]
+    readonly_fields = ["user", "date_of_purchase", "product_name", "invoice", "has_answer", "receipt"]
+    exclude = ["article"]
+    date_hierarchy = "created_date"
 
     def has_add_permission(self, request):
         return request.user.is_superuser
@@ -343,14 +351,11 @@ class ComplaintAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    @admin.display(description=gettext_lazy('has answer'), boolean=True)
+    @admin.display(description=gettext_lazy("has answer"), boolean=True)
     def has_answer(self, obj):
-        msg = Message.objects.filter(complaint=obj).only('user').order_by('-created_date').first()
-        if msg:
-            return msg.user.is_staff
-        return False
+        return obj.has_answer()
 
-    @admin.display(description=gettext_lazy('product name'), ordering='article__articleproperties__name')
+    @admin.display(description=gettext_lazy("product name"), ordering="article__articleproperties__name")
     def product_name(self, obj):
         return obj.product_name()
 
@@ -371,7 +376,7 @@ class ComplaintAdmin(admin.ModelAdmin):
         for message in messages:
             message.user = request.user
             message.save()
-            attachments = formset.cleaned_data[-1]['attachments']
+            attachments = formset.cleaned_data[-1]["attachments"]
             if attachments:
                 for attach in attachments:
                     MessageAttachment.objects.create(

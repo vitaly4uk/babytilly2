@@ -7,10 +7,27 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy
 
 from babytilly2 import settings
-from commercial.models import Category, CategoryProperties, ArticleProperties, ArticleImage, OrderItem, Article
+from commercial.models import (
+    Category,
+    CategoryProperties,
+    ArticleProperties,
+    ArticleImage,
+    OrderItem,
+    Article,
+    Complaint,
+)
 
 register = template.Library()
 logger = logging.getLogger(__name__)
+
+
+@register.simple_tag
+def has_new_messages(user) -> bool:
+    for complaint in Complaint.objects.exclude(status=Complaint.ComplaintStatus.CLOSED).filter(user=user):
+        msg = complaint.message_set.select_related("user").latest("created_date")
+        if msg.user.is_staff:
+            return True
+    return False
 
 
 @register.simple_tag
@@ -26,28 +43,29 @@ def get_article_images(article, user):
 @register.simple_tag
 def get_category_name(category, user):
     try:
-        category_property = CategoryProperties.objects.only('name').get(
+        category_property = CategoryProperties.objects.only("name").get(
             category=category, departament_id=user.profile.departament_id
         )
     except CategoryProperties.DoesNotExist:
-        return ''
+        return ""
     return category_property.name
 
 
 @register.simple_tag
 def get_article_name(article, user):
     try:
-        article_property = ArticleProperties.objects.only('name').get(
+        article_property = ArticleProperties.objects.only("name").get(
             article=article, departament_id=user.profile.departament_id
         )
     except ArticleProperties.DoesNotExist:
-        return ''
+        return ""
     return article_property.name
 
 
 @register.simple_tag
 def get_article_by_id(article_id):
     return Article.objects.get(id=article_id)
+
 
 @register.simple_tag
 def get_order_item_count(article, order):
@@ -56,6 +74,7 @@ def get_order_item_count(article, order):
     except OrderItem.DoesNotExist:
         return 1
     return order_item.count
+
 
 def get_cached_trees(queryset):
     """
@@ -103,9 +122,7 @@ def get_cached_trees(queryset):
             elif node_level < root_level:
                 # ``queryset`` was a list or other iterable (unable to order),
                 # and was provided in an order other than depth-first
-                raise ValueError(
-                    gettext_lazy("Node %s not in depth-first order") % (type(queryset),)
-                )
+                raise ValueError(gettext_lazy("Node %s not in depth-first order") % (type(queryset),))
 
             # Set up the attribute on the node that will store cached children,
             # which is used by ``MPTTModel.get_children``

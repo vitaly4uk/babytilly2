@@ -13,7 +13,16 @@
     </tr>
     {% for complaint in complaint_list %}
         <tr>
-            <td><a href="{{ complaint.get_absolute_url }}">{{ complaint.id }}</a></td>
+            <td>
+                <a href="{{ complaint.get_absolute_url }}">
+                    {% if complaint.has_answer %}
+                        <i class="fa-solid fa-envelope-open-text fa-fw"></i>
+                    {% else %}
+                        <i class="fa-solid fa-envelope fa-fw"></i>
+                    {% endif %}
+                    {{ complaint.id }}
+                </a>
+            </td>
             <td>{{ complaint.date_of_purchase }}</td>
             <td>{{ complaint.product_name }}</td>
             <td>{{ complaint.invoice }}</td>
