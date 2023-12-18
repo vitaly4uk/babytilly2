@@ -503,6 +503,13 @@ class Complaint(models.Model):
             return msg.user.is_staff
         return False
 
+    def has_unread(self):
+        return (
+            Message.objects.filter(complaint=self, is_read=False)
+            .exclude(complaint__status=Complaint.ComplaintStatus.CLOSED)
+            .exists()
+        )
+
     class Meta:
         verbose_name = _("complaint")
         verbose_name_plural = _("complaints")
@@ -514,6 +521,7 @@ class Message(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("user"), on_delete=models.CASCADE)
     text = models.TextField(_("text"))
     created_date = models.DateTimeField(_("created date"), auto_now_add=True)
+    is_read = models.BooleanField(_("is read"), default=False, editable=False)
 
     def __str__(self):
         return f"{formats.date_format(self.created_date)} {formats.time_format(self.created_date)}"

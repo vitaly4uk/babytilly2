@@ -15,6 +15,7 @@ from commercial.models import (
     OrderItem,
     Article,
     Complaint,
+    Message,
 )
 
 register = template.Library()
@@ -22,12 +23,12 @@ logger = logging.getLogger(__name__)
 
 
 @register.simple_tag
-def has_new_messages(user) -> bool:
-    for complaint in Complaint.objects.exclude(status=Complaint.ComplaintStatus.CLOSED).filter(user=user):
-        msg = complaint.message_set.select_related("user").latest("created_date")
-        if msg.user.is_staff:
-            return True
-    return False
+def has_unread_messages(user) -> bool:
+    return (
+        Message.objects.filter(complaint__user=user, is_read=False)
+        .exclude(complaint__status=Complaint.ComplaintStatus.CLOSED)
+        .exists()
+    )
 
 
 @register.simple_tag

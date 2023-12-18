@@ -1,11 +1,9 @@
 import io
-import io
 import logging
 import sys
 import zipfile
 from urllib.parse import urlencode
 
-from django.core import serializers
 from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -221,9 +219,7 @@ class ArticleSaleListView(ActiveRequiredMixin, ListView):
     def get_queryset(self):
         sort = self.request.GET.get("sort", None)
         user_departament_id = self.request.user.profile.departament_id
-        queryset = ArticleProperties.objects.filter(
-            published=True, departament_id=user_departament_id, is_special=True
-        )
+        queryset = ArticleProperties.objects.filter(published=True, departament_id=user_departament_id, is_special=True)
 
         if sort == "price":
             queryset = queryset.order_by("price")
@@ -256,9 +252,7 @@ class OrderListView(ActiveRequiredMixin, ListView):
     paginate_by = 25
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user, is_closed=True).order_by(
-            "-date"
-        )
+        return Order.objects.filter(user=self.request.user, is_closed=True).order_by("-date")
 
 
 class OrderDetailView(ActiveRequiredMixin, DetailView):
@@ -314,18 +308,16 @@ class ComplaintDetailView(ActiveRequiredMixin, FormView):
         return reverse("commercial_complaint_list")
 
     def get_object(self) -> Complaint:
-        return get_object_or_404(
-            Complaint, pk=self.kwargs.get("pk"), user=self.request.user
-        )
+        complaint = get_object_or_404(Complaint, pk=self.kwargs.get("pk"), user=self.request.user)
+        Message.objects.filter(complaint=complaint).update(is_read=True)
+        return complaint
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
             {
                 "complaint": self.get_object(),
-                "message_list": Message.objects.filter(
-                    complaint_id=self.kwargs.get("pk")
-                ),
+                "message_list": Message.objects.filter(complaint_id=self.kwargs.get("pk")),
             }
         )
         return context
@@ -370,9 +362,7 @@ class AddToCartView(ActiveRequiredMixin, TemplateView):
                 article_id=article_id,
                 departament_id=user_departament_id,
             )
-            order_item, _ = OrderItem.objects.get_or_create(
-                order=order, article_id=article_id
-            )
+            order_item, _ = OrderItem.objects.get_or_create(order=order, article_id=article_id)
             order_item.count = count
             order_item.name = article_property.name
             order_item.volume = article_property.volume
@@ -392,13 +382,9 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
     template_name = "commercial/editcart.html"
 
     def get(self, request, *args, **kwargs):
-        OrderItemFormSet = modelformset_factory(
-            OrderItem, form=OrderItemForm, can_delete=True, extra=0
-        )
+        OrderItemFormSet = modelformset_factory(OrderItem, form=OrderItemForm, can_delete=True, extra=0)
         order_form = EditOrderForm(instance=self.request.order)
-        order_items_formset = OrderItemFormSet(
-            queryset=OrderItem.objects.filter(order=self.request.order)
-        )
+        order_items_formset = OrderItemFormSet(queryset=OrderItem.objects.filter(order=self.request.order))
         context = {
             "order": request.order,
             "form": order_form,
@@ -408,20 +394,14 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
-        OrderItemFormSet = modelformset_factory(
-            OrderItem, form=OrderItemForm, can_delete=True, extra=0
-        )
+        OrderItemFormSet = modelformset_factory(OrderItem, form=OrderItemForm, can_delete=True, extra=0)
         order_form = EditOrderForm(request.POST, instance=request.order)
-        order_items_formset = OrderItemFormSet(
-            request.POST, queryset=OrderItem.objects.filter(order=request.order)
-        )
+        order_items_formset = OrderItemFormSet(request.POST, queryset=OrderItem.objects.filter(order=request.order))
         if order_form.is_valid() and order_items_formset.is_valid():
             order_form.save()
             order_items_formset.save()
             if order_items_formset.deleted_objects:
-                order_items_formset = OrderItemFormSet(
-                    queryset=OrderItem.objects.filter(order=request.order)
-                )
+                order_items_formset = OrderItemFormSet(queryset=OrderItem.objects.filter(order=request.order))
             if request.POST.get("send") == "true":
                 if hasattr(request, "order"):
                     order = request.order
@@ -457,18 +437,14 @@ class DownloadArticleImages(ActiveRequiredMixin, View):
                 article_property.main_image.read(),
             )
             for image in images:
-                zip_file.writestr(
-                    image.image.name.rsplit("/", 1)[-1], image.image.read()
-                )
+                zip_file.writestr(image.image.name.rsplit("/", 1)[-1], image.image.read())
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f"{article_id}.zip")
 
 
 class ExportToXML(View):
     def get(self, request, *args, **kwargs):
-        country = (
-            self.kwargs.get("country").upper() if "country" in self.kwargs else None
-        )
+        country = self.kwargs.get("country").upper() if "country" in self.kwargs else None
         departament = get_object_or_404(Departament, country=country)
         buffer = io.BytesIO()
         tree = export_department_to_xml(departament)
@@ -508,9 +484,7 @@ class LatestComplaintsJSONView(ListView):
     def get(self, request, *args, **kwargs):
         data = []
         for complaint in self.get_queryset():  # type: Complaint
-            msg = (
-                complaint.message_set.all().order_by("created_date").first()
-            )  # type: Message
+            msg = complaint.message_set.all().order_by("created_date").first()  # type: Message
             data.append(
                 {
                     "id": complaint.id,
@@ -520,9 +494,7 @@ class LatestComplaintsJSONView(ListView):
                     "invoice": complaint.invoice,
                     "receipt": complaint.receipt.url if complaint.receipt else "",
                     "text": msg.text if msg else "",
-                    "attachments": [i.file.url for i in msg.messageattachment_set.all()]
-                    if msg
-                    else [],
+                    "attachments": [i.file.url for i in msg.messageattachment_set.all()] if msg else [],
                 }
             )
         return JsonResponse(data=data, status=200, safe=False)
