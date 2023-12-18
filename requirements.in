@@ -20,4 +20,4 @@ django-bootstrap4==23.2
 fontawesomefree==6.5.1
 pylint==3.0.2
 pylint-django==2.5.5
-django-stubs==4.2.6
+django-stubs==4.2.7
