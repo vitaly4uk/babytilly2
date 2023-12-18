@@ -79,7 +79,7 @@
                             <i class="fa-solid fa-hand fa-fw"></i> {% trans "Complaints" %}
                             {% has_unread_messages request.user as exclamation_mark %}
                             {% if exclamation_mark %}
-                                &nbsp;&nbsp;<span class="badge badge-primary badge-pill">!</span>
+                                &nbsp;&nbsp;<span class="badge badge-warning badge-pill">!</span>
                             {% endif %}
                         </a>
                     {% endif %}

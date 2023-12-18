@@ -16,9 +16,9 @@
             <td>
                 <a href="{{ complaint.get_absolute_url }}">
                     {% if complaint.has_unread %}
-                        <i class="fa-solid fa-envelope-open-text fa-fw" style="color: red;"></i>
+                        <i class="fa-solid fa-envelope-open-text fa-fw text-primary"></i>
                     {% else %}
-                        <i class="fa-solid fa-envelope fa-fw"></i>
+                        <i class="fa-solid fa-envelope fa-fw text-secondary"></i>
                     {% endif %}
                     {{ complaint.id }}
                 </a>
