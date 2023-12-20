@@ -312,7 +312,6 @@ class ComplaintDetailView(ActiveRequiredMixin, FormView):
             Complaint,
             pk=self.kwargs.get("pk"),
             user=self.request.user,
-            status__in=[Complaint.ComplaintStatus.OPENED, Complaint.ComplaintStatus.INPROGRESS],
         )
         Message.objects.filter(complaint=complaint).update(is_read=True)
         return complaint
