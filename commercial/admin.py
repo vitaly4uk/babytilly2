@@ -337,7 +337,7 @@ class MessageInlineAdmin(admin.StackedInline):
 
 
 class ComplaintAdmin(admin.ModelAdmin):
-    list_display = ["id", "created_date", "user", "product_name", "has_answer", "status"]
+    list_display = ["id", "has_answer", "created_date", "user", "product_name", "status"]
     list_filter = ["status", "user__profile__departament", "user"]
     inlines = [MessageInlineAdmin]
     autocomplete_fields = ["user"]

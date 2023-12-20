@@ -9,69 +9,14 @@
         {% csrf_token %}
         {% bootstrap_form form %}
         {% buttons %}
-            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-rocket"></i> {% translate 'Send' %}</button>
+            <button id="form" type="submit" class="btn btn-primary" onclick="on()">
+                <i class="fa-solid fa-rocket"></i> {% translate 'Send' %}
+            </button>
         {% endbuttons %}
-        {% comment %}
-        {{ form.non_field_errors }}
-        <div class="form-group row">
-            <label for="{{ form.date_of_purchase.id_for_label }}" class="col-sm-3 col-form-label">{% translate 'Date of purchase of goods*:' %}</label>
-            <div class="col-sm-9">
-                <input type="text" class="form-control{% if form.date_of_purchase.errors %} is-invalid{% endif %}" id="{{ form.date_of_purchase.id_for_label }}" name="{{ form.date_of_purchase.html_name }}" value="{{ form.date_of_purchase.value|default_if_none:'' }}" required>
-                {% for error in form.date_of_purchase.errors %}
-                    <div id="{{ form.date_of_purchase.id_for_label }}_error_{{ forloop.counter }}" class="invalid-feedback">{{ error|escape }}</div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="{{ form.product_name.id_for_label }}" class="col-sm-3 col-form-label">{% translate 'Product name:' %}</label>
-            <div class="col-sm-9">
-                <input type="text" class="form-control{% if form.product_name.errors %} is-invalid{% endif %}" id="{{ form.product_name.id_for_label }}" name="{{ form.product_name.html_name }}" value="{{ form.product_name.value|default_if_none:'' }}" required>
-                {% for error in form.product_name.errors %}
-                    <div id="{{ form.product_name.id_for_label }}_error_{{ forloop.counter }}" class="invalid-feedback">{{ error|escape }}</div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="{{ form.invoice.id_for_label }}" class="col-sm-3 col-form-label">{% translate 'Invoice:' %}</label>
-            <div class="col-sm-9">
-                <input type="text" class="form-control{% if form.invoice.errors %} is-invalid{% endif %}" id="{{ form.invoice.id_for_label }}" name="{{ form.invoice.html_name }}" value="{{ form.invoice.value|default_if_none:'' }}" required>
-                {% for error in form.invoice.errors %}
-                    <div id="{{ form.invoice.id_for_label }}_error_{{ forloop.counter }}" class="invalid-feedback">{{ error|escape }}</div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="{{ form.description.id_for_label }}" class="col-sm-3 col-form-label">{% translate 'Description:' %}</label>
-            <div class="col-sm-9">
-                <textarea class="form-control{% if form.description.errors %} is-invalid{% endif %}" id="{{ form.description.id_for_label }}" name="{{ form.description.html_name }}" rows="3" value="{{ form.description.value }}" required></textarea>
-                {% for error in form.description.errors %}
-                    <div id="{{ form.description.id_for_label }}_error_{{ forloop.counter }}" class="invalid-feedback">{{ error|escape }}</div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="{{ form.image.id_for_label }}" class="col-sm-3 col-form-label">{% translate 'Photo:' %}</label>
-            <div class="col-sm-9">
-                <input type="file" class="form-control-file{% if form.image.errors %} is-invalid{% endif %}" id="{{ form.image.id_for_label }}" name="{{ form.image.html_name }}" required>
-                {% for error in form.image.errors %}
-                    <div id="{{ form.image.id_for_label }}_error_{{ forloop.counter }}" class="invalid-feedback">{{ error|escape }}</div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="{{ form.video.id_for_label }}" class="col-sm-3 col-form-label">{% translate 'Video:' %}</label>
-            <div class="col-sm-9">
-                <input type="file" class="form-control-file{% if form.video.errors %} is-invalid{% endif %}" id="{{ form.video.id_for_label }}" name="{{ form.video.html_name }}">
-                {% for error in form.video.errors %}
-                    <div id="{{ form.video.id_for_label }}_error_{{ forloop.counter }}" class="invalid-feedback">{{ error|escape }}</div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="form-group row">
-            <button type="submit" class="btn btn-primary">{% translate 'Send' %}</button>
-        </div>
-        {% endcomment %}
     </form>
+<div class="spinner-border" role="status" id="overlay" style="display: none;">
+  <span class="sr-only">Loading...</span>
+</div>
 {% endblock %}
 {% block extra_body %}
     <script>
@@ -81,6 +26,10 @@
             source: "{% url 'article_autocomplete_url' %}"
             }
         )
-    })
+    });
+    function on() {
+        document.getElementById("form").style.display = "none";
+        document.getElementById("overlay").style.display = "flex";
+    }
     </script>
 {% endblock %}

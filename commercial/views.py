@@ -308,7 +308,12 @@ class ComplaintDetailView(ActiveRequiredMixin, FormView):
         return reverse("commercial_complaint_list")
 
     def get_object(self) -> Complaint:
-        complaint = get_object_or_404(Complaint, pk=self.kwargs.get("pk"), user=self.request.user)
+        complaint = get_object_or_404(
+            Complaint,
+            pk=self.kwargs.get("pk"),
+            user=self.request.user,
+            status__in=[Complaint.ComplaintStatus.OPENED, Complaint.ComplaintStatus.INPROGRESS],
+        )
         Message.objects.filter(complaint=complaint).update(is_read=True)
         return complaint
 
@@ -326,6 +331,7 @@ class ComplaintDetailView(ActiveRequiredMixin, FormView):
         complaint = self.get_object()
         form.instance.user = self.request.user
         form.instance.complaint = complaint
+        form.instance.is_read = True
         msg = form.save()
         attachments = form.cleaned_data["attachments"]
         if attachments:

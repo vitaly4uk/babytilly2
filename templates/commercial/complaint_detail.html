@@ -40,12 +40,28 @@
             {% endfor %}
             </tbody>
         </table>
+        {% if complaint.status != 1 %}
         <form enctype="multipart/form-data" method="post" class="form pb-5" novalidate>
             {% csrf_token %}
             {% bootstrap_form form %}
             {% buttons %}
-                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-rocket"></i> {% translate 'Send' %}</button>
+                <button id="form" type="submit" class="btn btn-primary" onclick="on()">
+                    <i class="fa-solid fa-rocket"></i> {% translate 'Send' %}
+                </button>
             {% endbuttons %}
         </form>
+        {% endif %}
+<div class="spinner-border" role="status" id="overlay" style="display: none;">
+  <span class="sr-only">Loading...</span>
+</div>
     </div>
+{% endblock %}
+
+{% block extra_body %}
+    <script type="application/javascript">
+    function on() {
+        document.getElementById("form").style.display = "none";
+        document.getElementById("overlay").style.display = "flex";
+    }
+    </script>
 {% endblock %}
