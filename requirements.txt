@@ -50,7 +50,9 @@ build==1.0.3 \
 celery[redis,sqs]==5.2.7 \
     --hash=sha256:138420c020cd58d6707e6257b6beda91fd39af7afde5d36c6334d175302c0e14 \
     --hash=sha256:fafbd82934d30f8a004f81e8f7a062e31413a23d444be8ee3326553915958c6d
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   celery
 click==8.1.7 \
     --hash=sha256:ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28 \
     --hash=sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de
@@ -88,9 +90,9 @@ django==3.2.23 \
     #   django-storages
     #   django-stubs
     #   django-stubs-ext
-django-bootstrap4==23.2 \
-    --hash=sha256:6b5080a4bce80fa666ac5ce5d4c77ad6fc3c0984d4257a0060d4077f515f62e5 \
-    --hash=sha256:6c895cdda58de1360bf82cc9e31014ad158dad680198ac8366ca33c19efa972f
+django-bootstrap4==23.3 \
+    --hash=sha256:ad41a4393d2eb879f7b5ad8cf207d6d6f08e30e6fce5e9a4a9aefb5a8da87f67 \
+    --hash=sha256:e7b2acbd25db15e311017b6e24893353b901c737d631553ed68d41b933abe568
     # via -r requirements.in
 django-ckeditor==6.2.0 \
     --hash=sha256:9f66420907e41f5b4e698fa5671a00a86995776735f2c4696174aed4640fcbd8 \
