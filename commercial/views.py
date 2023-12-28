@@ -256,7 +256,7 @@ class OrderListView(ActiveRequiredMixin, ListView):
 
 
 class OrderDetailView(ActiveRequiredMixin, DetailView):
-    template_name = "commercial/editcart.html"
+    template_name = "commercial/order_detail.html"
     context_object_name = "order"
     model = Order
 
