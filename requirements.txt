@@ -80,9 +80,9 @@ django==3.2.23 \
     #   django-js-asset
     #   django-ses
     #   django-storages
-django-bootstrap4==23.3 \
-    --hash=sha256:ad41a4393d2eb879f7b5ad8cf207d6d6f08e30e6fce5e9a4a9aefb5a8da87f67 \
-    --hash=sha256:e7b2acbd25db15e311017b6e24893353b901c737d631553ed68d41b933abe568
+django-bootstrap4==23.4 \
+    --hash=sha256:577df4009adc21c8c65b7bfc3cd074c26072e245c43e6183ee0c6ae01181c263 \
+    --hash=sha256:f7f40ad719c1b20399c804336e56a810abc1dec7ba56257756964c10005916f9
     # via -r requirements.in
 django-ckeditor==6.2.0 \
     --hash=sha256:9f66420907e41f5b4e698fa5671a00a86995776735f2c4696174aed4640fcbd8 \
