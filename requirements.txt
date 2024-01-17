@@ -106,9 +106,9 @@ django-js-asset==2.2.0 \
     # via
     #   django-ckeditor
     #   django-mptt
-django-mptt==0.15.0 \
-    --hash=sha256:0df19d5a55f34e73df58ee03fbe0d91807493de4bd3a09f6eb00fc62920035d9 \
-    --hash=sha256:2574c014b102a41c642be5921f59356b8437fc83c9866d97644c6a0c5dc8ccc1
+django-mptt==0.16.0 \
+    --hash=sha256:56c9606bf0b329b5f5afd55dd8bfd073612ea1d5999b10903b09de62bee84c8e \
+    --hash=sha256:8716849ba3318d94e2e100ed0923a05c1ffdf8195f8472b690dbaf737d2af3b5
     # via -r requirements.in
 django-ses==3.5.2 \
     --hash=sha256:90c68cc6ca3467893faa8499981c81ba8ff2bd3f3acb08c06423a4142d6a0fc6 \
