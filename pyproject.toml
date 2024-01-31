@@ -21,4 +21,4 @@ homepage = "https://b2bcarrello.com"
 repository = "https://github.com/vitaly4uk/babytilly2"
 
 [tool.pip-tools]
-generate-hashes = true
+generate-hashes = false
