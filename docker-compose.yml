@@ -7,8 +7,6 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
       - MEMCACHED_URL=memcached://cache:11211
       - REDIS_URL=redis://redis:6379/0
-    env_file:
-      - .env
     volumes:
       - .:/app:rw
     ports:
@@ -18,7 +16,7 @@ services:
   db:
     image: library/postgres:11.12
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+      - ./pg_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:

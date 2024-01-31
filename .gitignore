@@ -7,8 +7,9 @@ db.sqlite3
 /static/
 __pycache__/
 import.csv
-postgres_data/
+pg_data/
 .DS_Store
 *.dump
 .env
 .venv/
+latest.db

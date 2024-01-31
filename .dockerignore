@@ -1,5 +1,6 @@
-postgres_data/
+pg_data/
 venv/
 __pycache__
 .vscode
 .git
+latest.db

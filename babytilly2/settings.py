@@ -25,7 +25,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 env = environ.Env(
-    DEBUG=(bool, False),
+    DJANGO_DEBUG=(bool, False),
     AWS_STORAGE_BUCKET_NAME=(str, "babytilly2"),
     AWS_DEFAULT_REGION=(str, "us-east-1"),
     REDIS_URL=(str, None),
@@ -44,7 +44,7 @@ COMPLAINTS_EMAIL = "complaints.carrello@gmail.com"
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = env("DJANGO_DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -168,8 +168,8 @@ CACHES = {
     "default": env.cache_url(default="locmemcache://"),
 }
 
-AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default=None)
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default=None)
 AWS_REGION_NAME = env("AWS_DEFAULT_REGION")
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 AWS_PRELOAD_METADATA = True
