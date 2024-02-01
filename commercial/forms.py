@@ -5,7 +5,14 @@ from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy
 
 from .fields import MultipleFileField
-from .models import Article, ArticleImage, Order, OrderItem, Message, Complaint
+from .models import (
+    Article,
+    ArticleImage,
+    Order,
+    OrderItem,
+    Message,
+    Complaint,
+)
 
 
 class ArticleAdminForm(forms.ModelForm):
@@ -41,15 +48,37 @@ class ArticleAdminForm(forms.ModelForm):
 
 
 class EditOrderForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        try:
+            total_forms = int(self.data.get("form-TOTAL_FORMS", None))
+        except (ValueError, TypeError):
+            pass
+        else:
+            delete_field_name_list = [
+                f"form-{num}-DELETE" for num in range(total_forms)
+            ]
+            if any(
+                map(
+                    lambda x: x in self.data and self.data[x] == "on",
+                    delete_field_name_list,
+                )
+            ):
+                self.fields["delivery"].required = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        return cleaned_data
+
     class Meta:
         model = Order
-        fields = ('delivery', 'comment')
+        fields = ("delivery", "comment")
         widgets = {
-            'comment': forms.Textarea(attrs={'cols': 40}),
-            'delivery': forms.Select(
+            "comment": forms.Textarea(attrs={"cols": 40}),
+            "widget": forms.Select(
                 attrs={
-                    'class': 'custom-select custom-select-sm d-inline-block',
-                    'onchange': 'document.getElementById("cartform").submit()',
+                    "class": "custom-select custom-select-sm d-inline-block",
+                    "onchange": 'document.getElementById("cartform").submit()',
                 }
             ),
         }
@@ -58,67 +87,67 @@ class EditOrderForm(forms.ModelForm):
 class OrderItemForm(forms.ModelForm):
     class Meta:
         model = OrderItem
-        fields = ['id', 'count']
+        fields = ["id", "count"]
         widgets = {
-            'id': forms.HiddenInput(),
-            'count': forms.NumberInput(attrs={'size': '5', 'style': 'width: 50px;'}),
+            "id": forms.HiddenInput(),
+            "count": forms.NumberInput(attrs={"size": "5", "style": "width: 50px;"}),
         }
 
 
 class ComplaintForm(forms.ModelForm):
     description = forms.CharField(
-        widget=forms.Textarea, label=gettext_lazy('Description')
+        widget=forms.Textarea, label=gettext_lazy("Description")
     )
     attachments = MultipleFileField(
-        label=gettext_lazy('Attachments'),
+        label=gettext_lazy("Attachments"),
         help_text=gettext_lazy(
-            'Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video.'
+            "Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video."
         ),
         required=True,
     )
     article = forms.ModelChoiceField(
         Article.objects.all(),
-        label=gettext_lazy('Product name'),
-        to_field_name='articleproperties__name',
+        label=gettext_lazy("Product name"),
+        to_field_name="articleproperties__name",
         help_text=gettext_lazy(
-            'Please, start enter product name like Bravo, Alfa, etc and select one from list.'
+            "Please, start enter product name like Bravo, Alfa, etc and select one from list."
         ),
         widget=forms.TextInput(),
     )
 
     def clean_date_of_purchase(self):
-        date_of_purchase = self.cleaned_data['date_of_purchase']
+        date_of_purchase = self.cleaned_data["date_of_purchase"]
         if date_of_purchase > now().date():
             raise ValidationError(
-                gettext_lazy('The date must be less or equal to today\'s')
+                gettext_lazy("The date must be less or equal to today's")
             )
         return date_of_purchase
 
     def clean_receipt(self):
-        r = self.cleaned_data['receipt']
-        content_type = r.content_type.split('/')[0]
-        if content_type == 'image':
+        r = self.cleaned_data["receipt"]
+        content_type = r.content_type.split("/")[0]
+        if content_type == "image":
             if r.size > 5242880:
-                raise ValidationError(gettext_lazy('Please keep filesize under 5Mb.'))
+                raise ValidationError(gettext_lazy("Please keep filesize under 5Mb."))
         return r
 
     class Meta:
         model = Complaint
-        exclude = ['user', 'status']
+        exclude = ["user", "status"]
         help_texts = {
-            'receipt': gettext_lazy('Only photos are allowed. Max allowed size is 5Mb.')
+            "receipt": gettext_lazy("Only photos are allowed. Max allowed size is 5Mb.")
         }
 
 
 class MessageForm(forms.ModelForm):
     attachments = MultipleFileField(
-        label=gettext_lazy('Attachments'),
+        label=gettext_lazy("Attachments"),
         help_text=gettext_lazy(
-            'Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video.'
+            "Only video and photos are allowed. Max allowed sizes are 5Mb for images and 50Mb for video."
         ),
         required=False,
     )
 
     class Meta:
         model = Message
-        fields = ['text']
+        fields = ["text"]
