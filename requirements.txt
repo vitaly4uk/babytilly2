@@ -12,7 +12,7 @@ asgiref==3.7.2
     #   django-countries
 async-timeout==4.0.3
     # via redis
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
     # via django-bootstrap4
 billiard==3.6.4.0
     # via celery
@@ -20,14 +20,13 @@ boto3==1.34.30
     # via
     #   -r requirements.in
     #   django-ses
-    #   kombu
-botocore==1.34.30
+botocore==1.34.32
     # via
     #   boto3
     #   s3transfer
 build==1.0.3
     # via pip-tools
-celery[redis,sqs]==5.2.7
+celery[redis]==5.2.7
     # via -r requirements.in
 click==8.1.7
     # via
@@ -50,7 +49,7 @@ django==3.2.23
     #   django-js-asset
     #   django-ses
     #   django-storages
-django-bootstrap4==23.4
+django-bootstrap4==24.1
     # via -r requirements.in
 django-ckeditor==6.2.0
     # via -r requirements.in
@@ -80,7 +79,7 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-kombu[sqs]==5.3.4
+kombu==5.3.5
     # via celery
 packaging==23.2
     # via
@@ -95,16 +94,14 @@ prompt-toolkit==3.0.43
 psycopg2-binary==2.9.9
     # via -r requirements.in
 pycurl==7.45.1
-    # via
-    #   -r requirements.in
-    #   kombu
+    # via -r requirements.in
 pymemcache==4.0.0
     # via -r requirements.in
 pyproject-hooks==1.0.0
     # via build
 python-dateutil==2.8.2
     # via botocore
-pytz==2023.3.post1
+pytz==2023.4
     # via
     #   celery
     #   django
@@ -136,15 +133,13 @@ typing-extensions==4.9.0
     #   django-countries
     #   kombu
 urllib3==1.26.18
-    # via
-    #   botocore
-    #   kombu
+    # via botocore
 vine==5.1.0
     # via
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.2.12
+wcwidth==0.2.13
     # via prompt-toolkit
 wheel==0.42.0
     # via pip-tools
