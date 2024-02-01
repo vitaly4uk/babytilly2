@@ -50,21 +50,22 @@ class ArticleAdminForm(forms.ModelForm):
 class EditOrderForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        try:
-            total_forms = int(self.data.get("form-TOTAL_FORMS", None))
-        except (ValueError, TypeError):
-            pass
-        else:
-            delete_field_name_list = [
-                f"form-{num}-DELETE" for num in range(total_forms)
-            ]
-            if any(
-                map(
-                    lambda x: x in self.data and self.data[x] == "on",
-                    delete_field_name_list,
-                )
-            ):
-                self.fields["delivery"].required = False
+        if self.data.get("send") != "true":
+            try:
+                total_forms = int(self.data.get("form-TOTAL_FORMS", None))
+            except (ValueError, TypeError):
+                pass
+            else:
+                delete_field_name_list = [
+                    f"form-{num}-DELETE" for num in range(total_forms)
+                ]
+                if any(
+                    map(
+                        lambda x: x in self.data and self.data[x] == "on",
+                        delete_field_name_list,
+                    )
+                ):
+                    self.fields["delivery"].required = False
 
     def clean(self):
         cleaned_data = super().clean()
