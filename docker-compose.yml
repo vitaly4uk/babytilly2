@@ -13,6 +13,8 @@ services:
       - "8080:8080"
     depends_on:
       - db
+      - redis
+      - cache
   db:
     image: library/postgres:11.12
     volumes:
@@ -21,11 +23,11 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
-#  cache:
-#    image: memcached
-#    ports:
-#      - "11211:11211"
-#  redis:
-#    image: redis
-#    ports:
-#      - "6379:6379"
+  cache:
+    image: memcached
+    ports:
+      - "11211:11211"
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
