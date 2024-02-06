@@ -7,7 +7,7 @@
 
     <div class="row">
         {% if category %}
-        <div class="col-md-4">
+            <div class="col-md-4">
                 <nav aria-label="breadcrumb" class="ml-3">
                     <ol class="breadcrumb">
                         {% for ancestor in category.get_ancestors_include_self %}
@@ -16,24 +16,25 @@
                         {% endfor %}
                     </ol>
                 </nav>
-        </div>
+            </div>
         {% endif %}
         <div class="{% if category %} col-md-8{% else %} col{% endif %}">
-                <form class="form-inline float-right w-sm-100" method="GET" name="ordering">
-                    <div class="form-group mx-2 d-none d-xl-block">
-                        <label for="perPageCount" class="d-inline-block">{% trans "amount" %}:</label>
-                        <select class="custom-select custom-select-sm" id="perPageCount" name="per_page"
-                                onchange="goToPage(1)">
-                            {% for value in paginator_list %}
-                                <option value="{{ value }}" {% if value == per_page %}selected{% endif %}>
-                                    {{ value }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group mx-2 w-sm-100">
+            <form class="form-inline float-right w-sm-100" method="GET" name="ordering">
+                <div class="form-group mx-2 d-none d-xl-block">
+                    <label for="perPageCount" class="d-inline-block">{% trans "amount" %}:</label>
+                    <select class="custom-select custom-select-sm" id="perPageCount" name="per_page"
+                            onchange="goToPage(1)">
+                        {% for value in paginator_list %}
+                            <option value="{{ value }}" {% if value == per_page %}selected{% endif %}>
+                                {{ value }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mx-2 w-sm-100">
                     <label for="sortSelect" class="d-none d-xl-block">{% trans "price" %}:</label>
-                    <select class="custom-select custom-select-sm d-inline-block" id="sortSelect" name="sort" onchange="goToPage(1)">
+                    <select class="custom-select custom-select-sm d-inline-block" id="sortSelect" name="sort"
+                            onchange="goToPage(1)">
                         <option value="name">
                             {% trans "no ordering" %}
                         </option>
@@ -44,11 +45,11 @@
                             {% trans "from expensive to cheap" %}
                         </option>
                     </select>
-                    </div>
-                    {% if request.GET.query %}
-                        <input type="hidden" name="query" value="{{ request.GET.query }}">
-                    {% endif %}
-                </form>
+                </div>
+                {% if request.GET.query %}
+                    <input type="hidden" name="query" value="{{ request.GET.query }}">
+                {% endif %}
+            </form>
         </div>
     </div>
     {% for item in object_list %}
@@ -57,85 +58,97 @@
                 <div class="card">
                     <div class="row no-gutters{% if item.article.id in request.order.get_order_article_ids %} bought{% endif %}">
                         <div class="col-md-2 text-center">
-                            <div class="carousel slide" data-ride="carousel" data-interval="false" id="carousel-{{ item.article.id }}">
+                            <div class="carousel slide" data-ride="carousel" data-interval="false"
+                                 id="carousel-{{ item.article.id }}">
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
-                                        <a href="{% if item.main_image %}{{ item.main_image.url }}{% endif %}" role="button" data-toggle="modal"
+                                        <a href="{% if item.main_image %}{{ item.main_image.url }}{% endif %}"
+                                           role="button" data-toggle="modal"
                                            data-target="#imageModal">
                                             {% thumbnail item.main_image "small"|get_thumb_size crop="center" as im %}
-                                            <img src="{{ im.url }}" class="card-img img-thumbnail"
-                                                 width="150" height="150">
+                                                <img src="{{ im.url }}" class="card-img img-thumbnail"
+                                                     width="150" height="150">
                                             {% endthumbnail %}
                                         </a>
                                     </div>
-                                {% get_article_images item.article request.user as additional_images %}
+                                    {% get_article_images item.article request.user as additional_images %}
                                     {% for i in additional_images %}
                                         <div class="carousel-item">
                                             <a href="{{ i.image.url }}" role="button" data-toggle="modal"
                                                data-target="#imageModal">
                                                 {% thumbnail i.image "small"|get_thumb_size crop="center" as im %}
-                                            <img src="{{ im.url }}" class="card-img img-thumbnail"
-                                                 width="150" height="150">
-                                            {% endthumbnail %}
+                                                    <img src="{{ im.url }}" class="card-img img-thumbnail"
+                                                         width="150" height="150">
+                                                {% endthumbnail %}
                                             </a>
                                         </div>
                                     {% endfor %}
                                 </div>
-                                    {% if additional_images %}
-                                        <a class="carousel-control-prev" href="#carousel-{{ item.article.id }}" role="button" data-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">{% trans "previose"|upper %}</span>
-                                        </a>
-                                        <a class="carousel-control-next" href="#carousel-{{ item.article.id }}" role="button" data-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">{% trans "next"|upper %}</span>
-                                        </a>
-                                    {% endif %}
+                                {% if additional_images %}
+                                    <a class="carousel-control-prev" href="#carousel-{{ item.article.id }}"
+                                       role="button" data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">{% trans "previous"|upper %}</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#carousel-{{ item.article.id }}"
+                                       role="button" data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">{% trans "next"|upper %}</span>
+                                    </a>
+                                {% endif %}
                             </div>
                             <br>
-                            <a href="{% url 'commercial_download_images_url' item.article_id %}" class="btn btn-primary btn-sm ml-2"><i class="fa-solid fa-download"></i> Download images</a>
+                            <a href="{% url 'commercial_download_images_url' item.article_id %}"
+                               class="btn btn-primary btn-sm ml-2"><i class="fa-solid fa-download"></i> Download images</a>
                         </div>
                         <div class="col-md-10">
                             <div class="card-header">
                                 <h5 class="card-title">
                                     {{ item.name }}
                                 </h5>
-                                    {% if item.is_less_then_five %}
-                                        <p class="badge badge-warning mb-3">{% trans 'less than 5'|upper %}</p>
-                                    {% endif %}
+                                {% if item.is_less_then_five %}
+                                    <p class="badge badge-warning mb-3">{% trans 'less than 5'|upper %}</p>
+                                {% endif %}
                             </div>
                             <div class="card-body">
                                 <p class="card-subtitle">
                                     {% if item.length %}
-                                        <span><i class="bi bi-arrows-angle-expand horizont"></i> {% trans 'length'|capfirst %}: {{ item.length }}</span>
+                                        <span><i
+                                                class="bi bi-arrows-angle-expand horizont"></i> {% trans 'length'|capfirst %}: {{ item.length }}</span>
                                     {% endif %}
                                     {% if item.width %}
-                                        <span><i class="bi bi-arrows-angle-expand"></i> {% trans 'width'|capfirst %}: {{ item.width }}</span>
+                                        <span><i
+                                                class="bi bi-arrows-angle-expand"></i> {% trans 'width'|capfirst %}: {{ item.width }}</span>
                                     {% endif %}
                                     {% if item.height %}
-                                        <span><i class="bi bi-arrows-angle-expand vertical"></i>{% trans 'height'|capfirst %}: {{ item.height }}</span>
+                                        <span><i
+                                                class="bi bi-arrows-angle-expand vertical"></i>{% trans 'height'|capfirst %}: {{ item.height }}</span>
                                     {% endif %}
                                     {% if item.volume %}
                                         <span><i class="bi bi-box"></i> {% trans 'volume'|capfirst %}: {{ item.volume }}</span>
                                     {% endif %}
                                     {% if item.weight %}
-                                        <span><i class="bi bi-box-arrow-down"></i> {% trans 'weight'|capfirst %}: {{ item.weight }}</span>
+                                        <span><i
+                                                class="bi bi-box-arrow-down"></i> {% trans 'weight'|capfirst %}: {{ item.weight }}</span>
                                     {% endif %}
                                     {% if item.image_link %}
-                                        <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}" target="_blank">{% trans 'image'|capfirst %}</a> </span>
+                                        <span><i class="bi bi-card-image"></i> <a href="{{ item.image_link }}"
+                                                                                  target="_blank">{% trans 'image'|capfirst %}</a> </span>
                                     {% endif %}
                                     {% if item.video_link %}
-                                        <span><i class="bi bi-youtube"></i> <a href="{{ item.video_link }}" target="_blank">{% trans 'video'|capfirst %}</a> </span>
+                                        <span><i class="bi bi-youtube"></i> <a href="{{ item.video_link }}"
+                                                                               target="_blank">{% trans 'video'|capfirst %}</a> </span>
                                     {% endif %}
                                     {% if item.site_link %}
-                                        <span><i class="bi bi-window"></i> <a href="{{ item.site_link }}" target="_blank">{% trans 'site'|capfirst %}</a> </span>
+                                        <span><i class="bi bi-window"></i> <a href="{{ item.site_link }}"
+                                                                              target="_blank">{% trans 'site'|capfirst %}</a> </span>
                                     {% endif %}
                                     {% if item.is_new %}
                                         <p class="badge badge-danger mb-2">{% trans 'new'|upper %}</p>
                                     {% endif %}
-                                    {% if item.is_special %}
-                                        <p class="badge badge-success mb-2">{% trans 'sale'|upper %}</p>
-                                    {% endif %}
+                                {% if item.is_special %}
+                                    <p class="badge badge-success mb-2">{% trans 'sale'|upper %}</p>
+                                {% endif %}
                                 </p>
 
                                 <p class="card-text truncated">{{ item.description|safe|truncatewords:15 }}</p>
@@ -148,15 +161,19 @@
                                 </div>
                                 <div class="card-text">
                                     <form class="form-inline mx-sm-3 mb-2">
-                                        <label class="sr-only" for="{{ item.article.id }}_input">{% trans 'count'|capfirst %}</label>
-                                        <input type="number" name="{{ item.article.id }}" id="{{ item.article.id }}_input"
+                                        <label class="sr-only"
+                                               for="{{ item.article.id }}_input">{% trans 'count'|capfirst %}</label>
+                                        <input type="number" name="{{ item.article.id }}"
+                                               id="{{ item.article.id }}_input"
                                                size=4 {% if item.article.id in request.order.get_order_article_ids %}
                                                value="{% get_order_item_count item.article request.order %}"
-                                               {% else %}value="1"{% endif %} class="form-control form-control-sm" min="1">
+                                               {% else %}value="1"{% endif %} class="form-control form-control-sm"
+                                               min="1">
                                         <a id="{{ item.article.id }}"
                                            href="{% url 'commercial_addto_cart_one' item.article.id %}/"
                                            class="btn btn-primary btn-sm ml-2"
-                                           onclick="addToCart('{{ item.article.id }}');return false;"><i class="fa-solid fa-cart-plus"></i> {% trans 'to cart'|capfirst %}</a>
+                                           onclick="addToCart('{{ item.article.id }}');return false;"><i
+                                                class="fa-solid fa-cart-plus"></i> {% trans 'to cart'|capfirst %}</a>
                                     </form>
                                 </div>
                             </div>
@@ -175,10 +192,17 @@
                 <div class="modal-body">
                     <div id="imageCarousel" class="carousel slide" data-ride="carousel">
                         <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="" class="d-block w-100" alt="...">
-                            </div>
                         </div>
+                                    <a class="carousel-control-prev" href="#imageCarousel"
+                                       role="button" data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">{% trans "previous"|upper %}</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#imageCarousel"
+                                       role="button" data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">{% trans "next"|upper %}</span>
+                                    </a>
                     </div>
                 </div>
             </div>
@@ -188,20 +212,22 @@
 
 {% block extra_body %}
     <script type="application/javascript">
-      $(document).ready(function () {
-        $('#imageModal').on('show.bs.modal', function (event) {
-          const button = $(event.relatedTarget) // Button that triggered the modal
-          const url = button.attr('href') // Extract info from data-* attributes
-          // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-          // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-          const modal = $(this)
-          modal.find('img').attr('src', url)
-        })
+        $(document).ready(function () {
+            $('#imageModal').on('show.bs.modal', function (event) {
+                const carouselInner = $(event.relatedTarget).parent().parent().clone();
+                const button = $(event.relatedTarget) // Button that triggered the modal
+                const url = button.attr('href') // Extract info from data-* attributes
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                const modal = $(this)
+                modal.find('.carousel-inner').replaceWith(carouselInner);
+                $('#imageCarousel').carousel();
+            })
 
-        $('p.truncated').on('click', function (event) {
-          event.preventDefault()
-          $(event.target).addClass('d-none').next().removeClass('d-none')
+            $('p.truncated').on('click', function (event) {
+                event.preventDefault()
+                $(event.target).addClass('d-none').next().removeClass('d-none')
+            })
         })
-      })
     </script>
 {% endblock %}
