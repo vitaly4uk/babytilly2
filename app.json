@@ -2,13 +2,8 @@
   "name": "Carrello",
   "description": "Best toys",
   "website": "https://b2bcarrello.com/",
-  "repository": "https://github.com/vitaly4uk/babytilly2",
+  "repository": "https://github.com/babytilly/babytilly2",
   "success_url": "/",
-  "buildpacks": [
-    {
-      "url": "heroku/python"
-    }
-  ],
   "formation": {
     "web": {
       "quantity": 1,

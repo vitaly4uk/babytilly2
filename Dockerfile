@@ -1,4 +1,4 @@
-FROM python:3.9.18-alpine
+FROM python:3.10.13-alpine
 ENV PYTHONUNBUFFERED 1
 ENV PYCURL_SSL_LIBRARY=openssl
 RUN apk add --no-cache libcurl
