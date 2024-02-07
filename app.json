@@ -4,6 +4,12 @@
   "website": "https://b2bcarrello.com/",
   "repository": "https://github.com/babytilly/babytilly2",
   "success_url": "/",
+  "scripts": {
+    "dokku": {
+      "predeploy": "python manage.py collectstatic --no-input",
+      "postdeploy": "python manage.py migrate --no-input"
+    }
+  },
   "formation": {
     "web": {
       "quantity": 1,
