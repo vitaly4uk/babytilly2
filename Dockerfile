@@ -7,7 +7,7 @@ WORKDIR /app
 RUN pip install --upgrade pip
 COPY requirements.txt /app/
 RUN pip install -U pip
-RUN apk add --no-cache --virtual .build-dependencies build-base curl-dev \
+RUN apk add --no-cache --virtual .build-dependencies build-base curl-dev bash \
     && pip install -r requirements.txt \
     && apk del .build-dependencies
 COPY . /app/
