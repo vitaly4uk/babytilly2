@@ -34,20 +34,27 @@ class MultipleFileField(forms.FileField):
             for r in result:
                 content_type = r.content_type.split("/")[0]
                 if content_type == "image":
-                    if r.size > 10485760:
+                    if r.size > 5242880:
                         raise ValidationError(
                             gettext_lazy(
-                                "Please keep filesize under 10Mb for images and 50Mb for videos."
+                                "Please keep filesize under 50Mb for videos and 5Mb for all other."
                             )
                         )
                 elif content_type == "video":
                     if r.size > 52428800:
                         raise ValidationError(
                             gettext_lazy(
-                                "Please keep filesize under 10Mb for images and 50Mb for videos."
+                                "Please keep filesize under 50Mb for videos and 5Mb for all other."
                             )
                         )
-                elif r.content_type not in ALLOWED_MIME_TYPES:
+                elif r.content_type in ALLOWED_MIME_TYPES:
+                    if r.size > 5242880:
+                        raise ValidationError(
+                            gettext_lazy(
+                                "Please keep filesize under 50Mb for videos and 5Mb for all other."
+                            )
+                        )
+                else:
                     raise ValidationError(
                         gettext_lazy(
                             "Only video, photos, word, excel and pdf files are allowed."

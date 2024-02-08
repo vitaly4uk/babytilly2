@@ -88,7 +88,7 @@ class ComplaintForm(forms.ModelForm):
     attachments = MultipleFileField(
         label=gettext_lazy("Attachments"),
         help_text=gettext_lazy(
-            "Only video, photos, word, excel and pdf files are allowed. Max allowed sizes are 1Mb for images and 50Mb for video."
+            "Only video, photos, word, excel and pdf files are allowed. Max allowed sizes are 50Mb for videos and 5Mb for all other."
         ),
         required=True,
     )
@@ -130,7 +130,7 @@ class MessageForm(forms.ModelForm):
     attachments = MultipleFileField(
         label=gettext_lazy("Attachments"),
         help_text=gettext_lazy(
-            "Only video, photos, word, excel and pdf files are allowed. Max allowed sizes are 10Mb for images and 50Mb for video."
+            "Only video, photos, word, excel and pdf files are allowed. Max allowed sizes are 50Mb for videos and 5Mb for all other."
         ),
         required=False,
     )
