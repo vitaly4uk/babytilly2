@@ -414,7 +414,7 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
                     order.save()
                     send_order_email.delay(order.id)
                 logout(request)
-                return HttpResponseRedirect("/")
+                return HttpResponseRedirect(reverse("commercial_order_complite"))
         context = {
             "order": request.order,
             "form": order_form,

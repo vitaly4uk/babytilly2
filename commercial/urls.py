@@ -57,6 +57,7 @@ urlpatterns = [
         OrderDetailView.as_view(),
         name="commercial_order_detail",
     ),
+    path("dashboard/order/complite/", TemplateView.as_view(template_name="commercial/order_complite.html"), name="commercial_order_complite"),
     path(
         "dashboard/complaint/",
         ComplaintListView.as_view(),
