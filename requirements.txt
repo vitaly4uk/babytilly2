@@ -90,7 +90,7 @@ packaging==23.2
     #   gunicorn
 pillow==10.2.0
     # via -r requirements.in
-pip-tools==7.3.0
+pip-tools==7.4.0
     # via -r requirements.in
 prompt-toolkit==3.0.43
     # via click-repl
@@ -101,7 +101,9 @@ pycurl==7.45.1
 pymemcache==4.0.0
     # via -r requirements.in
 pyproject-hooks==1.0.0
-    # via build
+    # via
+    #   build
+    #   pip-tools
 python-dateutil==2.8.2
     # via
     #   botocore
