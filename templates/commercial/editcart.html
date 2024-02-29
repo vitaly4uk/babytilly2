@@ -22,7 +22,7 @@
             <tbody>
                 {% for order_item_form in order_items_formset %}
                     <tr>
-                        <td>{{ order_item_form.id }}{% get_article_name order_item_form.instance.article request.user %}</td>
+                        <td>{{ order_item_form.id }}{% get_article_name order_item_form.instance.article request.user %}<br>{{ order_item_form.instance.barcode }}</td>
                         <td>{{ order_item_form.instance.price|floatformat:2 }}</td>
                         <td>{% if order.is_closed %}{{ order_item_form.count.value }}{% else %}{{ order_item_form.count }}{% endif %}</td>
                         <td>{{ order_item_form.instance.sum|floatformat:2 }}</td>

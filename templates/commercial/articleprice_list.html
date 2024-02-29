@@ -143,12 +143,13 @@
                                         <span><i class="bi bi-window"></i> <a href="{{ item.site_link }}"
                                                                               target="_blank">{% trans 'site'|capfirst %}</a> </span>
                                     {% endif %}
+                                    <span>{{ item.barcode }}</span>
                                     {% if item.is_new %}
                                         <p class="badge badge-danger mb-2">{% trans 'new'|upper %}</p>
                                     {% endif %}
-                                {% if item.is_special %}
-                                    <p class="badge badge-success mb-2">{% trans 'sale'|upper %}</p>
-                                {% endif %}
+                                    {% if item.is_special %}
+                                        <p class="badge badge-success mb-2">{% trans 'sale'|upper %}</p>
+                                    {% endif %}
                                 </p>
 
                                 <p class="card-text truncated">{{ item.description|safe|truncatewords:15 }}</p>
