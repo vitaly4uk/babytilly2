@@ -221,6 +221,13 @@ def export_department_to_xml(departament) -> ET.ElementTree:
         description.text = article_property.description
         barcode = ET.SubElement(offer_xml, 'barcode')
         barcode.text = article_property.barcode
+        length = ET.SubElement(offer_xml, 'length')
+        length.text = article_property.length
+        width = ET.SubElement(offer_xml, 'width')
+        width.text = article_property.width
+        height = ET.SubElement(offer_xml, 'height')
+        height.text = article_property.height
+
         offers.append(offer_xml)
 
     return ET.ElementTree(root)
