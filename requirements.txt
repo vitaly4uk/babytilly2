@@ -90,7 +90,7 @@ packaging==23.2
     #   gunicorn
 pillow==10.2.0
     # via -r requirements.in
-pip-tools==7.4.0
+pip-tools==7.4.1
     # via -r requirements.in
 prompt-toolkit==3.0.43
     # via click-repl
