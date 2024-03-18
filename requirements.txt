@@ -27,9 +27,7 @@ botocore==1.34.33
 build==1.0.3
     # via pip-tools
 celery[redis]==5.3.6
-    # via
-    #   -r requirements.in
-    #   celery
+    # via -r requirements.in
 click==8.1.7
     # via
     #   celery
@@ -43,7 +41,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-django==3.2.24
+django==3.2.25
     # via
     #   -r requirements.in
     #   django-bootstrap4
