@@ -337,6 +337,7 @@ class MessageInlineAdmin(admin.StackedInline):
 
 
 class ComplaintAdmin(admin.ModelAdmin):
+    search_fields = ["id"]
     list_display = ["id", "has_answer", "created_date", "user", "product_name", "status"]
     list_filter = ["status", "user__profile__departament", "user"]
     inlines = [MessageInlineAdmin]
@@ -367,7 +368,7 @@ class ComplaintAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj: Complaint, form, change):
         if obj.status == Complaint.ComplaintStatus.OPENED:
-            obj.status = Complaint.ComplaintStatus.INPROGRESS
+            obj.status = Complaint.ComplaintStatus.IN_PROGRESS
         super().save_model(request, obj, form, change)
 
     def save_formset(self, request, form, formset, change):

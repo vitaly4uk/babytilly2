@@ -593,7 +593,8 @@ class Complaint(models.Model):
     class ComplaintStatus(models.IntegerChoices):
         OPENED = 0, _("opened")
         CLOSED = 1, _("closed")
-        INPROGRESS = 2, _("in progress")
+        IN_PROGRESS = 2, _("in progress")
+        NO_ANSWER = 3, _('no answer')
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=_("user"), on_delete=models.CASCADE

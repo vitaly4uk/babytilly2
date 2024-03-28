@@ -90,7 +90,7 @@ def get_or_create_category(
 def do_import_price(csv_file: typing.IO, country: str):
     field_names = [
         'id', 'name', 'vendor_code', 'is_category', 'parent_id',
-        'parent_name', 'trade_price', 'retail_price', None, 'length', 'width', 'height',
+        'parent_name', 'trade_price', 'retail_price', 'currency', 'length', 'width', 'height',
         'volume', 'weight', None, None, 'barcode', 'description', 'image_link',
         'video_link', 'presence', 'site_link', 'company'
     ]
