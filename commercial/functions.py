@@ -227,6 +227,8 @@ def export_department_to_xml(departament) -> ET.ElementTree:
         width.text = str(article_property.width)
         height = ET.SubElement(offer_xml, 'height')
         height.text = str(article_property.height)
+        weight = ET.SubElement(offer_xml, 'weight')
+        weight.text = str(article_property.weight)
 
         offers.append(offer_xml)
 
