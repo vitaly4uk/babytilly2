@@ -180,6 +180,13 @@ def _perform_update_articles(csv_file: typing.IO, departament_id: int, field_nam
         ).update(**{field_name: True})
 
 
+def _add_to_xml(xml_element: ET.Element, article_property: ArticleProperties, field_name: str, subelement_name: typing.Optional[str] = None):
+    if subelement_name is None:
+        subelement_name = field_name
+    xml_subelement = ET.SubElement(xml_element, subelement_name)
+    xml_subelement.text = str(getattr(article_property, field_name))
+
+
 def export_department_to_xml(departament) -> ET.ElementTree:
     currency_id = 'EUR'
     root = ET.Element('yml_catalog', date=now().strftime('%d.%m.%Y %H:%M'))
@@ -195,16 +202,13 @@ def export_department_to_xml(departament) -> ET.ElementTree:
     for article_property in ArticleProperties.objects.filter(published=True,
                                                              departament=departament).select_related('article'):
         offer_xml = ET.Element('offer')
-        offer_id = ET.SubElement(offer_xml, 'id')
-        offer_id.text = article_property.article_id
+        _add_to_xml(offer_xml, article_property, 'article_id', 'id')
         available = ET.SubElement(offer_xml, 'available')
         available.text = 'true'
         price = ET.SubElement(offer_xml, 'price')
         price.text = '{0:.2f}'.format(article_property.retail_price).replace('.', ',')
-        currency = ET.SubElement(offer_xml, 'currencyId')
-        currency.text = currency_id
-        category = ET.SubElement(offer_xml, 'categoryId')
-        category.text = article_property.article.category_id
+        _add_to_xml(offer_xml, article_property, 'currency_id', 'currencyId')
+        _add_to_xml(offer_xml, article_property,'category_id', 'categoryId')
         pictures = ET.SubElement(offer_xml, 'pictures')
         if article_property.main_image:
             main_image = ET.SubElement(pictures, 'picture')
@@ -212,23 +216,15 @@ def export_department_to_xml(departament) -> ET.ElementTree:
         for pic in ArticleImage.objects.filter(article=article_property.article):
             picture = ET.SubElement(pictures, 'picture')
             picture.text = pic.image.url
-        name = ET.SubElement(offer_xml, 'name')
-        name.text = article_property.name
+        _add_to_xml(offer_xml, article_property, 'name')
         ET.SubElement(offer_xml, 'vendor')
-        vendor_code = ET.SubElement(offer_xml, 'vendorCode')
-        vendor_code.text = article_property.article.vendor_code
-        description = ET.SubElement(offer_xml, 'description')
-        description.text = article_property.description
-        barcode = ET.SubElement(offer_xml, 'barcode')
-        barcode.text = article_property.barcode
-        length = ET.SubElement(offer_xml, 'length')
-        length.text = str(article_property.length)
-        width = ET.SubElement(offer_xml, 'width')
-        width.text = str(article_property.width)
-        height = ET.SubElement(offer_xml, 'height')
-        height.text = str(article_property.height)
-        weight = ET.SubElement(offer_xml, 'weight')
-        weight.text = str(article_property.weight)
+        _add_to_xml(offer_xml, article_property, 'vendor_name', 'vendorCode')
+        _add_to_xml(offer_xml, article_property, 'description')
+        _add_to_xml(offer_xml, article_property, 'barcode')
+        _add_to_xml(offer_xml, article_property, 'length')
+        _add_to_xml(offer_xml, article_property, 'width')
+        _add_to_xml(offer_xml, article_property, 'height')
+        _add_to_xml(offer_xml, article_property, 'weight')
 
         offers.append(offer_xml)
 

@@ -15,7 +15,12 @@
                 <th scope="col">{% trans 'price'|capfirst %}</th>
                 <th scope="col">{% trans 'count'|capfirst %}</th>
                 <th scope="col">{% trans 'sum'|capfirst %}</th>
-                <th scope="col">{% if not order.is_closed %}{% trans 'delete'|capfirst %}{% endif %}</th>
+                <th scope="col">
+                    {% if not order.is_closed %}
+                        {% trans 'delete'|capfirst %}
+                        <input type="checkbox" id="deleteAll">
+                    {% endif %}
+                </th>
                 <th></th>
             </tr>
             </thead>
@@ -24,7 +29,14 @@
                     <tr>
                         <td>{{ order_item_form.id }}{% get_article_name order_item_form.instance.article request.user %}<br>{{ order_item_form.instance.barcode }}</td>
                         <td>{{ order_item_form.instance.price|floatformat:2 }}</td>
-                        <td>{% if order.is_closed %}{{ order_item_form.count.value }}{% else %}{{ order_item_form.count }}{% endif %}</td>
+                        <td>
+                            {% if order.is_closed %}
+                                {{ order_item_form.count.value }}
+                            {% else %}
+                                {{ order_item_form.count }}
+                                {{ order_item_form.count.errors }}
+                            {% endif %}
+                        </td>
                         <td>{{ order_item_form.instance.sum|floatformat:2 }}</td>
                         <td>{{ order_item_form.DELETE }}</td>
                         <td align="right">
@@ -116,4 +128,12 @@
     {% endif %}
 </div>
     </form>
+{% endblock %}
+
+{% block extra_body %}
+    <script type="application/javascript">
+    $("input[id=deleteAll]").on("change", function () {
+        $("input[id$=-DELETE]").prop('checked', $("input[id=deleteAll]").prop("checked"))
+    })
+    </script>
 {% endblock %}

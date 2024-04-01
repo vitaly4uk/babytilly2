@@ -160,6 +160,7 @@
                                 <div class="card-text">
                                     per pc <span class="h5">{% calculate_user_price item request.user %}</span>
                                 </div>
+                                {% if user.profile.is_buyer %}
                                 <div class="card-text">
                                     <form class="form-inline mx-sm-3 mb-2">
                                         <label class="sr-only"
@@ -177,6 +178,7 @@
                                                 class="fa-solid fa-cart-plus"></i> {% trans 'to cart'|capfirst %}</a>
                                     </form>
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

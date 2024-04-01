@@ -370,7 +370,7 @@ class OrderItem(models.Model):
         Article, verbose_name=_("article"), on_delete=models.CASCADE
     )
     name = models.CharField(_("name"), max_length=255, null=True)
-    count = models.PositiveIntegerField(_("count"), default=0)
+    count = models.PositiveIntegerField(_("count"), default=1, validators=[MinValueValidator(1)])
     volume = models.DecimalField(
         _("volume"), default=0, blank=True, decimal_places=2, max_digits=10
     )
@@ -428,6 +428,7 @@ class Profile(models.Model):
         blank=True,
     )
     inn = models.CharField(_("inn"), max_length=127, null=True, blank=True)
+    is_buyer = models.BooleanField(_('is buyer'), default=True)
 
     def __str__(self):
         return f"Profile for {self.user}"

@@ -72,9 +72,11 @@
                             <i class="fa-solid fa-user-tie fa-fw"></i> {% trans "Admin" %}
                         </a>
                     {% else %}
+                        {% if user.profile.is_buyer %}
                         <a href="{% url 'commercial_order_list' %}" class="list-group-item list-group-item-action">
                             <i class="fa-solid fa-receipt fa-fw"></i> {% trans "Orders" %}
                         </a>
+                        {% endif %}
                         <a href="{% url 'commercial_complaint_list' %}" class="list-group-item list-group-item-action">
                             <i class="fa-solid fa-hand fa-fw"></i> {% trans "Complaints" %}
                             {% has_unread_messages request.user as exclamation_mark %}
@@ -83,7 +85,9 @@
                             {% endif %}
                         </a>
                     {% endif %}
+                    {% if user.profile.is_buyer %}
                     <a href="{% url 'commercial_edit_cart' %}" id="cart" class="list-group-item list-group-item-action"></a>
+                    {% endif %}
                     <a href="{% url 'logout' %}?next=/" class="list-group-item list-group-item-action">
                         <i class="fa-solid fa-right-to-bracket fa-fw"></i> {% trans "Logout" %}
                     </a>
@@ -195,7 +199,7 @@
             }, 400)
             return false
         })
-        loadCart("{% url 'commercial_show_cart' %}");
+        {% if user.profile.is_buyer %}loadCart("{% url 'commercial_show_cart' %}");{% endif %}
 
 
         $.each({{ category.get_ancestors_ids|safe|default:'[]' }}, function (index, value) {
