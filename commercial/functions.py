@@ -221,7 +221,7 @@ def export_department_to_xml(departament) -> ET.ElementTree:
         _add_to_xml(offer_xml, article_property, 'name')
         ET.SubElement(offer_xml, 'vendor')
         vendor_name = ET.SubElement(offer_xml, 'vendorCode')
-        vendor_name.text = article_property.article.vendor_name
+        vendor_name.text = article_property.article.vendor_code
         _add_to_xml(offer_xml, article_property, 'description')
         _add_to_xml(offer_xml, article_property, 'barcode')
         _add_to_xml(offer_xml, article_property, 'length')
