@@ -54,7 +54,7 @@ django-bootstrap4==24.1
     # via -r requirements.in
 django-ckeditor==6.7.1
     # via -r requirements.in
-django-countries==7.5.1
+django-countries==7.6.1
     # via -r requirements.in
 django-debug-toolbar==4.3.0
     # via -r requirements.in
