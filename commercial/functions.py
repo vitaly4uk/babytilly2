@@ -207,7 +207,8 @@ def export_department_to_xml(departament) -> ET.ElementTree:
         available.text = 'true'
         price = ET.SubElement(offer_xml, 'price')
         price.text = '{0:.2f}'.format(article_property.retail_price).replace('.', ',')
-        _add_to_xml(offer_xml, article_property, 'currency_id', 'currencyId')
+        currency = ET.SubElement(offer_xml, 'currencyId')
+        currency.text = currency_id
         _add_to_xml(offer_xml, article_property,'category_id', 'categoryId')
         pictures = ET.SubElement(offer_xml, 'pictures')
         if article_property.main_image:
