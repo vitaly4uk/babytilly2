@@ -220,7 +220,8 @@ def export_department_to_xml(departament) -> ET.ElementTree:
             picture.text = pic.image.url
         _add_to_xml(offer_xml, article_property, 'name')
         ET.SubElement(offer_xml, 'vendor')
-        _add_to_xml(offer_xml, article_property, 'vendor_name', 'vendorCode')
+        vendor_name = ET.SubElement(offer_xml, 'vendorCode')
+        vendor_name.text = article_property.article.vendor_name
         _add_to_xml(offer_xml, article_property, 'description')
         _add_to_xml(offer_xml, article_property, 'barcode')
         _add_to_xml(offer_xml, article_property, 'length')
