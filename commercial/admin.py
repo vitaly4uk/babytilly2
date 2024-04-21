@@ -35,6 +35,7 @@ class ProfileAdmin(admin.StackedInline):
     can_delete = False
     min_num = 1
     max_num = 1
+    filter_horizontal = ['excluded_categories']
 
 
 class DebsAdmin(admin.TabularInline):

@@ -429,6 +429,11 @@ class Profile(models.Model):
     )
     inn = models.CharField(_("inn"), max_length=127, null=True, blank=True)
     is_buyer = models.BooleanField(_('is buyer'), default=True)
+    excluded_categories = models.ManyToManyField(
+        Category,
+        verbose_name=_('excluded categories'),
+        # limit_choices_to=models.Q(categories__departament_id=models.F('profile__departament_id'))
+    )
 
     def __str__(self):
         return f"Profile for {self.user}"
