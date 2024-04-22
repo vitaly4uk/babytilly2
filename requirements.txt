@@ -72,7 +72,7 @@ django-storages==1.14.2
     # via -r requirements.in
 fontawesomefree==6.5.1
     # via -r requirements.in
-gunicorn==21.2.0
+gunicorn==22.0.0
     # via -r requirements.in
 importlib-metadata==7.1.0
     # via build
