@@ -473,7 +473,7 @@ class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
             .distinct()
         )
         return JsonResponse(
-            [{"label": i.name, "value": i.name} for i in queryset],
+            [{"label": i.article_id, "value": i.name} for i in queryset],
             safe=False,
         )
 
