@@ -93,7 +93,7 @@ class ComplaintForm(forms.ModelForm):
         required=True,
     )
     article = forms.ModelChoiceField(
-        Article.objects.filter(articleproperties__departamet_id=4),
+        Article.objects.filter(articleproperties__departament_id=4),
         label=gettext_lazy("Product name"),
         to_field_name="articleproperties__name",
         help_text=gettext_lazy(
