@@ -68,7 +68,7 @@ django-mptt==0.16.0
     # via -r requirements.in
 django-ses==3.5.2
     # via -r requirements.in
-django-storages==1.14.2
+django-storages==1.14.3
     # via -r requirements.in
 fontawesomefree==6.5.1
     # via -r requirements.in
