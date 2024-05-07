@@ -11,7 +11,7 @@ celery[redis]==5.3.6
 pymemcache==4.0.0
 gunicorn==22.0.0
 django-ses==3.5.2
-django-storages==1.14.2
+django-storages==1.14.3
 django-ckeditor==6.7.1
 django-debug-toolbar==4.3.0
 pip-tools==7.4.1
