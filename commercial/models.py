@@ -486,7 +486,7 @@ class ImportPrice(models.Model):
         from commercial.tasks import import_price
 
         super(ImportPrice, self).save(*args, **kwargs)
-        import_price.apply_async(kwargs={"import_id": self.id}, countdown=30)
+        import_price.delay_on_commit(import_id=self.id)
 
     class Meta:
         verbose_name = _("import price")
@@ -513,7 +513,7 @@ class ImportNew(models.Model):
         from commercial.tasks import import_novelty
 
         super(ImportNew, self).save(*args, **kwargs)
-        import_novelty.apply_async(kwargs={"import_id": self.id}, countdown=30)
+        import_novelty.delay_on_commit(import_id=self.id)
 
     class Meta:
         verbose_name = _("import new")
@@ -540,7 +540,7 @@ class ImportSpecial(models.Model):
         from commercial.tasks import import_special
 
         super(ImportSpecial, self).save(*args, **kwargs)
-        import_special.apply_async(kwargs={"import_id": self.id}, countdown=30)
+        import_special.delay_on_commit(import_id=self.id)
 
     class Meta:
         verbose_name = _("import special")
@@ -564,7 +564,7 @@ class ImportDebs(models.Model):
         from commercial.tasks import import_debs
 
         super(ImportDebs, self).save(*args, **kwargs)
-        import_debs.apply_async(kwargs={"import_id": self.id}, countdown=30)
+        import_debs.delay_on_commit(import_id=self.id)
 
     class Meta:
         verbose_name = _("import debt")

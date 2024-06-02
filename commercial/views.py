@@ -296,7 +296,7 @@ class ComplaintCreateView(ActiveRequiredMixin, CreateView):
                     message=msg,
                     file=attach,
                 )
-        send_complaint_mail.delay(self.object.id)
+        send_complaint_mail.delay_on_commit(self.object.id)
         return response
 
 
@@ -412,7 +412,7 @@ class EditCartView(ActiveRequiredMixin, TemplateResponseMixin, View):
                     order = request.order
                     order.is_closed = True
                     order.save()
-                    send_order_email.delay(order.id)
+                    send_order_email.delay_on_commit(order.id)
                 logout(request)
                 return HttpResponseRedirect(reverse("commercial_order_complite"))
         context = {
