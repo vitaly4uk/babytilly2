@@ -71,7 +71,7 @@
                                             {% endthumbnail %}
                                         </a>
                                     </div>
-                                    {% get_article_images item.article request.user as additional_images %}
+                                    {% get_article_images item.article as additional_images %}
                                     {% for i in additional_images %}
                                         <div class="carousel-item">
                                             <a href="{{ i.image.url }}" role="button" data-toggle="modal"

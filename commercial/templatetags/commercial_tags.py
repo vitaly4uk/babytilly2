@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 
 from django import template
@@ -13,7 +12,6 @@ from commercial.models import (
     ArticleProperties,
     ArticleImage,
     OrderItem,
-    Article,
     Complaint,
     Message,
 )
@@ -37,8 +35,8 @@ def calculate_user_price(article: ArticleProperties, user):
 
 
 @register.simple_tag
-def get_article_images(article, user):
-    return ArticleImage.objects.filter(article=article, departament_id=user.profile.departament_id)
+def get_article_images(article):
+    return ArticleImage.objects.filter(article=article)
 
 
 @register.simple_tag
@@ -62,10 +60,6 @@ def get_article_name(article, user):
         return ""
     return article_property.name
 
-
-@register.simple_tag
-def get_article_by_id(article_id):
-    return Article.objects.get(id=article_id)
 
 
 @register.simple_tag

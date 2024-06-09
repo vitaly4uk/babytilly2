@@ -269,7 +269,6 @@ class ArticleImage(models.Model):
         related_name="images",
         on_delete=models.CASCADE,
     )
-    departament = models.ForeignKey(Departament, on_delete=models.CASCADE, null=True)
     image = ImageField(_("image"), upload_to="photos/%Y/%m/%d/%H/%m/")
 
     def __str__(self):

@@ -10,7 +10,8 @@ from django.utils.translation import gettext_lazy
 from mptt.admin import MPTTModelAdmin
 from sorl.thumbnail.admin import AdminImageMixin
 
-from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter, ArticleNewFilter, ArticleSaleFilter
+from commercial.filters import ArticlePublishedFilter, CategoryPublishedFilter, ArticleNewFilter, ArticleSaleFilter, \
+    CategoryDepartamentFilter, ArticleDepartamentFilter
 from commercial.forms import ArticleAdminForm, MessageForm
 from commercial.functions import export_department_to_xml
 from commercial.models import (
@@ -115,7 +116,7 @@ class CategoryAdmin(MPTTModelAdmin):
     inlines = [CategoryPropertyAdmin]
     list_display = ["id", "category_name"]
     search_fields = ["id", "categoryproperties__name"]
-    list_filter = [CategoryPublishedFilter]
+    list_filter = [CategoryPublishedFilter, CategoryDepartamentFilter]
     autocomplete_fields = ["parent"]
 
     @admin.display(description=gettext_lazy("name"), ordering="categoryproperties__name")
@@ -166,7 +167,7 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [ArticlePropertyAdmin, ArticleImageInline]
     list_display = ["id", "article_name", "article_order"]
     search_fields = ["id", "articleproperties__name"]
-    list_filter = [ArticlePublishedFilter, ArticleNewFilter, ArticleSaleFilter]
+    list_filter = [ArticlePublishedFilter, ArticleNewFilter, ArticleSaleFilter, ArticleDepartamentFilter]
     autocomplete_fields = ["category"]
     form = ArticleAdminForm
 
