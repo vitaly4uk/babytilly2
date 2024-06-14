@@ -94,7 +94,7 @@ class ComplaintForm(forms.ModelForm):
     article = forms.ModelChoiceField(
         Article.objects.all(),
         label=gettext_lazy("Product name"),
-        to_field_name="id",
+        to_field_name="articleproperties__name",
         help_text=gettext_lazy(
             "Please, start enter product name like Bravo, Alfa, etc and select one from list."
         ),

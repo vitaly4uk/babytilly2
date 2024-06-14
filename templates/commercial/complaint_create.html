@@ -23,15 +23,15 @@
     $(function () {
         $('#id_date_of_purchase').datepicker();
         $('#id_article').autocomplete({
-            source: "{% url 'article_autocomplete_url' %}",
-            focus: function( event, ui ) {
-                event.preventDefault();
-                $('#id_article').val(ui.item.label);
-            },
-            select: function( event, ui ) {
-                event.preventDefault();
-                $('#id_article').val(ui.item.label);
-            }
+            source: "{% url 'article_autocomplete_url' %}"
+            {#focus: function( event, ui ) {#}
+            {#    event.preventDefault();#}
+            {#    $('#id_article').val(ui.item.label);#}
+            {#},#}
+            {#select: function( event, ui ) {#}
+            {#    event.preventDefault();#}
+            {#    $('#id_article').val(ui.item.label);#}
+            {#}#}
         })
     });
     function on() {
