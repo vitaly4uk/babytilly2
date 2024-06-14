@@ -432,7 +432,6 @@ class DownloadArticleImages(ActiveRequiredMixin, View):
             ArticleProperties, article_id=article_id, departament_id=user_departament_id
         )
         images = ArticleImage.objects.filter(
-            departament=user_departament_id,
             article_id=article_id,
         )
         buffer = io.BytesIO()

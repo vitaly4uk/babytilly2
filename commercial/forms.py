@@ -41,8 +41,7 @@ class ArticleAdminForm(forms.ModelForm):
         for upload in self.files.getlist("images"):
             image = ArticleImage(
                 article=article,
-                image=upload,
-                departament_id=self.request.user.profile.departament_id,
+                image=upload
             )
             image.save()
 
