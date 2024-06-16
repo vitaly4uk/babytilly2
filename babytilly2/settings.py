@@ -111,7 +111,7 @@ WSGI_APPLICATION = "babytilly2.wsgi.application"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    "default": env.db_url(),
+    "default": env.db_url(default="postgres://postgres:postgres@localhost:5432/postgres"),
 }
 
 
