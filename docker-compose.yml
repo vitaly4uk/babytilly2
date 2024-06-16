@@ -1,3 +1,4 @@
+name: b2b-carrello
 services:
   web:
     build: .
