@@ -280,6 +280,11 @@ class ComplaintCreateView(ActiveRequiredMixin, CreateView):
     template_name = "commercial/complaint_create.html"
     model = Complaint
     form_class = ComplaintForm
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -463,7 +468,7 @@ class ArticleNameAutocompleteView(ActiveRequiredMixin, View):
         queryset = (
             ArticleProperties.objects.filter(
                 name__search=request.GET.get("term"),
-                departament=request.user.profile.departament,
+                # departament=request.user.profile.departament,
             )
             .values("name", "article_id")
             .distinct()

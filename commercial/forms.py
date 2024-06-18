@@ -92,7 +92,7 @@ class ComplaintForm(forms.ModelForm):
         required=True,
     )
     article = forms.ModelChoiceField(
-        Article.objects.all(),
+        Article.objects.none(),
         label=gettext_lazy("Product name"),
         to_field_name="articleproperties__name",
         help_text=gettext_lazy(
@@ -100,6 +100,10 @@ class ComplaintForm(forms.ModelForm):
         ),
         widget=forms.TextInput(),
     )
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['article'].queryset = Article.objects.filter(articleproperties__departament_id=user.profile.departament_id).distinct()
 
     def clean_date_of_purchase(self):
         date_of_purchase = self.cleaned_data["date_of_purchase"]
