@@ -134,7 +134,7 @@ typing-extensions==4.12.1
     #   django-countries
 tzdata==2024.1
     # via celery
-urllib3==2.2.1
+urllib3==2.2.2
     # via botocore
 vine==5.1.0
     # via
