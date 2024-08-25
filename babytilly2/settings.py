@@ -28,6 +28,8 @@ if SENTRY_DSN := os.environ.get('SENTRY_DSN'):
         # of sampled transactions.
         # We recommend adjusting this value in production.
         profiles_sample_rate=1.0,
+        release=os.environ.get("GIT_REV", "no-release"),
+        environment=os.environ.get("ENVIRONMENT", "development"),
     )
 
 ADMINS = (("Vitaly Omelchuk", "vitaly.omelchuk@gmail.com"),)
