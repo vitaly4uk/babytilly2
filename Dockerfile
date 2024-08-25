@@ -1,5 +1,5 @@
 FROM python:3.10.14-alpine
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 ENV PYCURL_SSL_LIBRARY=openssl
 RUN apk add --no-cache --virtual .build-dependencies build-base curl-dev bash libcurl
 RUN mkdir -p /app
