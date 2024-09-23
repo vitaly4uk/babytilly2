@@ -121,7 +121,7 @@ sentry-sdk[django]==2.13.0
     # via -r requirements.in
 six==1.16.0
     # via python-dateutil
-sorl-thumbnail==12.10.0
+sorl-thumbnail==12.11.0
     # via -r requirements.in
 soupsieve==2.6
     # via beautifulsoup4
