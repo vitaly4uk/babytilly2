@@ -17,6 +17,6 @@ django-debug-toolbar==4.3.0
 pip-tools==7.4.1
 django-environ==0.11.2
 django-bootstrap4==24.1
-fontawesomefree==6.5.1
+fontawesomefree==6.6.0
 pycurl==7.45.1  # Latest build with wheels provided
 sentry-sdk[django]==2.13.0

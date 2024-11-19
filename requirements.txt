@@ -73,7 +73,7 @@ django-ses==4.1.0
     # via -r requirements.in
 django-storages==1.14.4
     # via -r requirements.in
-fontawesomefree==6.5.1
+fontawesomefree==6.6.0
     # via -r requirements.in
 gunicorn==22.0.0
     # via -r requirements.in
