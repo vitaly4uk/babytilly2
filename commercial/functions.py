@@ -188,7 +188,7 @@ def _add_to_xml(xml_element: ET.Element, article_property: ArticleProperties, fi
 
 
 def export_department_to_xml(departament) -> ET.ElementTree:
-    currency_id = 'EUR'
+    currency_id = departament.currency
     root = ET.Element('yml_catalog', date=now().strftime('%d.%m.%Y %H:%M'))
     shop = ET.SubElement(root, 'shop')
     ET.SubElement(shop, 'currencies').append(ET.Element('currency', id=currency_id, rate='1'))

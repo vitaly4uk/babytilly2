@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 class Departament(models.Model):
     country = CountryField(_("country"))
     email = models.EmailField(_("email"))
+    currency = models.CharField(_("currency"), max_length=3, default="EUR")
 
     def __str__(self):
         return str(self.country)
